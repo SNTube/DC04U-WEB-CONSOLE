@@ -69,7 +69,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 - **通过网络提供服务也要提供源码**（AGPL 第 13 条）。把修改版架成在线服务，须向使用者
   提供获取对应源码的途径；
 - **商业使用需要单独授权**。闭源商用、OEM 集成、或不愿遵守 AGPL 的商用场景，
-  请联系作者获取商业许可：`（待填写：联系方式）`。
+  请通过 GitHub Issues 联系：https://github.com/SNTube/DC04U-WEB-CONSOLE/issues 。
+  请在标题里写「商业授权」并简述用途（产品名 / 是否闭源 / 分发规模）。
 
 以上授权仅覆盖本仓库自有代码。名称与图标不随代码授权，基于本项目的衍生作品请更换名称与图标。
 
