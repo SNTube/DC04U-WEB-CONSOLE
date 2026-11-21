@@ -1967,6 +1967,8 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "tip.normFollow":"跟随：让「经滤波后频响曲线」单独在标准化频率处归零；默认关（与源曲线同基准）",
     "eq.freqLanding":"频率落点",
     "eq.tipToggle":"浮层说明",
+    "fm.modeSimple":"简洁",
+    "fm.modeDetail":"详细",
     "eq.off":"关",
     "eq.clearHighlight":"清除高亮",
     "eq.freqNote":"频率为通用参考值，乐器与人声的实际泛音结构会随演奏法、拾音位置与混音处理而变化。",
@@ -2646,6 +2648,8 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "tip.normFollow":"Follow: align the filtered response to the normalize frequency on its own; off by default (same baseline as the source)",
     "eq.freqLanding":"Frequency marker",
     "eq.tipToggle":"Marker tooltip",
+    "fm.modeSimple":"Simple",
+    "fm.modeDetail":"Detailed",
     "eq.off":"Off",
     "eq.clearHighlight":"Clear highlight",
     "eq.freqNote":"Frequencies are general references; the actual overtone structure of instruments and voices varies with playing technique, microphone placement and mixing.",
@@ -2716,17 +2720,17 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "skin.importBack":"Import back artwork",
     "skin.editBack":"Edit back artwork",
     "skin.clearBack":"Remove back artwork",
-    "skin.backSize":"Device back · 23 × 58 mm",
-    "skin.backPanel":"Back panel · 21 × 56 mm",
-    "skin.backSticker":"Sticker · 20 × 55 mm · 1 mm fillet",
+    "skin.backSize":"Back · 23×58 mm",
+    "skin.backPanel":"Panel · 21×56 mm",
+    "skin.backSticker":"Sticker · 20×55 · r1",
     "skin.screen":"Screen",
     "skin.importFront":"Import front artwork",
     "skin.editFront":"Edit front artwork",
     "skin.clearFront":"Remove front artwork",
     "skin.flipFront":"Rotate device front 180°",
-    "skin.frontSize":"Device front · 20 × 58 mm",
-    "skin.frontPanel":"Front panel · 18 × 56 mm",
-    "skin.frontSticker":"Sticker · 17 × 55 mm · 1 mm fillet",
+    "skin.frontSize":"Front · 20×58 mm",
+    "skin.frontPanel":"Panel · 18×56 mm",
+    "skin.frontSticker":"Sticker · 17×55 · r1",
     "skin.angle":"Angle",
     "skin.clearAngle":"Clear angle",
     "skin.ccw90":"90° counter-clockwise",
@@ -2933,7 +2937,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "dev.noFrontArt":"No front material",
     "dev.noGoldArt":"No Hi-Res tag",
     "dev.gainLow":"Low",
-    "dev.gainMid":"Mid",
+    "dev.gainMid":"Medium",
     "dev.gainHigh":"High",
     "dev.dreOn":"On",
     "dev.dacOpt":"Optimized",
@@ -3325,6 +3329,8 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "tip.normFollow":"追従：「フィルタ後」を正規化周波数に単独で合わせる。既定はオフ（ソースと同じ基準）",
     "eq.freqLanding":"周波数マーカー",
     "eq.tipToggle":"マーカーの説明",
+    "fm.modeSimple":"シンプル",
+    "fm.modeDetail":"詳細",
     "eq.off":"オフ",
     "eq.clearHighlight":"ハイライトを消去",
     "eq.freqNote":"周波数はあくまで目安です。楽器や声の実際の倍音構成は、演奏法・マイク位置・ミックス処理によって変化します。",
@@ -3395,17 +3401,17 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "skin.importBack":"背面素材を読み込む",
     "skin.editBack":"背面素材を編集",
     "skin.clearBack":"背面素材を削除",
-    "skin.backSize":"デバイス背面 · 23 × 58 mm",
-    "skin.backPanel":"背面板 · 21 × 56 mm",
-    "skin.backSticker":"ステッカー · 20 × 55 mm · 角丸 1 mm",
+    "skin.backSize":"本体背面 · 23×58 mm",
+    "skin.backPanel":"背面パネル · 21×56 mm",
+    "skin.backSticker":"シール · 20×55 · R1",
     "skin.screen":"画面",
     "skin.importFront":"前面素材を読み込む",
     "skin.editFront":"前面素材を編集",
     "skin.clearFront":"前面素材を削除",
     "skin.flipFront":"デバイス前面を 180° 回転",
-    "skin.frontSize":"デバイス前面 · 20 × 58 mm",
-    "skin.frontPanel":"前面板 · 18 × 56 mm",
-    "skin.frontSticker":"ステッカー · 17 × 55 mm · 角丸 1 mm",
+    "skin.frontSize":"本体前面 · 20×58 mm",
+    "skin.frontPanel":"前面パネル · 18×56 mm",
+    "skin.frontSticker":"シール · 17×55 · R1",
     "skin.angle":"角度",
     "skin.clearAngle":"角度をクリア",
     "skin.ccw90":"反時計回り 90°",
@@ -4319,6 +4325,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     });
   }
 
+  var ATTR_OUT = new WeakMap();
   /** 把当前语言刷到带标记的节点上：文本、title、aria-label、placeholder。 */
   function patchAttrs(root) {
     var els = root.querySelectorAll('*');
@@ -4332,11 +4339,14 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
         if (!(a in store)) store[a] = el.getAttribute(a);
         var raw = store[a];
         var curVal = el.getAttribute(a);
-        if (curVal !== raw) { store[a] = curVal; raw = curVal; }
+        var outs = ATTR_OUT.get(el);
+        if (!outs) { outs = {}; ATTR_OUT.set(el, outs); }
+        if (curVal !== raw && curVal !== outs[a]) { store[a] = curVal; raw = curVal; outs[a] = undefined; }
         if (!/[\u4e00-\u9fa5]/.test(raw)) continue;
         var k = REV[raw];
         var out = k ? t(k) : tr(raw);
-        if (el.getAttribute(a) !== out) el.setAttribute(a, out);
+        if (curVal !== out) el.setAttribute(a, out);
+        outs[a] = out;
       }
     }
   }
@@ -4704,6 +4714,15 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   .fm-desc-btn.on b{color:#2f5bd0}
   .fm-clear-btn{color:#a3282d;border-color:#e7c4c4}
   .fm-clear-btn:hover{border-color:#a3282d;color:#a3282d}
+  .fm-mode{display:inline-flex;align-items:center;border:1px solid var(--line);
+    border-radius:999px;background:var(--surface);overflow:hidden;
+    font-size:10.5px;font-weight:600;color:var(--muted);white-space:nowrap}
+  .fm-mode>.fm-mode-label{padding:3px 8px 3px 10px}
+  .fm-mode>.fm-mode-btn{border:0;border-left:1px solid var(--line);background:transparent;
+    font:inherit;font-size:10.5px;font-weight:600;color:var(--muted);
+    padding:3px 9px;cursor:pointer;line-height:1.5}
+  .fm-mode>.fm-mode-btn:hover{color:var(--accent)}
+  .fm-mode>.fm-mode-btn.on{background:var(--surface-2);color:#2f5bd0}
   .fm-vocal{position:relative;max-height:470px;overflow-y:auto;padding-right:4px}
   .fm-axis{height:20px;position:relative;margin-left:150px;margin-right:24px;
     border-bottom:1px dashed #d8e0f0}
@@ -5007,8 +5026,9 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
     clip:rect(0,0,0,0);white-space:nowrap;border:0}
   .skin-fig figcaption{position:absolute;left:calc(50% - 15px);bottom:0;
-    transform:translateX(-50%);font-size:9px;color:#7a88a4;
-    white-space:nowrap;line-height:1.45;display:block;padding:4px 8px;
+    transform:translateX(-50%);font-size:8.5px;color:#7a88a4;
+    white-space:normal;width:max-content;max-width:min(132px,calc(100% + 40px));text-align:center;
+    overflow-wrap:break-word;line-height:1.45;display:block;padding:4px 8px;
     background:var(--surface);border:1px solid #dbe3f2;border-radius:9px;
     box-shadow:0 1px 3px rgba(35,55,110,.06);
     font-variant-numeric:tabular-nums}
@@ -5600,8 +5620,12 @@ try{
       </div>
       <details class="freq-map" id="freqMap">
         <summary><span class="fm-sum-title">频率落点</span><span class="fm-sum-actions">
-          <button class="fm-desc-btn" id="fmDescBtn" type="button" aria-pressed="false"
-            title="控制频响曲线浮层里是否显示频率落点说明（默认不显示）">浮层说明 <b>关</b></button>
+          <div class="fm-mode" id="fmMode" role="group" aria-label="浮层说明">
+            <span class="fm-mode-label">浮层说明</span>
+            <button class="fm-mode-btn" type="button" data-mode="off" aria-pressed="false">关</button>
+            <button class="fm-mode-btn" type="button" data-mode="simple" aria-pressed="true">简洁</button>
+            <button class="fm-mode-btn" type="button" data-mode="detail" aria-pressed="false">详细</button>
+          </div>
           <button class="fm-desc-btn fm-clear-btn" id="fmClear" type="button"
             title="清除频响曲线图上的区间高亮（折叠收起时也能用）">清除高亮</button>
         </span></summary>
@@ -6393,6 +6417,7 @@ const S = {
   zoom: 2,
   normFreq: 500,
   normFollow: false,
+  tipMode: 'simple',
   show:{target:true, source:true, each:true, sum:true, filtered:true},
   sourceCurve:null, targetCurve:null, targetName:null,
   baselineOn:false,
@@ -6401,6 +6426,20 @@ const S = {
 const bands = () => S.preset.filterSettings;
 const $ = id => document.getElementById(id==='themeToggle'?'themeDock':id);
 
+const TIPMODE_KEY='dc04u.tipMode.v1';
+const TIPMODES=['off','simple','detail'];
+function tipModeVal(){return TIPMODES.indexOf(S.tipMode)>=0?S.tipMode:'simple';}
+function tipModeLoad(){
+  try{
+    const raw=uiSelftestMode()?null:localStorage.getItem(TIPMODE_KEY);
+    if(TIPMODES.indexOf(raw)>=0)return raw;
+  }catch(_){}
+  return 'simple';
+}
+function tipModeSave(v){
+  if(uiSelftestMode())return;
+  try{localStorage.setItem(TIPMODE_KEY,v);}catch(_){}
+}
 const HIST={stack:[],redo:[],base:null,baseImported:false,key:null,time:0};
 const MAX_HISTORY=100;
 function snapshot(){
@@ -6741,9 +6780,9 @@ const LANES = VOCAL_SECS.map(o=>({
 const LANE_ITEMS = LANES.reduce((a,l)=>a.concat(...l.rows.map(r=>r.z)), []);
   const L0=Math.log10(20), L1=Math.log10(20000);
   const xFrac=f=>(Math.log10(Math.min(Math.max(f,20),20000))-L0)/(L1-L0);
-  let selected=null, descOn=false;
+  let selected=null;
   const tip=$('fmTip'), vocal=$('fmVocal'), detail=$('fmDetail'), box=$('freqMap'),
-        descBtn=$('fmDescBtn');
+        modeBox=$('fmMode'), modeBtns=modeBox?[...modeBox.querySelectorAll('.fm-mode-btn')]:[];
   const eqAvg=(a,b)=>{const bs=bands();let s=0;const N=24;
     for(let i=0;i<=N;i++)s+=PEQCore.responseAt(bs,a*Math.pow(b/a,i/N));
     return s/(N+1);};
@@ -6755,7 +6794,7 @@ const LANE_ITEMS = LANES.reduce((a,l)=>a.concat(...l.rows.map(r=>r.z)), []);
     return {f0:selected.f[0],f1:endF(selected),c:selected.c,name:shortSex(selected)};
   }
   function bandInfo(f){
-    if(!descOn)return '';
+
     const band=BANDS.find(b=>f>=b.f0&&f<b.f1)||BANDS[BANDS.length-1];
     const zm=VZONES[0].z.find(z=>f>=z.f[0]&&f<=z.f[1]);
     const zf=VZONES[1].z.find(z=>f>=z.f[0]&&f<=z.f[1]);
@@ -6878,23 +6917,30 @@ const LANE_ITEMS = LANES.reduce((a,l)=>a.concat(...l.rows.map(r=>r.z)), []);
     selected=null;syncSel();renderDetail();render();
   }
   function syncDesc(){
-    descBtn.setAttribute('aria-pressed',descOn?'true':'false');
-    descBtn.querySelector('b').textContent=descOn?T('fm.on','开'):T('eq.off','关');
-    descBtn.classList.toggle('on',descOn);
+    const cur=tipModeVal();
+    modeBtns.forEach(b=>{
+      const on=b.dataset.mode===cur;
+      b.classList.toggle('on',on);
+      b.setAttribute('aria-pressed',on?'true':'false');
+    });
   }
   function init(){
     renderLanes();renderDetail();syncDesc();
     const onSummaryBtn=(el,fn)=>el.addEventListener('click',e=>{
       e.preventDefault();e.stopPropagation();fn();
     });
-    onSummaryBtn(descBtn,()=>{descOn=!descOn;syncDesc();});
+    modeBtns.forEach(b=>onSummaryBtn(b,()=>{
+      S.tipMode=b.dataset.mode;
+      tipModeSave(S.tipMode);
+      syncDesc();
+    }));
     onSummaryBtn($('fmClear'),()=>{clear();hideTip();});
     box.addEventListener('toggle',()=>{if(box.open)reflow();else hideTip();});
     window.addEventListener('resize',()=>{if(box.open)reflow();});
   }
   return {init,reflow,highlight,bandInfo,clear,hideTip,
           refresh:()=>{renderLanes();renderDetail();syncDesc();hideTip();},
-          descOn:()=>descOn,setDesc:v=>{descOn=!!v;syncDesc();},
+          tipMode:tipModeVal,setTipMode:v=>{S.tipMode=v;tipModeSave(v);syncDesc();},
           selected:()=>selected,LANES,LANE_ITEMS,xFrac,rng,shortSex};
 })();
 FM.init();
@@ -7010,6 +7056,8 @@ function baseOption(){
         if(!ps.length)return'';
         const raw=ps[0].axisValue!=null?ps[0].axisValue:(ps[0].value&&ps[0].value[0]);
         if(raw==null||!isFinite(raw))return'';
+        const mode=tipModeVal();
+        if(mode==='off')return'';
         const f=FX(raw), rows=curveRowsAt(f);
         let s='<b>'+fmtFreq(f)+' Hz</b><br>';
         rows.forEach(r=>{
@@ -7017,7 +7065,7 @@ function baseOption(){
             +r.color+'"></span> '+trS(r.name)+' <b>'+r.v.toFixed(2)+' dB</b><br>';
         });
         if(!rows.length) s+='<span style="color:'+labelC+'">'+T('fm.allZero','各曲线均为 0.00 dB')+'</span>';
-        s+=FM.bandInfo(f);
+        if(mode==='detail')s+=FM.bandInfo(f);
         return s;
       }},
     series:buildSeries()
@@ -9777,6 +9825,7 @@ window.addEventListener('resize',()=>{
 });
 eqnLoad();
 S.normFreq=normFreqLoad();
+S.tipMode=tipModeLoad();
 render();syncEditor();renderCards();renderDf();syncPresetInfo();
 syncDevReadHint(false);
 syncConnToggle();
@@ -10072,30 +10121,35 @@ function runSelfTest(){
     syncNormFreq();
   })();
   (()=>{
-    const d=$('freqMap'),v=$('fmVocal'),btn=$('fmDescBtn'),clr=$('fmClear'),
+    const d=$('freqMap'),v=$('fmVocal'),clr=$('fmClear'),
+          box=$('fmMode'),segs=box?[...box.querySelectorAll('.fm-mode-btn')]:[],
           sum=d.querySelector('summary'),title=sum.querySelector('.fm-sum-title'),
           acts=sum.querySelector('.fm-sum-actions');
     const shape=!d.open && title.textContent.trim()==='频率落点' &&
       d.previousElementSibling.id==='chartWrap' && d.nextElementSibling.id==='tadj' &&
       v.querySelectorAll('.fm-row').length>=18 && v.querySelectorAll('.fm-seg').length>=40;
     const noClutter=d.querySelector('.fm-body').querySelectorAll('button').length===0 &&
-      d.querySelectorAll('button').length===2 &&
+      d.querySelectorAll('button').length===4 &&
       !d.textContent.includes('列表可上下滚动') && !d.textContent.includes('实心段 = 基频') &&
       !d.textContent.includes('悬停看说明');
-    const btnShape=!!acts && btn.parentElement===acts && clr.parentElement===acts &&
-      btn.getBoundingClientRect().right>title.getBoundingClientRect().right &&
-      clr.getBoundingClientRect().left>=btn.getBoundingClientRect().right-1 &&
+    const segMode=m=>segs.find(b=>b.dataset.mode===m);
+    const btnShape=!!acts && box.parentElement===acts && clr.parentElement===acts &&
+      box.getBoundingClientRect().right>title.getBoundingClientRect().right &&
+      clr.getBoundingClientRect().left>=box.getBoundingClientRect().right-1 &&
       clr.textContent.trim()==='清除高亮' &&
-      btn.getAttribute('aria-pressed')==='false' && !FM.descOn();
+      segs.length===3 && segs.every(b=>b.textContent.trim().length>0) &&
+      segMode('simple').getAttribute('aria-pressed')==='true' && FM.tipMode()==='simple';
     const tipOpt=chart.getOption().tooltip[0],tipFn=tipOpt.formatter;
     const tipAt=f=>tipFn([{value:[LX(f),0],seriesName:'合成滤波'}]);
     const off0=tipAt(800);
     const offOK=!off0.includes('男声：') && !off0.includes('落在这里的声音') &&
-      !off0.includes('中频') && off0.includes('800 Hz');
+      !off0.includes('中频') && off0.includes('800 Hz') && off0.includes('dB');
     const openBefore=d.open;
-    btn.click();
-    const onOK=FM.descOn() && btn.getAttribute('aria-pressed')==='true' &&
-      btn.classList.contains('on') && btn.querySelector('b').textContent==='开' &&
+    segMode('detail').click();
+    const onOK=FM.tipMode()==='detail' &&
+      segMode('detail').getAttribute('aria-pressed')==='true' &&
+      segMode('detail').classList.contains('on') &&
+      segMode('simple').getAttribute('aria-pressed')==='false' &&
       d.open===openBefore;
     const onHtml=tipAt(800),bi=FM.bandInfo(181);
     const descOK=onHtml.includes('中频') && onHtml.includes('男声：') &&
@@ -10116,8 +10170,9 @@ function runSelfTest(){
         bi.includes('white-space:normal') && bi.includes('max-width:100%');
       root.remove();r.ok=ok;return r;
     })();
-    btn.click();
-    const offOK2=!FM.descOn() && !tipAt(800).includes('男声：');
+    segMode('off').click();
+    const offOK2=FM.tipMode()==='off' && tipAt(800)==='' && tipAt(181)==='';
+    segMode('simple').click();
     d.open=true;FM.reflow();
     const z=FM.LANE_ITEMS[0],seg=v.querySelector('.fm-seg');
     const logOK=Math.abs(parseFloat(seg.style.left)/100-FM.xFrac(z.f[0]))<1e-6 &&
@@ -10141,11 +10196,11 @@ function runSelfTest(){
     const toggleOff=!FM.selected() && !(chart.getOption().series[0].markArea&&
       chart.getOption().series[0].markArea.data.length);
     FM.hideTip();d.open=false;
-    ck('「频率落点」默认折叠在目标曲线调整上方；长提示已移除，标题右侧为 [浮层说明][清除高亮]',
+    ck('「频率落点」默认折叠在目标曲线调整上方；长提示已移除，标题右侧为 [浮层说明三档][清除高亮]',
        shape&&noClutter&&btnShape&&logOK,
        {rows:v.querySelectorAll('.fm-row').length,segs:v.querySelectorAll('.fm-seg').length,
         shape,noClutter,btnShape,logOK});
-    ck('浮层说明开关：默认关不弹说明，按开才附频段/男女声区段，再按关且不影响折叠开合',
+    ck('浮层说明三档：关＝整块不显示／简洁＝只有各曲线 dB／详细＝再加频段与男女声区段',
        offOK&&onOK&&descOK&&offOK2,{offOK,onOK,descOK,offOK2,openBefore,dOpenAfter:d.open});
     ck('浮层说明不超出浮层框、且不再有「落在这里的声音」行',
        fit.ok&&descOK,fit);
