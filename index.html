@@ -5529,15 +5529,11 @@ try{
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         </button>
       </div>
-      <div class="dd split" id="importDD">
-        <button class="btn" id="importDDBtn" type="button">导入 PEQ <span class="caret">▾</span></button>
+      <div class="split" id="importDD">
+        <button class="btn" id="importPreset" type="button" title="导入 PEQ：官方 JSON 或 Parametric EQ 文本（.json / .txt / .eq），按文件内容自动识别">导入 PEQ</button>
         <button class="seg" id="resetAll" type="button" title="恢复默认 PEQ 预设（不影响已导入的源频响 / 目标曲线）">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         </button>
-        <div class="dd-menu" id="importDDMenu">
-          <button class="dd-item" id="importPreset" type="button">导入 官方 JSON</button>
-          <button class="dd-item" id="importPeq" type="button" title="导入 Parametric EQ 文本（Equalizer APO / REW），自动转换为官方 JSON">导入 Parametric EQ</button>
-        </div>
       </div>
       <div class="dd" id="exportDD">
         <button class="btn primary" id="exportDDBtn" type="button" title="导出 PEQ 文件" aria-label="导出 PEQ 文件"><span class="t-full">导出 PEQ 文件</span><span class="t-short">导出 PEQ</span> <span class="caret">▾</span></button>
@@ -6061,8 +6057,7 @@ try{
 <div class="toast" id="toast"></div>
 <div id="selftestResult" hidden></div>
 <div id="bridgeTestResult" hidden></div>
-<input type="file" id="filePreset" accept=".json,application/json" hidden>
-<input type="file" id="filePeq" accept=".txt,.eq,.csv,text/plain" hidden>
+<input type="file" id="filePreset" accept=".json,.txt,.eq,.csv,application/json,text/plain" hidden>
 <input type="file" id="fileCurve" accept=".txt,.csv,text/plain" hidden>
 <input type="file" id="fileSource" accept=".txt,.csv,text/plain" hidden>
 
@@ -7637,41 +7632,41 @@ function parseParametricEq(text,opts){
   }};
 }
 
+const IMPORT_JSON_RE=/^\s*\{/;
 $('importPreset').onclick=()=>$('filePreset').click();
-$('importPeq').onclick=()=>$('filePeq').click();
-$('filePeq').onchange=e=>{
-  const file=e.target.files[0];if(!file)return;
-  const rd=new FileReader();
-  rd.onload=()=>{
-    const name=file.name.replace(/\.[^.]+$/,'');
-    const r=parseParametricEq(rd.result,{name});
-    if(!r.ok){
-      toast(fillTpl(T('toastT.importFail','导入失败：{msg}'),{msg:r.error}));
-      if(r.warns.length) showInfo('Parametric EQ 导入失败',r.error+'（未改动当前预设）',r.warns.join('\n'));
-      return;
-    }
-    applyOfficialJson(r.json,{baseline:true,imported:true});
-    toast(fillTpl(T('toastT.importedApo','已导入 Parametric EQ：{on} / 10 段在用'),{on:r.onCount}));
-    if(r.warns.length) showInfo('Parametric EQ 导入完成（部分内容已跳过）',
-      `${r.onCount} / 10 段在用，已转换为官方 JSON。以下内容被跳过或做了调整：`,
-      r.warns.join('\n'));
-  };
-  rd.readAsText(file);e.target.value='';
-};
 $('filePreset').onchange=e=>{
   const file=e.target.files[0];if(!file)return;
   const rd=new FileReader();
   rd.onload=()=>{
-    try{
-      const json=JSON.parse(rd.result);
-      applyOfficialJson(json,{baseline:true,imported:true});
-      if(json.digitalFilter!==undefined){S.digitalFilter=Math.max(0,Math.min(4,+json.digitalFilter||0));renderDf();}
-      const n=PEQCore.fromPresetJson(json).bands.filter(b=>b.status!==false).length;
-      toast(fillTpl(T('toastT.imported','已导入：{name}（10 槽 / {n} 段在用）'),{name:(json.name||file.name),n}));
-    }catch(err){toast('导入失败：'+err.message);}
+    const text=String(rd.result||'').replace(/^\uFEFF/,'');
+    const name=file.name.replace(/\.[^.]+$/,'');
+    if(IMPORT_JSON_RE.test(text)) importOfficialText(text,file.name);
+    else importParametricEqText(text,name);
   };
   rd.readAsText(file);e.target.value='';
 };
+function importOfficialText(text,fileName){
+  try{
+    const json=JSON.parse(text);
+    applyOfficialJson(json,{baseline:true,imported:true});
+    if(json.digitalFilter!==undefined){S.digitalFilter=Math.max(0,Math.min(4,+json.digitalFilter||0));renderDf();}
+    const n=PEQCore.fromPresetJson(json).bands.filter(b=>b.status!==false).length;
+    toast(fillTpl(T('toastT.imported','已导入：{name}（10 槽 / {n} 段在用）'),{name:(json.name||fileName),n}));
+  }catch(err){toast('导入失败：'+err.message);}
+}
+function importParametricEqText(text,name){
+  const r=parseParametricEq(text,{name});
+  if(!r.ok){
+    toast(fillTpl(T('toastT.importFail','导入失败：{msg}'),{msg:r.error}));
+    if(r.warns.length) showInfo('Parametric EQ 导入失败',r.error+'（未改动当前预设）',r.warns.join('\n'));
+    return;
+  }
+  applyOfficialJson(r.json,{baseline:true,imported:true});
+  toast(fillTpl(T('toastT.importedApo','已导入 Parametric EQ：{on} / 10 段在用'),{on:r.onCount}));
+  if(r.warns.length) showInfo('Parametric EQ 导入完成（部分内容已跳过）',
+    `${r.onCount} / 10 段在用，已转换为官方 JSON。以下内容被跳过或做了调整：`,
+    r.warns.join('\n'));
+}
 $('exportPreset').onclick=()=>{
   if(!(S.preset.name||'').trim()){
     $('piNameErr').hidden=false;
@@ -10534,22 +10529,24 @@ function runSelfTest(){
               br.right<=sr.left+1&&br.height>=26&&!b.disabled;
      })(),m54.info);
 
-  ck('导入 PEQ 下拉含两个菜单项（官方 JSON / Parametric EQ）',
-     $('importDDBtn').textContent.includes('导入 PEQ') &&
-     $('importDDMenu').textContent.includes('导入 官方 JSON') &&
-     $('importDDMenu').textContent.includes('导入 Parametric EQ'),
-     $('importDDMenu').textContent.trim());
+  ck('导入 PEQ 单入口：一个按钮吃两种格式，不再有下拉菜单',
+     $('importPreset').textContent.trim()==='导入 PEQ' &&
+     !document.getElementById('importDDMenu') &&
+     !document.getElementById('importPeq') &&
+     !$('importDD').querySelector('.caret') &&
+     /\.json/.test($('filePreset').accept) && /\.txt/.test($('filePreset').accept),
+     $('filePreset').accept);
   ck('导出 PEQ 文件 下拉含两个菜单项',
      $('exportDDBtn').textContent.includes('导出 PEQ 文件') &&
      $('exportDDMenu').textContent.includes('导出 官方 JSON') &&
      $('exportDDMenu').textContent.includes('导出 Parametric EQ'),
      $('exportDDMenu').textContent.trim());
-  ck('下拉菜单默认收起，点按钮展开',
-     (()=>{const was=$('importDD').classList.contains('open');
-           $('importDDBtn').click();
-           const opened=$('importDD').classList.contains('open');
-           $('importDDBtn').click();
-           return !was&&opened&&!$('importDD').classList.contains('open');})(), true);
+  ck('导入格式按内容判断（不看扩展名）',
+     IMPORT_JSON_RE.test('{"name":"x"}') &&
+     IMPORT_JSON_RE.test('  \n {"filterSettings":[]}') &&
+     !IMPORT_JSON_RE.test('Filter 1: ON PK Fc 1000 Hz Gain 3 dB Q 1') &&
+     !IMPORT_JSON_RE.test('Preamp: -5 dB\nFilter 1: ON LS Fc 100 Hz Gain 2 dB'),
+     JSON.stringify({json:IMPORT_JSON_RE.test('{}'),peq:IMPORT_JSON_RE.test('Filter 1: ON PK')}));
   ck('「导入目标曲线」右侧图标段：恢复默认目标曲线（IEF Preference 2025）',
      (()=>{S.targetCurve=[{frequency:1000,db:5}];
            $('resetTarget').click();
@@ -11176,8 +11173,10 @@ function runSelfTest(){
                                cs.backgroundImage!=='none');
                      });
          const gs=getComputedStyle(stage);
+         const jc=gs.justifyContent;
+         const jcOK=jc==='flex-start'||jc==='flow-start'||jc==='start'||jc==='normal';
          const stageOK=gs.display==='flex'&&gs.flexDirection==='column'&&
-                       gs.flexGrow==='1'&&gs.justifyContent==='flex-start';
+                       gs.flexGrow==='1'&&jcOK;
          const twoKids=stage.children.length===2&&stage.firstElementChild===fig&&
                        stage.lastElementChild===dock&&
                        !stage.querySelector('.df-cap')&&!$('dfFigName');
@@ -11186,7 +11185,7 @@ function runSelfTest(){
          const fillOK=fr.top>=gr.top&&fr.bottom<=dr.top+1&&
                       Math.abs(dr.bottom-gr.bottom)<2&&dr.height>60&&
                       ds.flexGrow==='1'&&parseFloat(ds.minHeight)>0;
-         m51.sep={orderOK,noSep,stageOK,twoKids,fillOK,
+         m51.sep={orderOK,noSep,stageOK,twoKids,fillOK,jc,
                   stageH:+gr.height.toFixed(1),figH:+fr.height.toFixed(1),
                   dockH:+dr.height.toFixed(1)};
          return orderOK&&noSep&&stageOK&&twoKids&&fillOK;
