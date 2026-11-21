@@ -7080,6 +7080,7 @@ function syncTargetCurveName(){
   el.textContent=nm;el.title=fillTpl(T('tip.curveNow','当前目标曲线：{name}'),{name:nm});
 }
 function render(){
+  cancelBaseAnim();
   PEQCore.normalizeBands(bands());
   chart.setOption(baseOption(),{notMerge:true,lazyUpdate:false});
   syncPoints();
@@ -7882,12 +7883,38 @@ function syncBaseIcon(){
   $('baseIcoWave').classList.toggle('on',!S.baselineOn);
   $('baseIcoLine').classList.toggle('on',S.baselineOn);
 }
-$('adjBaseline').onclick=()=>{
-  S.baselineOn=!S.baselineOn;
+var BASE_ANIM_MS=420;
+var baseAnimRaf=0;
+function cancelBaseAnim(){
+  if(baseAnimRaf){cancelAnimationFrame(baseAnimRaf);baseAnimRaf=0;}
+}
+function setBaseline(on){
+  if(on===S.baselineOn)return;
+  const from=((chart.getOption()||{}).series||[]).map(s=>(s.data||[]).map(d=>Array.isArray(d)?d[1]:d));
+  S.baselineOn=on;
   syncBaseIcon();
-  render();
-  toast(S.baselineOn?'已拉直：各曲线显示相对目标曲线的差值':'已退出拉直：恢复绝对 dB 显示');
-};
+  toast(on?'已拉直：各曲线显示相对目标曲线的差值':'已退出拉直：恢复绝对 dB 显示');
+  cancelBaseAnim();
+  if(uiSelftestMode()){render();return;}
+  const next=buildSeries();
+  const toY=next.map(s=>(s.data||[]).map(d=>Array.isArray(d)?d[1]:d));
+  const ease=p=>p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
+  const patchAt=e=>next.map((s,i)=>{
+    const a=from[i],b=toY[i];
+    if(!b.length||!a||a.length!==b.length)return {data:s.data};
+    return {data:s.data.map((d,j)=>[d[0],a[j]+(b[j]-a[j])*e])};
+  });
+  const t0=performance.now();
+  let bail=setTimeout(()=>{bail=0;if(baseAnimRaf){cancelBaseAnim();render();}},BASE_ANIM_MS+150);
+  const tick=now=>{
+    const p=Math.min(1,(now-t0)/BASE_ANIM_MS);
+    chart.setOption({series:patchAt(ease(p)),animation:false},{lazyUpdate:true,silent:true});
+    if(p<1){baseAnimRaf=requestAnimationFrame(tick);}
+    else{baseAnimRaf=0;if(bail){clearTimeout(bail);bail=0;}render();}
+  };
+  baseAnimRaf=requestAnimationFrame(tick);
+}
+$('adjBaseline').onclick=()=>setBaseline(!S.baselineOn);
 syncBaseIcon();
 function parseCurveText(text){
   const pts=[];
