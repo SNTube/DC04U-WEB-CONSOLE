@@ -1963,6 +1963,8 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "eq.undoAll":"撤销全部",
     "eq.chartTitle":"频响曲线",
     "eq.normFreq":"标准化频率",
+    "eq.normFollow":"跟随",
+    "tip.normFollow":"跟随：让「经滤波后频响曲线」单独在标准化频率处归零；默认关（与源曲线同基准）",
     "eq.freqLanding":"频率落点",
     "eq.tipToggle":"浮层说明",
     "eq.off":"关",
@@ -2640,6 +2642,8 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "eq.undoAll":"Undo all",
     "eq.chartTitle":"Frequency response",
     "eq.normFreq":"Normalize frequency",
+    "eq.normFollow":"Follow",
+    "tip.normFollow":"Follow: align the filtered response to the normalize frequency on its own; off by default (same baseline as the source)",
     "eq.freqLanding":"Frequency marker",
     "eq.tipToggle":"Marker tooltip",
     "eq.off":"Off",
@@ -3317,6 +3321,8 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "eq.undoAll":"すべて元に戻す",
     "eq.chartTitle":"周波数特性",
     "eq.normFreq":"正規化周波数",
+    "eq.normFollow":"追従",
+    "tip.normFollow":"追従：「フィルタ後」を正規化周波数に単独で合わせる。既定はオフ（ソースと同じ基準）",
     "eq.freqLanding":"周波数マーカー",
     "eq.tipToggle":"マーカーの説明",
     "eq.off":"オフ",
@@ -4462,6 +4468,11 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   .normf .nf-box i{display:flex;align-items:center;padding:0 7px 0 6px;
     border-left:1px solid var(--line);font-style:normal;font-size:11px;
     color:var(--muted);background:var(--bg)}
+  .normf .nf-box .nf-follow{border:0;border-left:1px solid var(--line);
+    background:var(--bg);color:var(--muted);font:inherit;font-size:11px;
+    padding:0 9px;cursor:pointer;white-space:nowrap}
+  .normf .nf-box .nf-follow:hover{color:var(--accent)}
+  .normf .nf-box .nf-follow[aria-pressed="true"]{background:var(--accent);color:#fff}
   .chart-head>.normf~.zoom{margin-left:0}
   #chartWrap{position:relative;width:100%;flex:1;min-height:430px}
   .chart-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
@@ -5573,6 +5584,8 @@ try{
             <input type="text" inputmode="numeric" id="normFreq" value="500"
                    aria-label="标准化频率（Hz）" title="输入 20–20000 之间的整数，回车或失焦生效；↑/↓ 步进 10（Shift ×10）">
             <i>Hz</i>
+            <button type="button" class="nf-follow" id="normFollow" aria-pressed="false"
+                    title="跟随：让「经滤波后频响曲线」单独在标准化频率处归零；默认关（与源曲线同基准）">跟随</button>
           </div>
         </div>
         <div class="zoom">
@@ -6379,6 +6392,7 @@ const S = {
   digitalFilter: 0,
   zoom: 2,
   normFreq: 500,
+  normFollow: false,
   show:{target:true, source:true, each:true, sum:true, filtered:true},
   sourceCurve:null, targetCurve:null, targetName:null,
   baselineOn:false,
@@ -6900,6 +6914,7 @@ function curveRowsAt(f){
   const rel=(ff,db)=>baseAt?db-baseAt(ff):db;
   const nf=normFreqVal();
   const nSrc=rel(nf,interpLog(src,nf)), nTgt=rel(nf,interpLog(tgt,nf));
+  const nFlt=S.normFollow?rel(nf,interpLog(src,nf)+PEQCore.responseAt(bands(),nf)):nSrc;
   const srcdb=interpLog(src,f), composed=PEQCore.responseAt(bands(),f);
   const rows=[];
   const push=(name,v)=>{ if(isFinite(v))rows.push({name,v,color:CURVE_COLORS[name]}); };
@@ -6911,7 +6926,7 @@ function curveRowsAt(f){
     if(isFinite(db)&&Math.abs(db)>=0.005)
       rows.push({name:'滤波器 '+(i+1),v:db,color:COLORS[i]});
   });
-  if(S.show.filtered)push('经滤波后频响曲线',rel(f,srcdb+composed)-nSrc);
+  if(S.show.filtered)push('经滤波后频响曲线',rel(f,srcdb+composed)-nFlt);
   if(S.show.sum)push('合成滤波',composed);
   return rows;
 }
@@ -6924,6 +6939,9 @@ function buildSeries(){
   const rel = (f,db)=>baseAt?db-baseAt(f):db;
   const nf = normFreqVal();
   const offSrc = rel(nf,interpLog(src,nf)), offTgt = rel(nf,interpLog(tgt,nf));
+  const fltOff = S.normFollow
+    ? rel(nf, interpLog(src,nf) + PEQCore.responseAt(bands(),nf))
+    : offSrc;
   const dSrc = f=>rel(f,interpLog(src,f))-offSrc;
   const dTgt = f=>rel(f,interpLog(tgt,f))-offTgt;
   const composed = PEQCore.frequencyCurve(bands(),600,0).map(p=>p.magnitude);
@@ -6954,7 +6972,7 @@ function buildSeries(){
     });
   }
   if(S.show.filtered) out.push({name:'经滤波后频响曲线',type:'line',showSymbol:false,smooth:false,
-    data:freqs.map((f,i)=>[LX(f),rel(f,interpLog(src,f)+composed[i])-offSrc]),
+    data:freqs.map((f,i)=>[LX(f),rel(f,interpLog(src,f)+composed[i])-fltOff]),
     lineStyle:{color:'#0fa9a0',width:2.2}});
   if(S.show.sum) out.push({name:'合成滤波',type:'line',showSymbol:false,smooth:false,
     data:freqs.map((f,i)=>[LX(f),composed[i]]),lineStyle:{color:'#f59b23',width:2.4},z:5});
@@ -7883,6 +7901,17 @@ function setNormFreq(raw,persist){
     const next=Math.min(NORMF_MAX,Math.max(NORMF_MIN,from+step));
     el.value=String(next);
     setNormFreq(el.value,true);
+  });
+})();
+
+(function bindNormFollow(){
+  const b=$('normFollow');if(!b)return;
+  const paint=()=>b.setAttribute('aria-pressed',S.normFollow?'true':'false');
+  paint();
+  b.addEventListener('click',()=>{
+    S.normFollow=!S.normFollow;
+    paint();
+    render();
   });
 })();
 
@@ -9970,6 +9999,33 @@ function runSelfTest(){
                /localStorage\.setItem\(NORMF_KEY/.test(srcOf);
     ck('标准化频率纯显示：不改官方 JSON / 不进撤销栈 / 零 SET / 落盘 dc04u.normFreq.v1',
        pure,[NORMF_KEY,HIST.stack.length,histBefore]);
+
+    ck('跟随开关：开时经滤波后单独在 nf 归零，关时恢复「−源 ≡ 合成滤波」',
+       (()=>{
+         const btn=$('normFollow');
+         if(!btn) return false;
+         const wasFollow=!!S.normFollow;
+         const keep=JSON.parse(JSON.stringify(bands()));
+         setNormFreq(1000,false);
+         Object.assign(bands()[0],{frequency:1000,gain:6,factor:1,filterType:2,status:true});
+         PEQCore.normalizeBands(bands());
+         render();
+         const rd=name=>{const s=chart.getOption().series.find(x=>x.name===name);
+           const d=s.data.map(p=>({frequency:FX(p[0]),db:p[1]}));
+           return interpLog(d,1000);};
+         S.normFollow=false; btn.setAttribute('aria-pressed','false'); render();
+         const offF=rd('经滤波后频响曲线');
+         btn.click();
+         const pressed=btn.getAttribute('aria-pressed');
+         const onF=rd('经滤波后频响曲线'), onS=rd('源频响曲线');
+         btn.click();
+         const back=btn.getAttribute('aria-pressed');
+         keep.forEach((b,i)=>Object.assign(bands()[i],b));
+         S.normFollow=wasFollow; btn.setAttribute('aria-pressed',wasFollow?'true':'false');
+         render();
+         return pressed==='true' && back==='false' &&
+                Math.abs(offF-6)<0.05 && Math.abs(onF)<0.05 && Math.abs(onS)<0.05;
+       })(), ['off≈+6 / on≈0 (dB)']);
 
     setNormFreq(2000,false);
     const c1=setNormFreq(5,false);
