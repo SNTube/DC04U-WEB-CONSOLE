@@ -5027,11 +5027,14 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     clip:rect(0,0,0,0);white-space:nowrap;border:0}
   .skin-fig figcaption{position:absolute;left:calc(50% - 15px);bottom:0;
     transform:translateX(-50%);font-size:8.5px;color:#7a88a4;
-    white-space:normal;width:max-content;max-width:min(132px,calc(100% + 40px));text-align:center;
+    white-space:nowrap;width:max-content;max-width:none;text-align:center;
     overflow-wrap:break-word;line-height:1.45;display:block;padding:4px 8px;
     background:var(--surface);border:1px solid #dbe3f2;border-radius:9px;
     box-shadow:0 1px 3px rgba(35,55,110,.06);
     font-variant-numeric:tabular-nums}
+  html[lang="en"] .skin-fig figcaption,
+  html[lang="ja"] .skin-fig figcaption{
+    white-space:normal;max-width:min(132px,calc(100% + 40px))}
   .skin-dev{position:relative;flex:none;background:#d2daed;margin:0 auto;
     border-radius:2px;box-shadow:0 3px 9px rgba(35,55,110,.18);
     transition:transform .48s cubic-bezier(.22,.8,.28,1)}
