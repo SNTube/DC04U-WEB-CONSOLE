@@ -6489,6 +6489,15 @@ function uiLangFromQuery(search){
     return UILANG_VALS.indexOf(v)>=0?v:null;
   }catch(_){return null;}
 }
+function syncLangQuery(v){
+  try{
+    const u=new URL(location.href);
+    const val=UILANG_VALS[v|0]||'zh';
+    if(u.searchParams.get('lang')===val)return;
+    u.searchParams.set('lang',val);
+    history.replaceState(null,'',u.pathname+u.search+u.hash);
+  }catch(_){}
+}
 const HIST={stack:[],redo:[],base:null,baseImported:false,key:null,time:0};
 const MAX_HISTORY=100;
 function snapshot(){
@@ -7581,6 +7590,7 @@ function applyUiLang(v){
   I18N.apply(v|0);
   refreshDynamicText();
   I18N.patch(document.body);
+  syncLangQuery(v|0);
 }
 function showInfo(title,note,text){
   $('modalTitle').textContent=title;$('modalNote').textContent=note;
@@ -9925,13 +9935,14 @@ eqnLoad();
 S.normFreq=normFreqLoad();
 S.tipMode=tipModeLoad();
 FM.setTipMode(S.tipMode);
+const uiLangFromUrl=uiLangFromQuery(location.search);
 const uiLangCached=uiLangLoad();
-const uiLangPicked=uiLangCached||uiLangFromQuery(location.search);
+const uiLangPicked=uiLangFromUrl||uiLangCached;
 if(uiLangPicked&&window.I18N){
   const li=UILANG_VALS.indexOf(uiLangPicked);
   if(li>=0){
     S.dev.language=li;
-    if(!uiLangCached)uiLangSave(li);
+    if(uiLangFromUrl)uiLangSave(li);
   }
 }
 render();syncEditor();renderCards();renderDf();syncPresetInfo();
@@ -9939,6 +9950,7 @@ syncDevReadHint(false);
 syncConnToggle();
 syncWriteUi();
 devRender();
+if(window.I18N&&!uiSelftestMode())syncLangQuery(UILANG_VALS.indexOf(I18N.lang));
 syncPiSlots();
 syncSkinPage();
 setPage('device');
@@ -13363,6 +13375,16 @@ function runSelfTest(){
        uiLangFromQuery('?lang=fr')===null && uiLangFromQuery('?lang=EN')===null &&
        uiLangFromQuery('?lang=')===null && uiLangFromQuery('')===null,
        [uiLangFromQuery('?lang=en'),uiLangFromQuery('?lang=fr'),uiLangFromQuery('?lang=EN')]);
+    ck('地址栏 ?lang 与界面语言同步：切换语言即改写参数（replaceState，不新增历史）',
+       (()=>{
+         const before=location.search;
+         const a=(syncLangQuery(0),uiLangFromQuery(location.search));
+         const b=(syncLangQuery(2),uiLangFromQuery(location.search));
+         const c=(syncLangQuery(1),uiLangFromQuery(location.search));
+         try{history.replaceState(null,'',location.pathname+before+location.hash);}catch(_){}
+         return a==='en' && b==='ja' && c==='zh';
+       })(),
+       [location.search]);
     ck('开发版本号同步 V3.24 真机固件：3.24.30 免授权；UAC 三档用官方完整叫法',
        DEV_FW==='3.24.30' && DeviceProtocol.FIRMWARE_TARGET==='3.24.30' &&
        DeviceProtocol.isSupportedFirmware('3.24.30') &&
