@@ -1934,6 +1934,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   'use strict';
 
   var ZH = {
+    "app.title":"DC04U控制台",
     "nav.device":"设备选项",
     "nav.eq":"均衡器",
     "nav.skin":"贴纸",
@@ -2618,6 +2619,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   };
 
   var EN = {
+    "app.title":"DC04U Console",
     "nav.device":"Device",
     "nav.eq":"Equalizer",
     "nav.skin":"Sticker",
@@ -3302,6 +3304,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   };
 
   var JA = {
+    "app.title":"DC04U コンソール",
     "nav.device":"デバイス",
     "nav.eq":"イコライザー",
     "nav.skin":"ステッカー",
@@ -4390,6 +4393,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     if (LANGS.indexOf(lang) < 0) lang = 'zh';
     cur = lang;
     patch(document.body);
+    document.title = t('app.title');
   }
 
   g.I18N = { t: t, tr: tr, apply: apply, patch: patch, REV: REV, ZH: ZH, EN: EN, JA: JA,
@@ -11119,6 +11123,15 @@ function runSelfTest(){
        [bootDefaultDevice,...$('pageTabs').querySelectorAll('.page-tab')].map(x=>typeof x==='boolean'?x:x.textContent.trim())
         .concat(getComputedStyle($('tabSkin')).display));
     ck('网页标题改为「DC04U控制台」', document.title==='DC04U控制台', document.title);
+    ck('浏览器标签页标题跟随界面语言（中文 / English / 日本語）',
+       (()=>{
+         const back=I18N.lang;
+         I18N.apply('en');const en=document.title;
+         I18N.apply('ja');const ja=document.title;
+         I18N.apply(back);const now=document.title;
+         return en==='DC04U Console' && ja==='DC04U コンソール' && now==='DC04U控制台';
+       })(),
+       [document.title]);
     const headTxt=document.querySelector('header').textContent;
     ck('去掉冗余标题与说明：h1 / 设备页大标题 / 官网控制台说明 / 「本地预览 ·」/ 恢复默认',
        !document.querySelector('header h1') &&
