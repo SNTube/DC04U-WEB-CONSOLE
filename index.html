@@ -1985,7 +1985,6 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "eq.noGainAnd":"和",
     "eq.noGainTail":"决定，全通只改相位。",
     "eq.bandOn":"参与曲线",
-    "eq.radialPwr":"参与",
     "eq.presetInfo":"预设信息",
     "eq.customPreset":"自定义预设",
     "eq.presetName":"预设命名",
@@ -2667,7 +2666,6 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "eq.noGainAnd":"and",
     "eq.noGainTail":"; all-pass only changes phase.",
     "eq.bandOn":"Include in curve",
-    "eq.radialPwr":"Include",
     "eq.presetInfo":"Preset info",
     "eq.customPreset":"Custom preset",
     "eq.presetName":"Preset Name",
@@ -3349,7 +3347,6 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "eq.noGainAnd":"と",
     "eq.noGainTail":"だけで決まり、オールパスは位相のみを変えます。",
     "eq.bandOn":"カーブに含める",
-    "eq.radialPwr":"反映",
     "eq.presetInfo":"プリセット情報",
     "eq.customPreset":"カスタムプリセット",
     "eq.presetName":"プリセット名",
@@ -4027,7 +4024,6 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "和":"eq.noGainAnd",
     "决定，全通只改相位。":"eq.noGainTail",
     "参与曲线":"eq.bandOn",
-    "参与":"eq.radialPwr",
     "预设信息":"eq.presetInfo",
     "自定义预设":"eq.customPreset",
     "预设命名":"eq.presetName",
@@ -7157,10 +7153,10 @@ function paintRadial(i,cx,cy,R){
       if(s.pwr){
         return `<button class="rbtn pwr${on?'':' off'}" data-pwr="1" style="left:${x}px;top:${y}px"
           title="${T('eq.bandOn','参与曲线')} · ${on?'✓':'✕'}">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
             stroke-width="2" stroke-linecap="round" aria-hidden="true">
             <path d="M12 3.6v8"/><path d="M6.6 6.7a7.2 7.2 0 1 0 10.8 0"/>
-          </svg><span>${T('eq.radialPwr','参与')}</span></button>`;
+          </svg></button>`;
       }
       const k=s.k;
       const t=TYPE_CURVES[k]||TYPE_CURVES[2];
