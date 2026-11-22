@@ -7206,6 +7206,7 @@ function wheelQ(ev,i){
   editBand(()=>bands()[i].factor=v,'wheel:Q');
 }
 function startDrag(ev,i){
+  if(ev.button!==0) return;
   if(bands()[i].status===false) return;
   ev.preventDefault(); ev.stopPropagation();
   select(i);
@@ -10323,6 +10324,17 @@ function runSelfTest(){
        moved.t===t0&&Math.abs(moved.g-g0)>0.5&&moved.f>f0&&cardTf==='',
        [t0,moved.t,f0,moved.f,g0,moved.g,cardTf]);
     Object.assign(b,save); render();syncEditor();renderCards();
+  })();
+  (()=>{
+    const b=bands()[0], f0=b.frequency, g0=b.gain;
+    const pt=$('points').querySelector('.pt[data-i="0"]'), r=pt.getBoundingClientRect();
+    pt.dispatchEvent(new MouseEvent('mousedown',{bubbles:true,cancelable:true,button:2,buttons:2,
+      clientX:r.x+r.width/2,clientY:r.y+r.height/2}));
+    window.dispatchEvent(new MouseEvent('mousemove',{bubbles:true,buttons:2,
+      clientX:r.x+r.width/2+90,clientY:r.y+r.height/2+70}));
+    window.dispatchEvent(new MouseEvent('mouseup',{bubbles:true,button:2}));
+    ck('右键按住拖动不改 F/G：轮盘是右键功能，拖圆点只认左键',
+       b.frequency===f0 && b.gain===g0, [f0,b.frequency,g0,b.gain]);
   })();
   (()=>{
     const pt=$('points').querySelector('.pt[data-i="0"]');
