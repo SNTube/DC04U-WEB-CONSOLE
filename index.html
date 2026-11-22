@@ -7303,6 +7303,7 @@ function wheelQ(ev,i){
 function startDrag(ev,i){
   if(ev.button!==0) return;
   if(bands()[i].status===false) return;
+  closeRadial();
   ev.preventDefault(); ev.stopPropagation();
   select(i);
   const el=ev.currentTarget; el.classList.add('drag');
@@ -10448,6 +10449,17 @@ function runSelfTest(){
     window.dispatchEvent(new MouseEvent('mouseup',{bubbles:true,button:2}));
     ck('右键按住拖动不改 F/G：轮盘是右键功能，拖圆点只认左键',
        b.frequency===f0 && b.gain===g0, [f0,b.frequency,g0,b.gain]);
+  })();
+  (()=>{
+    const pt=$('points').querySelector('.pt[data-i="0"]'), r=pt.getBoundingClientRect();
+    pt.dispatchEvent(new MouseEvent('contextmenu',{cancelable:true}));
+    const opened=!$('radial').hidden;
+    pt.dispatchEvent(new MouseEvent('mousedown',{bubbles:true,cancelable:true,button:0,buttons:1,
+      clientX:r.x+r.width/2,clientY:r.y+r.height/2}));
+    const closed=$('radial').hidden;
+    window.dispatchEvent(new MouseEvent('mouseup',{button:0}));
+    ck('轮盘开着时拖动圆点会先收起轮盘（它铺满圆点四周，会挡住曲线）',
+       opened && closed, [opened,closed]);
   })();
   (()=>{
     const pt=$('points').querySelector('.pt[data-i="0"]');
