@@ -2118,6 +2118,8 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "cache.skin":"贴纸草稿与已导入的图片素材",
     "cache.names":"自定义 1 / 2 / 3 的方案命名（只用于本机备忘）",
     "cache.normFreq":"标准化频率（频响曲线 0 dB 的参照点）",
+    "cache.tipMode":"浮层说明档位（关 / 简洁 / 详细）",
+    "cache.volAuto":"音量静态补偿的「自动」开关（补偿值本身不保存）",
     "cache.warn":"不会改动设备里的任何设置，也不会向设备发送任何写入报文；不会影响已导出的 PEQ / JSON 文件。清除后页面会刷新回到初始状态，当前未导出的均衡器编辑会丢失，已连接的设备会断开。",
     "cache.confirm":"确认清除",
     "uac.title":"设置已更新，请重新连接USB",
@@ -2799,6 +2801,8 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "cache.skin":"Sticker drafts and imported images",
     "cache.names":"Names of custom presets 1 / 2 / 3 (local memo only)",
     "cache.normFreq":"Normalize frequency (the 0 dB reference of the response curve)",
+    "cache.tipMode":"Marker tooltip level (off / simple / detailed)",
+    "cache.volAuto":"Static compensation auto switch (the value itself is not saved)",
     "cache.warn":"No device setting is changed and no write packet is sent; exported PEQ / JSON files are unaffected. After clearing, the page reloads to its initial state, unsaved equalizer edits are lost and the connected device is disconnected.",
     "cache.confirm":"Clear now",
     "uac.title":"Settings updated — reconnect USB",
@@ -3480,6 +3484,8 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "cache.skin":"ステッカーの下書きと読み込んだ画像素材",
     "cache.names":"カスタム 1 / 2 / 3 のプリセット名（ローカルのメモ用）",
     "cache.normFreq":"正規化周波数（特性カーブ 0 dB の基準点）",
+    "cache.tipMode":"マーカーの説明の詳細度（オフ / シンプル / 詳細）",
+    "cache.volAuto":"音量静的補正の「自動」スイッチ（補正値自体は保存されません）",
     "cache.warn":"デバイスの設定は一切変更せず、書き込みパケットも送信しません。書き出し済みの PEQ / JSON ファイルには影響しません。消去後はページが初期状態に戻り、未保存のイコライザー編集は失われ、接続中のデバイスは切断されます。",
     "cache.confirm":"消去する",
     "uac.title":"設定を更新しました。USB を再接続してください",
@@ -4140,6 +4146,8 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "贴纸草稿与已导入的图片素材":"cache.skin",
     "自定义 1 / 2 / 3 的方案命名（只用于本机备忘）":"cache.names",
     "标准化频率（频响曲线 0 dB 的参照点）":"cache.normFreq",
+    "浮层说明档位（关 / 简洁 / 详细）":"cache.tipMode",
+    "音量静态补偿的「自动」开关（补偿值本身不保存）":"cache.volAuto",
     "不会改动设备里的任何设置，也不会向设备发送任何写入报文；不会影响已导出的 PEQ / JSON 文件。清除后页面会刷新回到初始状态，当前未导出的均衡器编辑会丢失，已连接的设备会断开。":"cache.warn",
     "确认清除":"cache.confirm",
     "设置已更新，请重新连接USB":"uac.title",
@@ -13302,6 +13310,13 @@ function runSelfTest(){
        })(),
        {id:$('btnClearCache')&&$('btnClearCache').id,
         after:$('btnConnToggle').nextElementSibling&&$('btnConnToggle').nextElementSibling.id});
+    ck('清除缓存清单 7 项：浮层说明档位 / 音量自动补偿自动开关两项均已进三语词典',
+       (()=>{
+         const zh=[...document.querySelectorAll('#cacheMask .cache-list li')].map(li=>li.textContent.trim());
+         const must=['浮层说明档位（关 / 简洁 / 详细）','音量静态补偿的「自动」开关（补偿值本身不保存）'];
+         return zh.length===7 && must.every(t=>zh.indexOf(t)>=0 && !!(window.I18N&&I18N.REV[t]));
+       })(),
+       [...document.querySelectorAll('#cacheMask .cache-list li')].map(li=>li.textContent.trim()).slice(-2));
     ck('开发版本号同步 V3.24 真机固件：3.24.30 免授权；UAC 三档用官方完整叫法',
        DEV_FW==='3.24.30' && DeviceProtocol.FIRMWARE_TARGET==='3.24.30' &&
        DeviceProtocol.isSupportedFirmware('3.24.30') &&
