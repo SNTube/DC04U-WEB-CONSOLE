@@ -6483,6 +6483,12 @@ function uiLangSave(v){
   if(uiSelftestMode())return;
   try{localStorage.setItem(UILANG_KEY,UILANG_VALS[v|0]||'zh');}catch(_){}
 }
+function uiLangFromQuery(search){
+  try{
+    const v=new URLSearchParams(search||'').get('lang');
+    return UILANG_VALS.indexOf(v)>=0?v:null;
+  }catch(_){return null;}
+}
 const HIST={stack:[],redo:[],base:null,baseImported:false,key:null,time:0};
 const MAX_HISTORY=100;
 function snapshot(){
@@ -9919,10 +9925,14 @@ eqnLoad();
 S.normFreq=normFreqLoad();
 S.tipMode=tipModeLoad();
 FM.setTipMode(S.tipMode);
-const uiLangSaved=uiLangLoad();
-if(uiLangSaved&&window.I18N){
-  const li=UILANG_VALS.indexOf(uiLangSaved);
-  if(li>=0)S.dev.language=li;
+const uiLangCached=uiLangLoad();
+const uiLangPicked=uiLangCached||uiLangFromQuery(location.search);
+if(uiLangPicked&&window.I18N){
+  const li=UILANG_VALS.indexOf(uiLangPicked);
+  if(li>=0){
+    S.dev.language=li;
+    if(!uiLangCached)uiLangSave(li);
+  }
 }
 render();syncEditor();renderCards();renderDf();syncPresetInfo();
 syncDevReadHint(false);
@@ -13346,6 +13356,13 @@ function runSelfTest(){
        UILANG_KEY==='dc04u.uiLang.v1' && UILANG_VALS.join()==='en,zh,ja' &&
        I18N.LANGS.join()===UILANG_VALS.join() && DEV_LANG.length===3,
        [UILANG_KEY,UILANG_VALS.join(),I18N.LANGS.join()]);
+    ck('地址栏 ?lang=zh|en|ja 可指定首次访问的界面语言；非法值 / 大小写不符一律忽略',
+       uiLangFromQuery('?lang=en')==='en' && uiLangFromQuery('?lang=ja')==='ja' &&
+       uiLangFromQuery('?lang=zh')==='zh' && uiLangFromQuery('?a=1&lang=en')==='en' &&
+       uiLangFromQuery('?selftest&lang=ja')==='ja' &&
+       uiLangFromQuery('?lang=fr')===null && uiLangFromQuery('?lang=EN')===null &&
+       uiLangFromQuery('?lang=')===null && uiLangFromQuery('')===null,
+       [uiLangFromQuery('?lang=en'),uiLangFromQuery('?lang=fr'),uiLangFromQuery('?lang=EN')]);
     ck('开发版本号同步 V3.24 真机固件：3.24.30 免授权；UAC 三档用官方完整叫法',
        DEV_FW==='3.24.30' && DeviceProtocol.FIRMWARE_TARGET==='3.24.30' &&
        DeviceProtocol.isSupportedFirmware('3.24.30') &&
