@@ -7172,8 +7172,8 @@ function paintRadial(i,cx,cy,R){
   menu.querySelectorAll('.rbtn').forEach(btn=>btn.addEventListener('click',e=>{
     e.stopPropagation();
     if(btn.dataset.pwr){
+      closeRadial();
       updatePreset(()=>{PEQCore.toggleBand(bands(),i);},'status');
-      paintRadial(i,cx,cy,R);
       return;
     }
     const t=+btn.dataset.t;
@@ -10349,19 +10349,23 @@ function runSelfTest(){
     const topMin=Math.min(...btns.map(b=>parseFloat(b.style.top)));
     const pwrTop=parseFloat(pwr?pwr.style.top:'9999');
     const ring8=!!pwr && btns.length===8 && typeBtns.length===7 && Math.abs(pwrTop-topMin)<.5;
+    const reopen=()=>{
+      pt.dispatchEvent(new MouseEvent('contextmenu',{cancelable:true}));
+      return menu.querySelector('.rbtn.pwr');
+    };
     const g0=bands()[0].gain, f0=bands()[0].frequency;
     pwr.click();
-    const pwrOff=menu.querySelector('.rbtn.pwr');
-    const offOK=bands()[0].status===false && bands()[0].gain===0 &&
-                !menu.hidden && !!pwrOff && pwrOff.classList.contains('off');
+    const offOK=bands()[0].status===false && bands()[0].gain===0 && menu.hidden;
+    const pwrOff=reopen();
+    const redOK=!!pwrOff && pwrOff.classList.contains('off') && !menu.hidden;
     pwrOff.click();
-    const pwrOn=menu.querySelector('.rbtn.pwr');
     const onOK=bands()[0].status!==false && Math.abs(bands()[0].gain-g0)<1e-9 &&
-               Math.abs(bands()[0].frequency-f0)<1e-9 &&
-               !!pwrOn && !pwrOn.classList.contains('off');
-    ck('右键圆环＝8 方位：正上方新增「参与曲线」电源开关（绿圈开/红圈关），只切该段参与、不改类型',
-       ring8 && offOK && onOK,
-       [btns.length,typeBtns.length,pwrTop,topMin,bands()[0].status]);
+               Math.abs(bands()[0].frequency-f0)<1e-9 && menu.hidden;
+    const pwrOn=reopen();
+    const greenOK=!!pwrOn && !pwrOn.classList.contains('off');
+    ck('右键圆环＝8 方位：正上方新增「参与曲线」电源开关（绿圈开/红圈关，点完即收菜单），只切该段参与、不改类型',
+       ring8 && offOK && redOK && onOK && greenOK,
+       [btns.length,typeBtns.length,pwrTop,topMin,bands()[0].status,offOK,redOK,onOK,greenOK]);
     const pick=menu.querySelectorAll('.rbtn[data-t="6"]')[0]; pick.click();
     const t1=bands()[0].filterType, hidden1=menu.hidden;
     document.body.click();
