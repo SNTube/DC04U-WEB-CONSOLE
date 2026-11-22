@@ -5387,10 +5387,15 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     padding:9px 11px;font-size:11.5px;line-height:1.7;color:var(--muted);margin:0 0 14px}
   .cache-actions{display:flex;justify-content:flex-end;gap:8px}
   .cache-actions .btn{font-size:11.5px;padding:6px 14px}
+  #langAskMask .modal{width:min(430px,100%)}
   #langAskActions.lang-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
     justify-content:stretch}
-  .lang-pick .btn{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;
-    padding:0;font-size:14px;font-weight:600;letter-spacing:.2px}
+  .lang-pick .btn{aspect-ratio:3/4;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;gap:6px;height:auto;padding:10px 6px;white-space:normal}
+  .lang-pick .btn b{font-size:14px;font-weight:700;line-height:1.1;color:var(--fg)}
+  .lang-pick .btn i{font-style:normal;font-size:10px;line-height:1.25;color:var(--muted);
+    text-align:center}
+  .lang-pick .btn:hover b{color:var(--accent)}
   .cache-actions .btn.danger{background:#c0503f;border-color:#c0503f;color:#fff}
   .cache-actions .btn.danger:hover:not(:disabled){background:#a9402f;color:#fff}
   .uac-confirm{width:min(470px,100%)}
@@ -6541,9 +6546,9 @@ const LANG_ASK={
       go:'日本語で表示', keep:'中国語のまま'}
 };
 const LANG_PICK=[
-  {v:1,label:'中文'},
-  {v:0,label:'English'},
-  {v:2,label:'日本語'}
+  {v:1,label:'中文',    sub:'用中文显示'},
+  {v:0,label:'English', sub:'Display in English'},
+  {v:2,label:'日本語',  sub:'日本語で表示'}
 ];
 function showLangAsk(target){
   const mask=$('langAskMask');if(!mask)return;
@@ -6554,7 +6559,8 @@ function showLangAsk(target){
     $('langAskTitle').textContent='Choose interface language';
     $('langAskNote').textContent='Your browser language is not Chinese, English or Japanese. Which language should this console use?';
     box.className='cache-actions lang-pick';
-    box.innerHTML=LANG_PICK.map(b=>`<button class="btn" type="button" data-v="${b.v}">${b.label}</button>`).join('');
+    box.innerHTML=LANG_PICK.map(b=>
+      `<button class="btn" type="button" data-v="${b.v}"><b>${b.label}</b><i>${b.sub}</i></button>`).join('');
   }else{
     const c=LANG_ASK[target];if(!c)return;
     $('langAskTitle').textContent=c.title;
@@ -13494,18 +13500,20 @@ function runSelfTest(){
        !!$('langAskMask') && !!$('langAskActions') &&
        !!LANG_ASK.en && !!LANG_ASK.ja && LANG_PICK.length===3,
        ['en','ja','zh','fr'].map(b=>langAskPlan({hasUrl:false,hasCache:false,browser:b})));
-    ck('浏览器语言不是中/英/日时弹三格 1:1 语言选择（中文 / English / 日本語）',
+    ck('浏览器语言不是中/英/日时弹三格 3:4 语言选择（中文 / English / 日本語 + 各自「用该语言显示」）',
        (()=>{
          showLangAsk('other');
          const bs=[...$('langAskActions').querySelectorAll('button')];
          const rects=bs.map(b=>b.getBoundingClientRect());
-         const square=rects.length===3 && rects.every(r=>r.width>40 && Math.abs(r.width-r.height)<1.5);
+         const ratioOK=rects.length===3 && rects.every(r=>r.width>80 && r.width<200 &&
+           Math.abs(r.height/r.width-4/3)<0.05);
          const sameRow=rects.length===3 && rects.every(r=>Math.abs(r.top-rects[0].top)<1.5);
-         const labels=bs.map(b=>b.textContent.trim()).join('/');
+         const labels=bs.map(b=>(b.querySelector('b')||{}).textContent+'/'+(b.querySelector('i')||{}).textContent).join('|');
          const shown=$('langAskMask').classList.contains('on');
          $('langAskMask').classList.remove('on');
          $('langAskActions').className='cache-actions';
-         return shown && square && sameRow && labels==='中文/English/日本語';
+         return shown && ratioOK && sameRow &&
+           labels==='中文/用中文显示|English/Display in English|日本語/日本語で表示';
        })(),
        [...document.querySelectorAll('#langAskActions button')].map(b=>b.textContent.trim()));
     ck('开发版本号同步 V3.24 真机固件：3.24.30 免授权；UAC 三档用官方完整叫法',
