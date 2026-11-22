@@ -11,7 +11,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>iBasso DC04U控制台 - Produced by SNTube Studio</title>
+<title>iBasso DC04U 控制台 - Produced by SNTube Studio</title>
 <script>
 /*
 * Licensed to the Apache Software Foundation (ASF) under one
@@ -1934,7 +1934,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   'use strict';
 
   var ZH = {
-    "app.title":"iBasso DC04U控制台 - Produced by SNTube Studio",
+    "app.title":"iBasso DC04U 控制台 - Produced by SNTube Studio",
     "nav.device":"设备选项",
     "nav.eq":"均衡器",
     "nav.skin":"贴纸",
@@ -5387,6 +5387,10 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     padding:9px 11px;font-size:11.5px;line-height:1.7;color:var(--muted);margin:0 0 14px}
   .cache-actions{display:flex;justify-content:flex-end;gap:8px}
   .cache-actions .btn{font-size:11.5px;padding:6px 14px}
+  #langAskActions.lang-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+    justify-content:stretch}
+  .lang-pick .btn{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;
+    padding:0;font-size:14px;font-weight:600;letter-spacing:.2px}
   .cache-actions .btn.danger{background:#c0503f;border-color:#c0503f;color:#fff}
   .cache-actions .btn.danger:hover:not(:disabled){background:#a9402f;color:#fff}
   .uac-confirm{width:min(470px,100%)}
@@ -6109,10 +6113,7 @@ try{
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="langAskTitle">
     <h3 id="langAskTitle"></h3>
     <p id="langAskNote"></p>
-    <div class="cache-actions">
-      <button class="btn" id="langAskKeep" type="button"></button>
-      <button class="btn primary" id="langAskGo" type="button"></button>
-    </div>
+    <div class="cache-actions" id="langAskActions"></div>
   </div>
 </div>
 <div class="mask" id="uacMask">
@@ -6523,11 +6524,13 @@ function browserLang(){
     if(v.indexOf('ja')===0)return 'ja';
     if(v.indexOf('en')===0)return 'en';
   }
-  return 'zh';
+  return 'other';
 }
 function langAskPlan(o){
   if(o.hasUrl||o.hasCache)return null;
-  return (o.browser==='en'||o.browser==='ja')?o.browser:null;
+  if(o.browser==='zh')return null;
+  if(o.browser==='en'||o.browser==='ja')return o.browser;
+  return 'other';
 }
 const LANG_ASK={
   en:{title:'Switch the interface to English?',
@@ -6537,18 +6540,33 @@ const LANG_ASK={
       note:'ブラウザの言語は日本語です。このコンソールを日本語で表示しますか？',
       go:'日本語で表示', keep:'中国語のまま'}
 };
+const LANG_PICK=[
+  {v:1,label:'中文'},
+  {v:0,label:'English'},
+  {v:2,label:'日本語'}
+];
 function showLangAsk(target){
-  const c=LANG_ASK[target];if(!c||!$('langAskMask'))return;
-  $('langAskTitle').textContent=c.title;
-  $('langAskNote').textContent=c.note;
-  $('langAskGo').textContent=c.go;
-  $('langAskKeep').textContent=c.keep;
-  $('langAskMask').classList.add('on');
-  const idx=UILANG_VALS.indexOf(target);
-  const close=()=>$('langAskMask').classList.remove('on');
-  $('langAskGo').onclick=()=>{close();uiLangSave(idx);applyUiLang(idx);};
-  $('langAskKeep').onclick=()=>{close();uiLangSave(1);applyUiLang(1);};
-  $('langAskMask').onclick=e=>{if(e.target===$('langAskMask'))$('langAskKeep').click();};
+  const mask=$('langAskMask');if(!mask)return;
+  const box=$('langAskActions');
+  const close=()=>mask.classList.remove('on');
+  const choose=idx=>{close();uiLangSave(idx);applyUiLang(idx);};
+  if(target==='other'){
+    $('langAskTitle').textContent='Choose interface language';
+    $('langAskNote').textContent='Your browser language is not Chinese, English or Japanese. Which language should this console use?';
+    box.className='cache-actions lang-pick';
+    box.innerHTML=LANG_PICK.map(b=>`<button class="btn" type="button" data-v="${b.v}">${b.label}</button>`).join('');
+  }else{
+    const c=LANG_ASK[target];if(!c)return;
+    $('langAskTitle').textContent=c.title;
+    $('langAskNote').textContent=c.note;
+    const idx=UILANG_VALS.indexOf(target);
+    box.className='cache-actions';
+    box.innerHTML=`<button class="btn" type="button" data-v="1">${c.keep}</button>`+
+      `<button class="btn primary" type="button" data-v="${idx}">${c.go}</button>`;
+  }
+  box.querySelectorAll('button').forEach(b=>b.onclick=()=>choose(+b.dataset.v));
+  mask.classList.add('on');
+  mask.onclick=e=>{if(e.target===mask)choose(1);};
 }
 const HIST={stack:[],redo:[],base:null,baseImported:false,key:null,time:0};
 const MAX_HISTORY=100;
@@ -11187,7 +11205,7 @@ function runSelfTest(){
        [bootDefaultDevice,...$('pageTabs').querySelectorAll('.page-tab')].map(x=>typeof x==='boolean'?x:x.textContent.trim())
         .concat(getComputedStyle($('tabSkin')).display));
     ck('网页标题＝iBasso 前缀＋控制台名＋Produced by 后缀',
-       document.title==='iBasso DC04U控制台 - Produced by SNTube Studio', document.title);
+       document.title==='iBasso DC04U 控制台 - Produced by SNTube Studio', document.title);
     ck('浏览器标签页标题跟随界面语言（中文 / English / 日本語）',
        (()=>{
          const back=I18N.lang;
@@ -11196,7 +11214,7 @@ function runSelfTest(){
          I18N.apply(back);const now=document.title;
          return en==='iBasso DC04U Console - Produced by SNTube Studio' &&
                 ja==='iBasso DC04U コンソール - Produced by SNTube Studio' &&
-                now==='iBasso DC04U控制台 - Produced by SNTube Studio';
+                now==='iBasso DC04U 控制台 - Produced by SNTube Studio';
        })(),
        [document.title]);
     const headTxt=document.querySelector('header').textContent;
@@ -13471,10 +13489,25 @@ function runSelfTest(){
        langAskPlan({hasUrl:false,hasCache:false,browser:'zh'})===null &&
        langAskPlan({hasUrl:false,hasCache:false,browser:'en'})==='en' &&
        langAskPlan({hasUrl:false,hasCache:false,browser:'ja'})==='ja' &&
-       langAskPlan({hasUrl:false,hasCache:false,browser:'fr'})===null &&
-       !!$('langAskMask') && !!$('langAskGo') && !!$('langAskKeep') &&
-       !!LANG_ASK.en && !!LANG_ASK.ja,
+       langAskPlan({hasUrl:false,hasCache:false,browser:'fr'})==='other' &&
+       langAskPlan({hasUrl:false,hasCache:false,browser:'other'})==='other' &&
+       !!$('langAskMask') && !!$('langAskActions') &&
+       !!LANG_ASK.en && !!LANG_ASK.ja && LANG_PICK.length===3,
        ['en','ja','zh','fr'].map(b=>langAskPlan({hasUrl:false,hasCache:false,browser:b})));
+    ck('浏览器语言不是中/英/日时弹三格 1:1 语言选择（中文 / English / 日本語）',
+       (()=>{
+         showLangAsk('other');
+         const bs=[...$('langAskActions').querySelectorAll('button')];
+         const rects=bs.map(b=>b.getBoundingClientRect());
+         const square=rects.length===3 && rects.every(r=>r.width>40 && Math.abs(r.width-r.height)<1.5);
+         const sameRow=rects.length===3 && rects.every(r=>Math.abs(r.top-rects[0].top)<1.5);
+         const labels=bs.map(b=>b.textContent.trim()).join('/');
+         const shown=$('langAskMask').classList.contains('on');
+         $('langAskMask').classList.remove('on');
+         $('langAskActions').className='cache-actions';
+         return shown && square && sameRow && labels==='中文/English/日本語';
+       })(),
+       [...document.querySelectorAll('#langAskActions button')].map(b=>b.textContent.trim()));
     ck('开发版本号同步 V3.24 真机固件：3.24.30 免授权；UAC 三档用官方完整叫法',
        DEV_FW==='3.24.30' && DeviceProtocol.FIRMWARE_TARGET==='3.24.30' &&
        DeviceProtocol.isSupportedFirmware('3.24.30') &&
