@@ -6518,18 +6518,19 @@ function syncLangQuery(v){
     history.replaceState(null,'',u.pathname+u.search+u.hash);
   }catch(_){}
 }
-function browserLang(){
-  let list=[];
-  try{
-    list=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||''];
-  }catch(_){}
-  for(let i=0;i<list.length;i++){
-    const v=String(list[i]||'').toLowerCase();
-    if(v.indexOf('zh')===0)return 'zh';
-    if(v.indexOf('ja')===0)return 'ja';
-    if(v.indexOf('en')===0)return 'en';
-  }
+function langOfTag(tag){
+  const v=String(tag||'').toLowerCase();
+  if(v.indexOf('zh')===0)return 'zh';
+  if(v.indexOf('ja')===0)return 'ja';
+  if(v.indexOf('en')===0)return 'en';
   return 'other';
+}
+function browserLang(){
+  let first='';
+  try{
+    first=(navigator.languages&&navigator.languages.length)?navigator.languages[0]:(navigator.language||'');
+  }catch(_){}
+  return langOfTag(first);
 }
 function langAskPlan(o){
   if(o.hasUrl||o.hasCache)return null;
@@ -13489,6 +13490,14 @@ function runSelfTest(){
          return a==='en' && b==='ja' && c==='zh';
        })(),
        [location.search]);
+    ck('浏览器语言只看首选：de → 三格；英文/日文/中文按各自规则；备用语里的 en 不算数',
+       (()=>{
+         const r=t=>langOfTag(t);
+         return r('de-DE')==='other' && r('fr')==='other' && r('ko-KR')==='other' &&
+           r('en-US')==='en' && r('ja-JP')==='ja' && r('zh-CN')==='zh' &&
+           r('zh-Hant-HK')==='zh' && r('')==='other' && r('EN')==='en';
+       })(),
+       ['de-DE','fr','en-US','ja-JP','zh-Hant-HK',''].map(t=>langOfTag(t)));
     ck('浏览器语言只「问一句」不静默改界面：有 ?lang / 有记忆 / 浏览器中文都不问',
        langAskPlan({hasUrl:true,hasCache:false,browser:'en'})===null &&
        langAskPlan({hasUrl:false,hasCache:true,browser:'ja'})===null &&
