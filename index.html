@@ -1985,6 +1985,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "eq.noGainAnd":"和",
     "eq.noGainTail":"决定，全通只改相位。",
     "eq.bandOn":"参与曲线",
+    "eq.radialPwr":"参与",
     "eq.presetInfo":"预设信息",
     "eq.customPreset":"自定义预设",
     "eq.presetName":"预设命名",
@@ -2666,6 +2667,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "eq.noGainAnd":"and",
     "eq.noGainTail":"; all-pass only changes phase.",
     "eq.bandOn":"Include in curve",
+    "eq.radialPwr":"Include",
     "eq.presetInfo":"Preset info",
     "eq.customPreset":"Custom preset",
     "eq.presetName":"Preset Name",
@@ -3347,6 +3349,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "eq.noGainAnd":"と",
     "eq.noGainTail":"だけで決まり、オールパスは位相のみを変えます。",
     "eq.bandOn":"カーブに含める",
+    "eq.radialPwr":"反映",
     "eq.presetInfo":"プリセット情報",
     "eq.customPreset":"カスタムプリセット",
     "eq.presetName":"プリセット名",
@@ -4024,6 +4027,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "和":"eq.noGainAnd",
     "决定，全通只改相位。":"eq.noGainTail",
     "参与曲线":"eq.bandOn",
+    "参与":"eq.radialPwr",
     "预设信息":"eq.presetInfo",
     "自定义预设":"eq.customPreset",
     "预设命名":"eq.presetName",
@@ -4542,6 +4546,18 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   .rbtn:hover{border-color:var(--accent);transform:translate(-50%,-50%) scale(1.08)}
   .rbtn.cur{border-color:var(--accent);box-shadow:0 0 0 3px #eaf0ff,0 4px 14px rgba(20,35,80,.18)}
   .rbtn.cur span{color:var(--accent);font-weight:600}
+  .rbtn.pwr{border-color:#12b8a6;color:#0c8f7f;
+    box-shadow:0 0 0 3px rgba(18,184,166,.14),0 4px 14px rgba(20,35,80,.18)}
+  .rbtn.pwr span{color:#0c8f7f;font-weight:600}
+  .rbtn.pwr:hover{border-color:#12b8a6}
+  .rbtn.pwr.off{border-color:#c0603f;color:#a3282d;
+    box-shadow:0 0 0 3px rgba(163,40,45,.12),0 4px 14px rgba(20,35,80,.18)}
+  .rbtn.pwr.off span{color:#a3282d}
+  .rbtn.pwr.off:hover{border-color:#c0603f}
+  html[data-theme="dark"] .rbtn.pwr{border-color:#2fbfa4;color:#2fbfa4}
+  html[data-theme="dark"] .rbtn.pwr span{color:#2fbfa4}
+  html[data-theme="dark"] .rbtn.pwr.off{border-color:#e0736a;color:#e0736a}
+  html[data-theme="dark"] .rbtn.pwr.off span{color:#e0736a}
   .pt{position:absolute;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;
       border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.22);pointer-events:auto;cursor:grab;
       display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;
@@ -7128,24 +7144,27 @@ function syncPoints(){
   });
 }
 const closeRadial=()=>{$('radial').hidden=true;};
-function openRadial(ev,i){
-  ev.preventDefault(); ev.stopPropagation();
-  select(i);
+function paintRadial(i,cx,cy,R){
   const b=bands()[i];
-  const wrap=$('chartWrap'), rect=wrap.getBoundingClientRect();
-  const pos=chart.convertToPixel({xAxisIndex:0,yAxisIndex:0},[LX(b.frequency),b.gain]);
-  if(!pos)return;
-  const R=100, pad=34;
-  const cx=Math.max(R+pad,Math.min(rect.width -R-pad,pos[0]));
-  const cy=Math.max(R+pad,Math.min(rect.height-R-pad,pos[1]));
   const keys=Object.keys(PEQCore.TYPE_INFO);
+  const on=b.status!==false;
   const menu=$('radial');
+  const slots=[{pwr:true}].concat(keys.map(k=>({k})));
   menu.innerHTML=`<div class="ring" style="left:${cx}px;top:${cy}px;width:${2*R}px;height:${2*R}px"></div>`+
-    keys.map((k,n)=>{
-      const ang=(-90+n*360/keys.length)*Math.PI/180;
+    slots.map((s,n)=>{
+      const ang=(-90+n*45)*Math.PI/180;
       const x=cx+R*Math.cos(ang), y=cy+R*Math.sin(ang);
+      if(s.pwr){
+        return `<button class="rbtn pwr${on?'':' off'}" data-pwr="1" style="left:${x}px;top:${y}px"
+          title="${T('eq.bandOn','参与曲线')} · ${on?'✓':'✕'}">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M12 3.6v8"/><path d="M6.6 6.7a7.2 7.2 0 1 0 10.8 0"/>
+          </svg><span>${T('eq.radialPwr','参与')}</span></button>`;
+      }
+      const k=s.k;
       const t=TYPE_CURVES[k]||TYPE_CURVES[2];
-      const cur=+b.filterType===+k;
+      const cur=on&&+b.filterType===+k;
       const ti=PEQCore.TYPE_INFO[k], zhUi=!window.I18N||I18N.lang==='zh';
       return `<button class="rbtn${cur?' cur':''}" data-t="${k}" style="left:${x}px;top:${y}px"
         title="${k} · ${zhUi?ti.zh+' / '+ti.en:ti.en}">
@@ -7156,11 +7175,28 @@ function openRadial(ev,i){
   menu.hidden=false;
   menu.querySelectorAll('.rbtn').forEach(btn=>btn.addEventListener('click',e=>{
     e.stopPropagation();
+    if(btn.dataset.pwr){
+      updatePreset(()=>{PEQCore.toggleBand(bands(),i);},'status');
+      paintRadial(i,cx,cy,R);
+      return;
+    }
     const t=+btn.dataset.t;
     closeRadial();
     if(+bands()[i].filterType===t && bands()[i].status!==false) return;
     editBand(()=>bands()[i].filterType=t,'type');
   }));
+}
+function openRadial(ev,i){
+  ev.preventDefault(); ev.stopPropagation();
+  select(i);
+  const b=bands()[i];
+  const wrap=$('chartWrap'), rect=wrap.getBoundingClientRect();
+  const pos=chart.convertToPixel({xAxisIndex:0,yAxisIndex:0},[LX(b.frequency),b.gain]);
+  if(!pos)return;
+  const R=100, pad=34;
+  const cx=Math.max(R+pad,Math.min(rect.width -R-pad,pos[0]));
+  const cy=Math.max(R+pad,Math.min(rect.height-R-pad,pos[1]));
+  paintRadial(i,cx,cy,R);
 }
 function wheelQ(ev,i){
   ev.preventDefault(); ev.stopPropagation();
@@ -10300,11 +10336,29 @@ function runSelfTest(){
     const cur=btns.filter(b=>b.classList.contains('cur'));
     const curType=btns.length?+cur[0].dataset.t:-1;
     const t0=bands()[0].filterType;
-    const pick=btns.find(b=>b.dataset.t==='6'); pick.click();
+    const pwr=btns.find(b=>b.dataset.pwr);
+    const typeBtns=btns.filter(b=>b.dataset.t);
+    const topMin=Math.min(...btns.map(b=>parseFloat(b.style.top)));
+    const pwrTop=parseFloat(pwr?pwr.style.top:'9999');
+    const ring8=!!pwr && btns.length===8 && typeBtns.length===7 && Math.abs(pwrTop-topMin)<.5;
+    const g0=bands()[0].gain, f0=bands()[0].frequency;
+    pwr.click();
+    const pwrOff=menu.querySelector('.rbtn.pwr');
+    const offOK=bands()[0].status===false && bands()[0].gain===0 &&
+                !menu.hidden && !!pwrOff && pwrOff.classList.contains('off');
+    pwrOff.click();
+    const pwrOn=menu.querySelector('.rbtn.pwr');
+    const onOK=bands()[0].status!==false && Math.abs(bands()[0].gain-g0)<1e-9 &&
+               Math.abs(bands()[0].frequency-f0)<1e-9 &&
+               !!pwrOn && !pwrOn.classList.contains('off');
+    ck('右键圆环＝8 方位：正上方新增「参与曲线」电源开关（绿圈开/红圈关），只切该段参与、不改类型',
+       ring8 && offOK && onOK,
+       [btns.length,typeBtns.length,pwrTop,topMin,bands()[0].status]);
+    const pick=menu.querySelectorAll('.rbtn[data-t="6"]')[0]; pick.click();
     const t1=bands()[0].filterType, hidden1=menu.hidden;
     document.body.click();
-    ck('右键圆点弹圆环类型菜单：7 项 SVG 图标、当前类型高亮、点击切换、点外部关闭',
-       btns.length===7 && cur.length===1 && curType===t0 &&
+    ck('右键圆点弹圆环类型菜单：8 项（含电源）SVG 图标、当前类型高亮、点击切换、点外部关闭',
+       btns.length===8 && cur.length===1 && curType===t0 &&
        t1===6 && hidden1 && menu.hidden,
        [btns.length,curType,t0,t1,hidden1,menu.hidden]);
     $('resetAll').click();
