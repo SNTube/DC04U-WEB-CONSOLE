@@ -6078,6 +6078,8 @@ try{
       <li>贴纸草稿与已导入的图片素材</li>
       <li>自定义 1 / 2 / 3 的方案命名（只用于本机备忘）</li>
       <li>标准化频率（频响曲线 0 dB 的参照点）</li>
+      <li>浮层说明档位（关 / 简洁 / 详细）</li>
+      <li>音量静态补偿的「自动」开关（补偿值本身不保存）</li>
     </ul>
     <p class="cache-note">不会改动设备里的任何设置，也不会向设备发送任何写入报文；不会影响已导出的 PEQ / JSON 文件。清除后页面会刷新回到初始状态，当前未导出的均衡器编辑会丢失，已连接的设备会断开。</p>
     <div class="cache-actions">
@@ -9889,6 +9891,7 @@ window.addEventListener('resize',()=>{
 eqnLoad();
 S.normFreq=normFreqLoad();
 S.tipMode=tipModeLoad();
+FM.setTipMode(S.tipMode);
 render();syncEditor();renderCards();renderDf();syncPresetInfo();
 syncDevReadHint(false);
 syncConnToggle();
