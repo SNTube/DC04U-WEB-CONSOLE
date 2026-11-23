@@ -4928,6 +4928,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     white-space:normal;line-height:1.15;word-break:break-word;transition:.15s}
   html[lang="ja"] .eq-preset-panel .pg.songs{grid-template-columns:repeat(3,1fr)}
   html[lang="ja"] .eq-preset-panel .pg.songs button{font-size:10px}
+  html[lang="en"] .eq-preset-panel .pg.songs button{font-size:9.5px;letter-spacing:-.15px}
   html[lang="en"] .opt button,html[lang="ja"] .opt button{font-size:10.5px;padding:5px 2px}
   html[lang="en"] .df-item,html[lang="ja"] .df-item{padding:5px 8px}
   html[lang="en"] .df-item .nm b,html[lang="ja"] .df-item .nm b{font-size:11.5px}
@@ -11584,6 +11585,19 @@ function runSelfTest(){
          return ok&&['devVolVal','devOpVal','devBalVal','devBrightVal'].every(id=>!!$(id));
        })(),
        [...$('devAudio').querySelectorAll('.dev-sec.meter')].length);
+    ck('三语 EQ 档位胶囊的文字都不溢出格子（英文 HIP-HOP 曾经压到隔壁 Classical 上）',
+       (()=>{
+         const html=document.documentElement, old=html.lang;
+         const ok=()=>[...document.querySelectorAll('#devEqPresets .pg button')]
+           .every(b=>b.scrollWidth<=b.clientWidth+1);
+         const zh=ok();
+         html.lang='en'; const en=ok();
+         html.lang='ja'; const ja=ok();
+         html.lang=old; ok();
+         return zh&&en&&ja;
+       })(),
+       [...$('devEqPresets').querySelectorAll('.pg button')].map(b=>b.textContent.trim()));
+
     ck('均衡器 11 档＝离散单选：三组胶囊轨道各带一块滑块，选中按钮透明、滑块贴住它',
        (()=>{
          if($('pageDevice').hidden)setPage('device');
