@@ -5799,7 +5799,7 @@ try{
           </span>
         </h2>
         <label class="pi-label" for="piName"><span id="piNameLabel">预设命名</span> <em>*</em></label>
-        <input class="pi-input" id="piName" type="text" maxlength="40" placeholder="给你的 EQ 预设起个名字">
+        <input class="pi-input" id="piName" type="text" maxlength="50" placeholder="给你的 EQ 预设起个名字">
         <p class="pi-err" id="piNameErr" hidden>请输入预设命名</p>
         <label class="pi-label" for="piDesc">简介（可选）</label>
         <textarea class="pi-input pi-desc" id="piDesc" rows="2" maxlength="200" placeholder="描述调音风格或适用场景..."></textarea>
@@ -6487,6 +6487,7 @@ const TAG_GROUPS = [
   {category:3, key:'tag.scene',   label:"Scene · 使用场景"}
 ];
 const TAG_MAX = 3;
+const NAME_MAX = 50, DESC_MAX = 200;
 const TARGET_DEFAULT_NAME = 'IEF Preference 2025 (B&K 5128)';
 const tagOfficial = t => ({nameEn:t.nameEn, nameZh:t.nameZh, category:t.category});
 const tagKey = t => t.nameEn+'|'+t.nameZh+'|'+t.category;
@@ -6719,7 +6720,9 @@ function refreshJson(){
 }
 function applyOfficialJson(json,opts){
   const p=PEQCore.fromPresetJson(json);
-  S.preset={name:p.name,description:p.description,totalGain:p.totalGain,tags:p.tags,
+  S.preset={name:String(p.name||'').slice(0,NAME_MAX),
+            description:String(p.description||'').slice(0,DESC_MAX),
+            totalGain:p.totalGain,tags:p.tags,
             filterSettings:p.bands};
   S.preset.tags=(S.preset.tags||[]).slice(0,TAG_MAX).map(t=>{
     const hit=OFFICIAL_TAGS.find(o=>tagKey(o)===tagKey(t));
@@ -7547,7 +7550,7 @@ function eqnNormalize(raw){
   const out={1:'',2:'',3:''};
   try{
     const o=JSON.parse(raw||'{}');
-    [1,2,3].forEach(k=>{if(o&&typeof o[k]==='string')out[k]=o[k].slice(0,40);});
+    [1,2,3].forEach(k=>{if(o&&typeof o[k]==='string')out[k]=o[k].slice(0,NAME_MAX);});
   }catch(_){}
   return out;
 }
@@ -7571,7 +7574,7 @@ function eqnSave(){
   if(st)eqnWrite(st,EQN_NAMES);
 }
 function eqnSet(name){
-  EQN_NAMES[EQN_OWNER]=String(name==null?'':name).slice(0,40);
+  EQN_NAMES[EQN_OWNER]=String(name==null?'':name).slice(0,NAME_MAX);
   eqnSave();
 }
 function eqnLabel(){
@@ -7651,7 +7654,7 @@ function toggleOfficialTag(i){
 }
 $('piName').addEventListener('input',e=>{
   pushHistory('pi-name');
-  S.preset.name=e.target.value;
+  S.preset.name=e.target.value.slice(0,NAME_MAX);
   eqnSet(S.preset.name);
   $('piNameErr').hidden=!!e.target.value.trim();
   if(e.target.value.trim())$('piName').classList.remove('bad');
@@ -7659,7 +7662,7 @@ $('piName').addEventListener('input',e=>{
 });
 $('piDesc').addEventListener('input',e=>{
   pushHistory('pi-desc');
-  S.preset.description=e.target.value;
+  S.preset.description=e.target.value.slice(0,DESC_MAX);
   refreshJson();
 });
 
@@ -13186,6 +13189,20 @@ function runSelfTest(){
        $('presetInfo').textContent.includes('简介（可选）') &&
        $('presetInfo').textContent.includes('风格标签（可选）'),
        $('presetInfo').textContent.replace(/\s+/g,' ').trim().slice(0,60));
+    ck('命名 / 简介的字符上限对齐官网（50 / 200），本机缓存与导入都按同一常量收',
+       (()=>{
+         const n=$('piName'), d=$('piDesc');
+         const long='x'.repeat(60);
+         const kept=eqnNormalize(JSON.stringify({1:long,2:'',3:''}))[1].length;
+         return n.maxLength===50 && d.maxLength===200 &&
+                NAME_MAX===50 && DESC_MAX===200 &&
+                kept===50 &&
+                /NAME_MAX/.test(eqnSet.toString()) &&
+                /NAME_MAX/.test(eqnNormalize.toString());
+       })(),
+       [$('piName').maxLength,$('piDesc').maxLength,
+        eqnNormalize(JSON.stringify({1:'x'.repeat(60),2:'',3:''}))[1].length]);
+
     ck('读取设备前：1|2|3 三个胶囊全暗、不默认选中 1、不加点，默认配置只作空闲态',
        (()=>{const box=$('piSlots'),bs=[...box.querySelectorAll('button')];
              const before=JSON.stringify(officialJson());
@@ -13350,7 +13367,7 @@ function runSelfTest(){
       const bad=JSON.stringify(eqnRead(fake))===JSON.stringify({1:'',2:'',3:''});
       m.set(EQN_KEY,JSON.stringify({1:12,2:'x'.repeat(80),3:null}));
       const nr=eqnRead(fake);
-      const norm=nr[1]==='' && nr[2].length===40 && nr[3]==='';
+      const norm=nr[1]==='' && nr[2].length===NAME_MAX && nr[3]==='';
       const setOwner=n=>{S.eqSlot=n;syncPiSlots();};
       const type=v=>{$('piName').value=v;
         $('piName').dispatchEvent(new Event('input',{bubbles:true}));};
