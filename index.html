@@ -4545,17 +4545,22 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   .dd-item.on .pm{color:#6b84c4}
   #chart{width:100%;height:100%}
   #points{position:absolute;inset:0;pointer-events:none}
-  #radial{position:absolute;inset:0;pointer-events:none;z-index:50}
+  #radial{position:absolute;inset:0;pointer-events:none;z-index:50;
+    opacity:0;visibility:hidden;
+    transition:opacity .14s ease,visibility .14s}
+  #radial.on{opacity:1;visibility:visible}
   #radial .ring{position:absolute;transform:translate(-50%,-50%);border-radius:50%;
     border:1.5px dashed #c4cfe6;pointer-events:none}
   .rbtn{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;
     align-items:center;justify-content:center;gap:2px;width:58px;height:58px;border-radius:50%;
     border:1.5px solid var(--line);background:var(--surface);cursor:pointer;padding:0;
     box-shadow:0 4px 14px rgba(20,35,80,.18);transition:.15s}
-  #radial:not([hidden]) .rbtn{pointer-events:auto}
+  #radial.on .rbtn{pointer-events:auto;animation:rbtnIn .2s cubic-bezier(.2,.9,.3,1.25) both}
+  @keyframes rbtnIn{from{opacity:0;transform:translate(-50%,-50%) scale(.7)}
+                    to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
   .rbtn svg{display:block}
   .rbtn span{font:inherit;font-size:9.5px;color:var(--muted);line-height:1;white-space:nowrap}
-  .rbtn:hover{border-color:var(--accent);transform:translate(-50%,-50%) scale(1.08)}
+  #radial .rbtn:hover{border-color:var(--accent);transform:translate(-50%,-50%) scale(1.08)}
   .rbtn.cur{border-color:var(--accent);box-shadow:0 0 0 3px #eaf0ff,0 4px 14px rgba(20,35,80,.18)}
   .rbtn.cur span{color:var(--accent);font-weight:600}
   .rbtn.pwr{border-color:#12b8a6;color:#0c8f7f;
@@ -4809,6 +4814,12 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     box-shadow:0 2px 6px rgba(74,127,240,.25)}
   .page-tab.skin-only{display:none}
   .page[hidden]{display:none}
+  @media (prefers-reduced-motion: no-preference){
+    ::view-transition-old(root){animation:pgOut .16s ease both}
+    ::view-transition-new(root){animation:pgIn .24s cubic-bezier(.2,.8,.3,1) both}
+  }
+  @keyframes pgOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-4px)}}
+  @keyframes pgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   body.on-device header>.toolbar,
   body.on-skin header>.toolbar{display:none}
   .conn-state{display:inline-flex;align-items:center;gap:6px;flex:none;white-space:nowrap;
@@ -5656,7 +5667,7 @@ try{
       <div id="chartWrap">
         <div id="chart"></div>
         <div id="points"></div>
-        <div id="radial" hidden></div>
+        <div id="radial"></div>
       </div>
       <details class="freq-map" id="freqMap">
         <summary><span class="fm-sum-title">频率落点</span><span class="fm-sum-actions">
@@ -7259,7 +7270,7 @@ function syncPoints(){
     el.addEventListener('contextmenu',ev=>openRadial(ev,+el.dataset.i));
   });
 }
-const closeRadial=()=>{$('radial').hidden=true;};
+const closeRadial=()=>{$('radial').classList.remove('on');};
 function paintRadial(i,cx,cy,R){
   const b=bands()[i];
   const keys=Object.keys(PEQCore.TYPE_INFO);
@@ -7288,7 +7299,8 @@ function paintRadial(i,cx,cy,R){
           <path d="${t.d}" stroke="${t.c}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"${t.dash?` stroke-dasharray="${t.dash}"`:''}/>
         </svg><span>${zhUi?PEQCore.TYPE_INFO[k].zh:PEQCore.TYPE_INFO[k].en}</span></button>`;
     }).join('');
-  menu.hidden=false;
+  menu.classList.add('on');
+  [...menu.querySelectorAll('.rbtn')].forEach((btn,k)=>{btn.style.animationDelay=(k*16)+'ms';});
   menu.querySelectorAll('.rbtn').forEach(btn=>btn.addEventListener('click',e=>{
     e.stopPropagation();
     if(btn.dataset.pwr){
@@ -8623,19 +8635,25 @@ async function writeEqOff(){
     }
   });
 }
+let devGroupSig={};
 function devGroup(id,labels,key,values){
   const host=$(id);
-  host.innerHTML=labels.map((t,i)=>{
-    const v=values?values[i]:i;
-    return `<button type="button" data-v="${v}" class="${S.dev[key]===v?'on':''}">${t}</button>`;
-  }).join('');
-  host.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  const sig=[key,labels.join('\u0001'),values?values.join(','):''].join('|');
+  if(devGroupSig[id]!==sig){
+    host.innerHTML=labels.map((t,i)=>{
+      const v=values?values[i]:i;
+      return `<button type="button" data-v="${v}">${t}</button>`;
+    }).join('');
+    devGroupSig[id]=sig;
+    host.querySelectorAll('button').forEach(b=>b.onclick=()=>{
     const v=+b.dataset.v;
     S.dev[key]=v;devRender();
     if(key==='rotation')syncSkinScreen();
-    if(key==='language'){UI_LANG_SRC=v;applyUiLang(v);uiLangSave(v);}
-    devSet(key,v);
-  });
+      if(key==='language'){UI_LANG_SRC=v;applyUiLang(v);uiLangSave(v);}
+      devSet(key,v);
+    });
+  }
+  host.querySelectorAll('button').forEach(b=>b.classList.toggle('on',S.dev[key]===+b.dataset.v));
 }
 function setDevVal(id,v,fmt){
   const el=$(id),empty=(v===null||v===undefined);
@@ -8686,6 +8704,7 @@ function paintRange(el,v){
   }
   if(el.id==='devBrightness')paintBattery(empty?0:+el.value);
 }
+let devChartReady=false;
 function syncDevEqChart(){
   if(!devChart)return;
   const dark=isDark(),axisC=dark?'#42516e':'#e4e9f4',
@@ -8697,7 +8716,10 @@ function syncDevEqChart(){
   const yMin=Math.min(-10,Math.floor(lo/2.5)*2.5),
         yMax=Math.max(10,Math.ceil(hi/2.5)*2.5);
   devChart.setOption({
-    animation:false,
+    animation:devChartReady,
+    animationDuration:0,
+    animationDurationUpdate:280,
+    animationEasingUpdate:'cubicOut',
     graphic:[],
     grid:{left:38,right:12,top:12,bottom:24},
     xAxis:{type:'value',min:LX(20),max:LX(20000),
@@ -8715,7 +8737,8 @@ function syncDevEqChart(){
       itemStyle:{color:'#4a7ff0'},areaStyle:{color:'rgba(74,127,240,.10)'},
       markLine:{silent:true,symbol:'none',animation:false,
         data:[{yAxis:0}],lineStyle:{color:zeroC,width:1},label:{show:false}}}]
-  },{notMerge:true});
+  },{notMerge:false});
+  devChartReady=true;
 }
 /** 设备页渲染：读数、可写项可用性、曲线与按钮状态都在这里同步。 */
 function devRender(){
@@ -8749,14 +8772,20 @@ function devRender(){
   });
   renderDfList();
   applyDfImg($('devFilterImg'),DIGITAL_FILTERS[dfShowIndex()].key);
-  $('devEqPresets').innerHTML=EQ_PRESET_GROUPS.map(g=>
-    `<div class="pg ${g.cls}">${g.idx.map(i=>
-      `<button type="button" data-v="${i}" class="${S.dev.eqPreset===i?'on':''}">`+
-        `${DEV_EQ_PRESETS[i].name}</button>`).join('')}</div>`).join('');
-  $('devEqPresets').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  const pgHost=$('devEqPresets');
+  const pgSig=EQ_PRESET_GROUPS.map(g=>g.cls+':'+g.idx.map(i=>DEV_EQ_PRESETS[i].name).join('~')).join('|');
+  if(pgHost.dataset.sig!==pgSig){
+    pgHost.innerHTML=EQ_PRESET_GROUPS.map(g=>
+      `<div class="pg ${g.cls}">${g.idx.map(i=>
+        `<button type="button" data-v="${i}">`+
+          `${DEV_EQ_PRESETS[i].name}</button>`).join('')}</div>`).join('');
+    pgHost.dataset.sig=pgSig;
+  }
+  pgHost.querySelectorAll('button').forEach(b=>b.onclick=()=>{
     S.dev.eqPreset=+b.dataset.v;devRender();
     devSet('eqPreset',S.dev.eqPreset);
   });
+  pgHost.querySelectorAll('button').forEach(b=>b.classList.toggle('on',S.dev.eqPreset===+b.dataset.v));
   syncDevEqChart();
   syncSkinScreen();
   if(window.I18N){
@@ -9976,9 +10005,19 @@ function syncSkinPage(){
   }
   if(!split&&!SKIN_MOVING&&!$('pageSkin').hidden)setPage('device');
 }
+const reducedMotion=()=>{
+  try{return window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(_){return false;}
+};
 function setPage(name){
+  if(name==='skin'&&!skinIsSplit())name='device';
+  const run=()=>setPageNow(name);
+  if(!uiSelftestMode()&&!reducedMotion()&&document.startViewTransition){
+    try{document.startViewTransition(run);return;}catch(_){}
+  }
+  run();
+}
+function setPageNow(name){
   const device=name==='device', skin=name==='skin';
-  if(skin&&!skinIsSplit())name='device';
   SKIN_MOVING=true;syncSkinPage();SKIN_MOVING=false;
   const dev=name==='device', eq=name==='eq', sk=name==='skin';
   $('pageEq').hidden=!eq;
@@ -10507,10 +10546,10 @@ function runSelfTest(){
   (()=>{
     const pt=$('points').querySelector('.pt[data-i="0"]'), r=pt.getBoundingClientRect();
     pt.dispatchEvent(new MouseEvent('contextmenu',{cancelable:true}));
-    const opened=!$('radial').hidden;
+    const opened=$('radial').classList.contains('on');
     pt.dispatchEvent(new MouseEvent('mousedown',{bubbles:true,cancelable:true,button:0,buttons:1,
       clientX:r.x+r.width/2,clientY:r.y+r.height/2}));
-    const closed=$('radial').hidden;
+    const closed=!$('radial').classList.contains('on');
     window.dispatchEvent(new MouseEvent('mouseup',{button:0}));
     ck('轮盘开着时拖动圆点会先收起轮盘（它铺满圆点四周，会挡住曲线）',
        opened && closed, [opened,closed]);
@@ -10519,7 +10558,7 @@ function runSelfTest(){
     const pt=$('points').querySelector('.pt[data-i="0"]');
     pt.dispatchEvent(new MouseEvent('contextmenu',{cancelable:true}));
     const menu=$('radial');
-    const btns=menu.hidden?[]:[...menu.querySelectorAll('.rbtn')];
+    const btns=menu.classList.contains('on')?[...menu.querySelectorAll('.rbtn')]:[];
     const cur=btns.filter(b=>b.classList.contains('cur'));
     const curType=btns.length?+cur[0].dataset.t:-1;
     const t0=bands()[0].filterType;
@@ -10534,23 +10573,23 @@ function runSelfTest(){
     };
     const g0=bands()[0].gain, f0=bands()[0].frequency;
     pwr.click();
-    const offOK=bands()[0].status===false && bands()[0].gain===0 && menu.hidden;
+    const offOK=bands()[0].status===false && bands()[0].gain===0 && !menu.classList.contains('on');
     const pwrOff=reopen();
-    const redOK=!!pwrOff && pwrOff.classList.contains('off') && !menu.hidden;
+    const redOK=!!pwrOff && pwrOff.classList.contains('off') && menu.classList.contains('on');
     pwrOff.click();
     const onOK=bands()[0].status!==false && Math.abs(bands()[0].gain-g0)<1e-9 &&
-               Math.abs(bands()[0].frequency-f0)<1e-9 && menu.hidden;
+               Math.abs(bands()[0].frequency-f0)<1e-9 && !menu.classList.contains('on');
     const pwrOn=reopen();
     const greenOK=!!pwrOn && !pwrOn.classList.contains('off');
     ck('右键圆环＝8 方位：正上方新增「参与曲线」电源开关（绿圈开/红圈关，点完即收菜单），只切该段参与、不改类型',
        ring8 && offOK && redOK && onOK && greenOK,
        [btns.length,typeBtns.length,pwrTop,topMin,bands()[0].status,offOK,redOK,onOK,greenOK]);
     const pick=menu.querySelectorAll('.rbtn[data-t="6"]')[0]; pick.click();
-    const t1=bands()[0].filterType, hidden1=menu.hidden;
+    const t1=bands()[0].filterType, hidden1=!menu.classList.contains('on');
     document.body.click();
     ck('右键圆点弹圆环类型菜单：8 项（含电源）SVG 图标、当前类型高亮、点击切换、点外部关闭',
        btns.length===8 && cur.length===1 && curType===t0 &&
-       t1===6 && hidden1 && menu.hidden,
+       t1===6 && hidden1 && !menu.classList.contains('on'),
        [btns.length,curType,t0,t1,hidden1,menu.hidden]);
     $('resetAll').click();
   })();
@@ -12717,13 +12756,32 @@ function runSelfTest(){
                /writeGate\(\)/.test(writeEqPreset.toString()) &&
                /writeGate\(\)/.test(writeEqOff.toString());})(),
        'connectDevice / openDeviceBridge / writeEqPreset');
+    ck('动效：切页走 View Transitions、设备曲线用 ECharts 插值、轮盘错峰弹出、胶囊不重建 DOM',
+       (()=>{
+         const css=[...document.querySelectorAll('style')].map(e=>e.textContent).join('');
+         const pageOK=/startViewTransition/.test(setPage.toString()) &&
+                      /view-transition-new\(root\)/.test(css);
+         const curveOK=/animationDurationUpdate:280/.test(syncDevEqChart.toString()) &&
+                       !/notMerge:true/.test(syncDevEqChart.toString());
+         const radialOK=/classList\.add\('on'\)/.test(paintRadial.toString()) &&
+                        /@keyframes rbtnIn/.test(css);
+         const host=$('devGain'), before=[...host.querySelectorAll('button')];
+         const keep=before.length>1 && !before[1].classList.contains('on');
+         before[1].click();
+         const after=[...host.querySelectorAll('button')];
+         const same=after.length===before.length && before.every((b,i)=>b===after[i]);
+         before[0].click();
+         return pageOK && curveOK && radialOK && keep && same;
+       })(),
+       [typeof document.startViewTransition, S.dev.gain]);
+
     ck('连接保持读取：被动上报订阅 / 2 秒健康检查 / 物理拔出收尾 / 切页补读齐备',
        typeof onDeviceReport==='function' && typeof startHealthCheck==='function' &&
        typeof stopHealthCheck==='function' && typeof handleDeviceLost==='function' &&
        typeof refreshDeviceState==='function' && typeof $('connBadge').onclick==='function' &&
        /onUnsolicited:onDeviceReport/.test(openDeviceBridge.toString()) &&
        /getDevices\(\)/.test(startHealthCheck.toString()) &&
-       /refreshDeviceState\(\)/.test(setPage.toString()),
+       /refreshDeviceState\(\)/.test(setPage.toString()+setPageNow.toString()),
        ['onDeviceReport','startHealthCheck','handleDeviceLost','refreshDeviceState']);
     ck('主题颜色 7 个色点一行排开不换行（左列加宽后放得下）',
        (()=>{const ds=[...$('devColors').querySelectorAll('button')];
