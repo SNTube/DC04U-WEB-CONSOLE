@@ -4402,6 +4402,9 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
 
 </script>
 <style>
+  html{background-color:var(--bg);background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 1400' preserveAspectRatio='xMidYMid slice'><defs><pattern id='pd' width='22' height='22' patternUnits='userSpaceOnUse'><circle cx='3' cy='3' r='1.7' fill='%231c2642' fill-opacity='.55'/></pattern></defs><circle cx='1180' cy='250' r='300' fill='none' stroke='%234a7ff0' stroke-opacity='.13' stroke-width='1.5'/><circle cx='1180' cy='250' r='184' fill='none' stroke='%231c2642' stroke-opacity='.045'/><polygon points='-200,1220 1800,460 1800,700 -200,1460' fill='%231c2642' opacity='.020'/><polygon points='-200,1290 1800,530 1800,534 -200,1294' fill='%234a7ff0' opacity='.11'/><rect x='210' y='1020' width='180' height='180' fill='none' stroke='%234a7ff0' stroke-opacity='.16' stroke-width='1.5' transform='rotate(14 300 1110)'/><rect x='446' y='1092' width='46' height='46' fill='none' stroke='%23c98a1e' stroke-opacity='.34' stroke-width='1.5' transform='rotate(14 469 1115)'/><rect x='1180' y='880' width='220' height='220' fill='url(%23pd)' opacity='.10'/></svg>");
+       background-repeat:no-repeat;background-attachment:fixed;
+       background-size:cover;background-position:center center}
   /* 主题变量。浅色为默认，深色在下方 html[data-theme="dark"] 里覆盖同名变量；
      组件样式只引用变量，不写死颜色。 */
   :root{
@@ -4419,8 +4422,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     --shadow:0 1px 2px rgba(35,55,110,.06),0 10px 26px -14px rgba(35,55,110,.20);
   }
   *{box-sizing:border-box}
-  body{margin:0;color:var(--fg);
-       background:radial-gradient(1200px 700px at 50% -10%,#ffffff 0%,rgba(255,255,255,0) 62%),var(--bg);
+  body{margin:0;color:var(--fg);background:transparent;
        font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;font-size:13px}
   .app{max-width:1500px;margin:0 auto;padding:18px clamp(12px,2.5vw,28px) 36px}
   header{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:14px}
@@ -5475,7 +5477,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     --pre-fg:#dce7fb; --pre-ok:#79d6a5; --pre-bad:#ff9b9b;
     --shadow:0 1px 2px rgba(0,0,0,.45),0 12px 30px -16px rgba(0,0,0,.80),
              inset 0 1px 0 rgba(255,255,255,.045);
-    background:radial-gradient(900px 560px at 50% -8%,#1b2438 0%,rgba(27,36,56,0) 62%),var(--bg);
+    background-color:var(--bg);background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 1400' preserveAspectRatio='xMidYMid slice'><defs><pattern id='pd' width='22' height='22' patternUnits='userSpaceOnUse'><circle cx='3' cy='3' r='1.7' fill='%231c2642' fill-opacity='.55'/></pattern></defs><circle cx='1180' cy='250' r='300' fill='none' stroke='%234a7ff0' stroke-opacity='.13' stroke-width='1.5'/><circle cx='1180' cy='250' r='184' fill='none' stroke='%231c2642' stroke-opacity='.045'/><polygon points='-200,1220 1800,460 1800,700 -200,1460' fill='%231c2642' opacity='.022'/><polygon points='-200,1290 1800,530 1800,534 -200,1294' fill='%234a7ff0' opacity='.11'/><rect x='210' y='1020' width='180' height='180' fill='none' stroke='%234a7ff0' stroke-opacity='.20' stroke-width='1.5' transform='rotate(14 300 1110)'/><rect x='446' y='1092' width='46' height='46' fill='none' stroke='%23c98a1e' stroke-opacity='.34' stroke-width='1.5' transform='rotate(14 469 1115)'/><rect x='1180' y='880' width='220' height='220' fill='url(%23pd)' opacity='.10'/></svg>");
     color-scheme:dark;
   }
   html.theme-switching *,html.theme-switching *::before,html.theme-switching *::after{
@@ -11783,7 +11785,7 @@ function runSelfTest(){
            getComputedStyle(dock.querySelector('.theme-orb .moon')).display!=='none'&&
            getComputedStyle(dock.querySelector('.theme-orb .sun')).display==='none'&&
            getComputedStyle(dock.querySelector('.theme-cafe')).filter==='none'&&
-           getComputedStyle(document.body).backgroundColor!=='rgb(245, 247, 252)'&&
+           getComputedStyle(document.documentElement).backgroundColor==='rgb(20, 27, 43)'&&
            $('devFilterImg').dataset.dfDark==='1'&&
            getComputedStyle($('devFilterImg').parentElement).backgroundColor==='rgb(21, 29, 48)'&&
            baseOption().series[0].markLine.lineStyle.color==='#2c3a54'&&
@@ -12856,6 +12858,18 @@ function runSelfTest(){
                 Math.abs(ir.height-cr.height)<1.5;
        })(),
        [...$('pageTabs').querySelectorAll('.page-tab')].map(b=>b.textContent.trim()));
+
+    ck('背景＝html 单层几何图（data URI + fixed），body 透明（不会在底部收出接缝）',
+       (()=>{
+         const hs=getComputedStyle(document.documentElement),
+               bs=getComputedStyle(document.body);
+         return hs.backgroundImage.indexOf('data:image/svg+xml')>=0 &&
+                hs.backgroundAttachment==='fixed' &&
+                hs.backgroundSize==='cover' &&
+                bs.backgroundColor==='rgba(0, 0, 0, 0)';
+       })(),
+       [getComputedStyle(document.documentElement).backgroundAttachment,
+        getComputedStyle(document.body).backgroundColor]);
 
     ck('动效：切页走 View Transitions、设备曲线用 ECharts 插值、轮盘错峰弹出、胶囊不重建 DOM',
        (()=>{
