@@ -4806,23 +4806,24 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   }
 
   .page-tabs{display:inline-flex;align-items:center;gap:2px;flex:none;padding:3px;
-    border:1px solid var(--line);border-radius:11px;background:var(--surface);box-shadow:var(--shadow)}
+    border:1px solid var(--line);border-radius:11px;background:var(--surface);box-shadow:var(--shadow);
+    position:relative;--seg-bg:var(--accent);--seg-sh:0 2px 6px rgba(74,127,240,.25)}
   .page-tab{font:inherit;font-size:12px;padding:6px 14px;border:none;border-radius:8px;
-    background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap;transition:.15s}
+    background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap;
+    transition:background .15s,border-color .15s}
+  .page-tab{position:relative;z-index:1}
   .page-tab:hover{color:var(--accent)}
-  .page-tab.on{background:var(--accent);color:#fff;font-weight:600;
-    box-shadow:0 2px 6px rgba(74,127,240,.25)}
+  .page-tab.on:hover{color:#fff}
+  .page-tab.on{background:transparent;color:#fff;font-weight:600;box-shadow:none}
   .page-tab.skin-only{display:none}
   .page[hidden]{display:none}
   @media (prefers-reduced-motion: no-preference){
     ::view-transition{background:var(--bg)}
-    ::view-transition-old(root){animation:pvOut .3s cubic-bezier(.32,.72,0,1) both}
-    ::view-transition-new(root){animation:pvIn .3s cubic-bezier(.32,.72,0,1) both}
+    ::view-transition-old(root){animation:pgOut .22s ease both}
+    ::view-transition-new(root){animation:pgIn .33s cubic-bezier(.2,.8,.3,1) both}
   }
-  @keyframes pvOut{from{transform:none;opacity:1}
-                   to{transform:translateX(calc(-100% * var(--pgdir,1)));opacity:.9}}
-  @keyframes pvIn{from{transform:translateX(calc(100% * var(--pgdir,1)));opacity:.9}
-                  to{transform:none;opacity:1}}
+  @keyframes pgOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-4px)}}
+  @keyframes pgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   body.on-device header>.toolbar,
   body.on-skin header>.toolbar{display:none}
   .conn-state{display:inline-flex;align-items:center;gap:6px;flex:none;white-space:nowrap;
@@ -5586,6 +5587,7 @@ try{
 <div class="app">
   <header>
     <div class="page-tabs" id="pageTabs" role="tablist" aria-label="页面切换">
+      <i class="seg-ind"></i>
       <button class="page-tab" id="tabDevice" type="button" role="tab" data-page="device" aria-selected="false">设备选项</button>
       <button class="page-tab on" id="tabEq" type="button" role="tab" data-page="eq" aria-selected="true">均衡器</button>
       <button class="page-tab skin-only" id="tabSkin" type="button" role="tab" data-page="skin" aria-selected="false">贴纸</button>
@@ -8666,7 +8668,7 @@ function syncSegInd(host,instant){
   }
 }
 function syncSegIndAll(instant){
-  document.querySelectorAll('.opt,.eq-preset-panel .pg').forEach(h=>syncSegInd(h,instant));
+  document.querySelectorAll('.page-tabs,.opt,.eq-preset-panel .pg').forEach(h=>syncSegInd(h,instant));
 }
 
 var devGroupSig;
@@ -10045,17 +10047,10 @@ function syncSkinPage(){
 function reducedMotion(){
   try{return window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(_){return false;}
 }
-function currentPageName(){
-  const sk=$('pageSkin'), dv=$('pageDevice');
-  return (sk&&!sk.hidden)?'skin':((dv&&!dv.hidden)?'device':'eq');
-}
 function setPage(name){
   if(name==='skin'&&!skinIsSplit())name='device';
   const run=()=>setPageNow(name);
   if(!uiSelftestMode()&&!reducedMotion()&&document.startViewTransition){
-    const order=['device','eq','skin'];
-    const dir=order.indexOf(name)>=order.indexOf(currentPageName())?1:-1;
-    document.documentElement.style.setProperty('--pgdir',String(dir));
     try{document.startViewTransition(run);return;}catch(_){}
   }
   run();
@@ -10075,6 +10070,7 @@ function setPageNow(name){
   $('tabSkin').setAttribute('aria-selected',String(sk));
   document.body.classList.toggle('on-device',dev);
   document.body.classList.toggle('on-skin',sk);
+  syncSegInd($('pageTabs'));
   if(dev||sk){
     if(!devChart)devChart=echarts.init($('devEqChart'));
     if(dev){devChart.resize();refreshDeviceState();}
@@ -10124,6 +10120,7 @@ syncPiSlots();
 syncSkinPage();
 setPage('device');
 applyTheme(themeSaved()==='dark',false);
+syncSegInd($('pageTabs'),true);
 
 function installMockBridge(){
   const st={connected:false,sent:[],logs:[],listeners:new Map()};
@@ -12821,6 +12818,20 @@ function runSelfTest(){
                /writeGate\(\)/.test(writeEqPreset.toString()) &&
                /writeGate\(\)/.test(writeEqOff.toString());})(),
        'connectDevice / openDeviceBridge / writeEqPreset');
+    ck('顶部「设备选项 / 均衡器」也是胶囊：选中块由滑块提供并贴住当前分页',
+       (()=>{
+         const host=$('pageTabs'), ind=host.querySelector(':scope > .seg-ind'),
+               cur=host.querySelector('.page-tab.on');
+         if(!ind||!cur)return false;
+         const ir=ind.getBoundingClientRect(), cr=cur.getBoundingClientRect();
+         return getComputedStyle(cur).backgroundColor==='rgba(0, 0, 0, 0)' &&
+                ind.classList.contains('on') &&
+                Math.abs(ir.left-cr.left)<1.5 &&
+                Math.abs(ir.width-cr.width)<1.5 &&
+                Math.abs(ir.height-cr.height)<1.5;
+       })(),
+       [...$('pageTabs').querySelectorAll('.page-tab')].map(b=>b.textContent.trim()));
+
     ck('动效：切页走 View Transitions、设备曲线用 ECharts 插值、轮盘错峰弹出、胶囊不重建 DOM',
        (()=>{
          const css=[...document.querySelectorAll('style')].map(e=>e.textContent).join('');
