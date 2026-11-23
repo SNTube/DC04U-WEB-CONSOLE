@@ -4815,11 +4815,14 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   .page-tab.skin-only{display:none}
   .page[hidden]{display:none}
   @media (prefers-reduced-motion: no-preference){
-    ::view-transition-old(root){animation:pgOut .16s ease both}
-    ::view-transition-new(root){animation:pgIn .24s cubic-bezier(.2,.8,.3,1) both}
+    ::view-transition{background:var(--bg)}
+    ::view-transition-old(root){animation:pvOut .3s cubic-bezier(.32,.72,0,1) both}
+    ::view-transition-new(root){animation:pvIn .3s cubic-bezier(.32,.72,0,1) both}
   }
-  @keyframes pgOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-4px)}}
-  @keyframes pgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes pvOut{from{transform:none;opacity:1}
+                   to{transform:translateX(calc(-100% * var(--pgdir,1)));opacity:.9}}
+  @keyframes pvIn{from{transform:translateX(calc(100% * var(--pgdir,1)));opacity:.9}
+                  to{transform:none;opacity:1}}
   body.on-device header>.toolbar,
   body.on-skin header>.toolbar{display:none}
   .conn-state{display:inline-flex;align-items:center;gap:6px;flex:none;white-space:nowrap;
@@ -4924,7 +4927,8 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   .dev-sec .lab{font-size:11.5px;color:var(--muted);margin-bottom:7px;display:flex;align-items:center;gap:8px}
   .dev-sec .lab b{margin-left:auto;color:var(--fg);font-weight:600;font-variant-numeric:tabular-nums}
   .opt{display:flex;flex-wrap:nowrap;gap:2px;padding:3px;border:1px solid var(--line);
-    border-radius:999px;background:var(--surface-2)}
+    border-radius:999px;background:var(--surface-2);position:relative;
+    --seg-bg:var(--surface);--seg-sh:0 1px 3px rgba(15,23,42,.16)}
   .opt button{font:inherit;font-size:11.5px;padding:6px 4px;border:none;flex:1 1 0;min-width:0;
     border-radius:999px;background:transparent;color:var(--muted);cursor:pointer;
     white-space:normal;line-height:1.15;word-break:break-word;transition:.15s}
@@ -4942,7 +4946,15 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   html[lang="ja"] .eq-preset-panel .pg button{font-size:10px;padding:5px 2px}
   html[lang="en"] .side-actions .btn,html[lang="ja"] .side-actions .btn{font-size:11px;padding:6px 8px}
   .opt button:hover{color:var(--accent)}
-  .opt button.on{background:var(--surface);color:#2d55b8;font-weight:600;box-shadow:0 1px 3px rgba(15,23,42,.16)}
+  .opt button.on{background:transparent;color:#2d55b8;font-weight:600;box-shadow:none}
+  .opt button,.eq-preset-panel .pg button{position:relative;z-index:1}
+  .seg-ind{position:absolute;left:0;top:0;border-radius:999px;background:var(--seg-bg);
+    box-shadow:var(--seg-sh);pointer-events:none;z-index:0;opacity:0;
+    transition:transform .34s cubic-bezier(.34,.72,.06,1),
+               width .34s cubic-bezier(.34,.72,.06,1),
+               height .34s cubic-bezier(.34,.72,.06,1),
+               opacity .18s ease}
+  .seg-ind.on{opacity:1}
   .dev-toggles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .dev-toggles button{display:flex;align-items:center;gap:7px;font:inherit;font-size:11.5px;
     padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface);
@@ -5313,21 +5325,21 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   #devEqChart{width:100%;height:160px;flex:none}
   .eq-preset-panel{display:flex;flex-direction:column;gap:7px;min-width:0;
     border-top:1px solid var(--line);margin-top:12px;padding-top:12px}
-  .eq-preset-panel .pg{display:grid;gap:3px;padding:3px;
-    background:var(--surface-2);border:1px solid var(--line);border-radius:14px}
+  .eq-preset-panel .pg{display:grid;gap:3px;padding:3px;position:relative;
+    background:var(--surface-2);border:1px solid var(--line);border-radius:14px;
+    --seg-bg:var(--accent);--seg-sh:0 2px 6px rgba(74,127,240,.35)}
   .eq-preset-panel .pg.solo{grid-template-columns:1fr;border-radius:999px}
   .eq-preset-panel .pg.songs{grid-template-columns:repeat(4,1fr)}
   .eq-preset-panel .pg.custom{grid-template-columns:repeat(3,1fr);border-radius:999px}
   .eq-preset-panel button{width:100%;min-width:0;
     font:inherit;font-size:11px;padding:5px 2px;border:1px solid transparent;
-    border-radius:999px;background:var(--surface);color:var(--fg);cursor:pointer;
-    white-space:nowrap;transition:.15s;
-    box-shadow:0 1px 2px rgba(15,23,42,.06)}
+    border-radius:999px;background:transparent;color:var(--fg);cursor:pointer;
+    white-space:nowrap;transition:color .2s ease,border-color .2s ease,background .2s ease}
   .eq-preset-panel .pg.custom button{font-size:10px;position:relative}
   .eq-preset-panel button:hover:not(.on){background:var(--surface-2);color:var(--accent);
     border-color:#cddcf8}
-  .eq-preset-panel button.on{background:var(--accent);border-color:var(--accent);color:#fff;
-    font-weight:700;box-shadow:0 2px 6px rgba(74,127,240,.35)}
+  .eq-preset-panel button.on{background:transparent;border-color:transparent;color:#fff;
+    font-weight:700;box-shadow:none}
   .write-settings{flex:none;font-size:11.5px;padding:6px 12px;border-radius:999px;
     display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
   .write-settings .dot{width:8px;height:8px;border-radius:50%;background:#b9c0cc;flex:none;
@@ -8635,12 +8647,35 @@ async function writeEqOff(){
     }
   });
 }
-let devGroupSig={};
+function syncSegInd(host,instant){
+  if(!host)return;
+  const ind=host.querySelector(':scope > .seg-ind');
+  if(!ind)return;
+  const cur=host.querySelector('button.on');
+  if(!cur){ind.classList.remove('on');return;}
+  const first=!ind.dataset.init;
+  if(instant||first)ind.style.transition='none';
+  ind.style.width=cur.offsetWidth+'px';
+  ind.style.height=cur.offsetHeight+'px';
+  ind.style.transform='translate('+cur.offsetLeft+'px,'+cur.offsetTop+'px)';
+  ind.classList.add('on');
+  if(instant||first){
+    void ind.offsetWidth;
+    ind.style.transition='';
+    ind.dataset.init='1';
+  }
+}
+function syncSegIndAll(instant){
+  document.querySelectorAll('.opt,.eq-preset-panel .pg').forEach(h=>syncSegInd(h,instant));
+}
+
+var devGroupSig;
 function devGroup(id,labels,key,values){
+  devGroupSig=devGroupSig||{};
   const host=$(id);
   const sig=[key,labels.join('\u0001'),values?values.join(','):''].join('|');
   if(devGroupSig[id]!==sig){
-    host.innerHTML=labels.map((t,i)=>{
+    host.innerHTML='<i class="seg-ind"></i>'+labels.map((t,i)=>{
       const v=values?values[i]:i;
       return `<button type="button" data-v="${v}">${t}</button>`;
     }).join('');
@@ -8654,6 +8689,7 @@ function devGroup(id,labels,key,values){
     });
   }
   host.querySelectorAll('button').forEach(b=>b.classList.toggle('on',S.dev[key]===+b.dataset.v));
+  syncSegInd(host);
 }
 function setDevVal(id,v,fmt){
   const el=$(id),empty=(v===null||v===undefined);
@@ -8704,7 +8740,7 @@ function paintRange(el,v){
   }
   if(el.id==='devBrightness')paintBattery(empty?0:+el.value);
 }
-let devChartReady=false;
+var devChartReady;
 function syncDevEqChart(){
   if(!devChart)return;
   const dark=isDark(),axisC=dark?'#42516e':'#e4e9f4',
@@ -8776,7 +8812,7 @@ function devRender(){
   const pgSig=EQ_PRESET_GROUPS.map(g=>g.cls+':'+g.idx.map(i=>DEV_EQ_PRESETS[i].name).join('~')).join('|');
   if(pgHost.dataset.sig!==pgSig){
     pgHost.innerHTML=EQ_PRESET_GROUPS.map(g=>
-      `<div class="pg ${g.cls}">${g.idx.map(i=>
+      `<div class="pg ${g.cls}"><i class="seg-ind"></i>${g.idx.map(i=>
         `<button type="button" data-v="${i}">`+
           `${DEV_EQ_PRESETS[i].name}</button>`).join('')}</div>`).join('');
     pgHost.dataset.sig=pgSig;
@@ -8786,6 +8822,7 @@ function devRender(){
     devSet('eqPreset',S.dev.eqPreset);
   });
   pgHost.querySelectorAll('button').forEach(b=>b.classList.toggle('on',S.dev.eqPreset===+b.dataset.v));
+  pgHost.querySelectorAll('.pg').forEach(h=>syncSegInd(h));
   syncDevEqChart();
   syncSkinScreen();
   if(window.I18N){
@@ -10005,13 +10042,20 @@ function syncSkinPage(){
   }
   if(!split&&!SKIN_MOVING&&!$('pageSkin').hidden)setPage('device');
 }
-const reducedMotion=()=>{
+function reducedMotion(){
   try{return window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(_){return false;}
-};
+}
+function currentPageName(){
+  const sk=$('pageSkin'), dv=$('pageDevice');
+  return (sk&&!sk.hidden)?'skin':((dv&&!dv.hidden)?'device':'eq');
+}
 function setPage(name){
   if(name==='skin'&&!skinIsSplit())name='device';
   const run=()=>setPageNow(name);
   if(!uiSelftestMode()&&!reducedMotion()&&document.startViewTransition){
+    const order=['device','eq','skin'];
+    const dir=order.indexOf(name)>=order.indexOf(currentPageName())?1:-1;
+    document.documentElement.style.setProperty('--pgdir',String(dir));
     try{document.startViewTransition(run);return;}catch(_){}
   }
   run();
@@ -10047,6 +10091,7 @@ $('tabSkin').onclick=()=>setPage('skin');
 
 window.addEventListener('resize',()=>{
   syncSkinPage();
+  syncSegIndAll(true);
   chart.resize();syncPoints();
   if(devChart)devChart.resize();
   Skin.render();
@@ -11505,13 +11550,26 @@ function runSelfTest(){
                 el.style.getPropertyValue('--fill')!=='';}),
        ['devVolume','devOpVoltage','devBalance','devBrightness'].map(id=>
          $(id).style.getPropertyValue('--fill')));
-    ck('均衡器档位选中态改实心蓝底白字（关闭 按钮高亮）',
-       (()=>{const b=$('devEqPresets').querySelector('button.on');
+    ck('均衡器档位选中态＝白字 + 轨道里的蓝滑块顶上（按钮自身透明，避免盖住滑块）',
+       (()=>{if($('pageDevice').hidden)setPage('device');
+             syncSegIndAll(true);
+             const b=$('devEqPresets').querySelector('button.on');
              const s=getComputedStyle(b);
-             return s.color==='rgb(255, 255, 255)' && s.backgroundColor==='rgb(74, 127, 240)';})(),
+             const ind=b.parentElement.querySelector(':scope > .seg-ind');
+             const is=getComputedStyle(ind);
+             const ir=ind.getBoundingClientRect(), br=b.getBoundingClientRect();
+             const same=Math.abs(ir.width-br.width)<1.5 &&
+                        Math.abs(ir.left-br.left)<1.5 &&
+                        Math.abs(ir.top-br.top)<1.5;
+             return s.color==='rgb(255, 255, 255)' &&
+                    s.backgroundColor==='rgba(0, 0, 0, 0)' &&
+                    is.backgroundColor==='rgb(74, 127, 240)' &&
+                    ind.classList.contains('on') && same;})() ,
        (()=>{const b=$('devEqPresets').querySelector('button.on');
-             const s=getComputedStyle(b);
-             return [b.textContent,s.backgroundColor,s.color];})());
+             const ind=b.parentElement.querySelector(':scope > .seg-ind');
+             return [b.textContent,getComputedStyle(b).backgroundColor,
+                     getComputedStyle(ind).backgroundColor,
+                     ind.offsetWidth,b.offsetWidth];})());
     ck('四条连续量滑条统一「参数仪表行」：标签 + 数值徽标 + 填充轨道 + 对齐刻度',
        (()=>{
          const secs=[...$('devAudio').querySelectorAll('.dev-sec.meter'),
@@ -11527,18 +11585,25 @@ function runSelfTest(){
          return ok&&['devVolVal','devOpVal','devBalVal','devBrightVal'].every(id=>!!$(id));
        })(),
        [...$('devAudio').querySelectorAll('.dev-sec.meter')].length);
-    ck('均衡器 11 档＝离散单选：三组各一条胶囊轨道，按钮白底浮起、选中仍实心蓝底白字',
+    ck('均衡器 11 档＝离散单选：三组胶囊轨道各带一块滑块，选中按钮透明、滑块贴住它',
        (()=>{
+         if($('pageDevice').hidden)setPage('device');
+         syncSegIndAll(true);
          const gs=[...$('devEqPresets').querySelectorAll('.pg')],
                ts=gs.map(g=>getComputedStyle(g)),
                b=$('devEqPresets').querySelector('button.on');
+         const indHas=gs.every(g=>!!g.querySelector(':scope > .seg-ind'));
+         const curG=b.parentElement, curInd=curG.querySelector(':scope > .seg-ind');
          return gs.length===3&&
            ts.every(s=>s.backgroundColor==='rgb(238, 241, 246)'&&
              s.borderTopWidth==='1px'&&parseFloat(s.borderTopLeftRadius)>=10)&&
            parseFloat(getComputedStyle($('devEqPresets').querySelector('button'))
              .borderTopLeftRadius)>=20&&
-           getComputedStyle(b).backgroundColor==='rgb(74, 127, 240)'&&
-           getComputedStyle(b).color==='rgb(255, 255, 255)';
+           getComputedStyle(b).backgroundColor==='rgba(0, 0, 0, 0)'&&
+           getComputedStyle(b).color==='rgb(255, 255, 255)'&&
+           indHas && curInd.classList.contains('on') &&
+           Math.abs(curInd.getBoundingClientRect().left-b.getBoundingClientRect().left)<1.5 &&
+           Math.abs(curInd.getBoundingClientRect().width-b.getBoundingClientRect().width)<1.5;
        })(),
        [...$('devEqPresets').querySelectorAll('.pg')].map(g=>getComputedStyle(g).backgroundColor));
     ck('脉冲响应图上方的「脉冲响应 + 滤波器名」整行图题已删除：无 .df-cap / #dfFigName / .df-note；中文名、英文名、说明只在上方 5 个选项里各出现一次，18:7 浅色底不变',
