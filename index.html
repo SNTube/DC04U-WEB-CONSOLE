@@ -4817,13 +4817,6 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   .page-tab.on{background:transparent;color:#fff;font-weight:600;box-shadow:none}
   .page-tab.skin-only{display:none}
   .page[hidden]{display:none}
-  @media (prefers-reduced-motion: no-preference){
-    ::view-transition{background:var(--bg)}
-    ::view-transition-old(root){animation:pgOut .22s ease both}
-    ::view-transition-new(root){animation:pgIn .33s cubic-bezier(.2,.8,.3,1) both}
-  }
-  @keyframes pgOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-4px)}}
-  @keyframes pgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   body.on-device header>.toolbar,
   body.on-skin header>.toolbar{display:none}
   .conn-state{display:inline-flex;align-items:center;gap:6px;flex:none;white-space:nowrap;
@@ -4948,6 +4941,8 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   html[lang="en"] .side-actions .btn,html[lang="ja"] .side-actions .btn{font-size:11px;padding:6px 8px}
   .opt button:hover{color:var(--accent)}
   .opt button.on{background:transparent;color:#2d55b8;font-weight:600;box-shadow:none}
+  html[data-theme="dark"] .opt{--seg-bg:var(--surface-3);
+    --seg-sh:inset 0 0 0 1px rgba(107,150,255,.30),0 2px 8px rgba(0,0,0,.45)}
   .opt button,.eq-preset-panel .pg button{position:relative;z-index:1}
   .seg-ind{position:absolute;left:0;top:0;border-radius:999px;background:var(--seg-bg);
     box-shadow:var(--seg-sh);pointer-events:none;z-index:0;opacity:0;
@@ -10044,16 +10039,13 @@ function syncSkinPage(){
   }
   if(!split&&!SKIN_MOVING&&!$('pageSkin').hidden)setPage('device');
 }
+var pageAnimReady=false;
 function reducedMotion(){
   try{return window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(_){return false;}
 }
 function setPage(name){
   if(name==='skin'&&!skinIsSplit())name='device';
-  const run=()=>setPageNow(name);
-  if(!uiSelftestMode()&&!reducedMotion()&&document.startViewTransition){
-    try{document.startViewTransition(run);return;}catch(_){}
-  }
-  run();
+  setPageNow(name);
 }
 function setPageNow(name){
   const device=name==='device', skin=name==='skin';
@@ -10071,6 +10063,16 @@ function setPageNow(name){
   document.body.classList.toggle('on-device',dev);
   document.body.classList.toggle('on-skin',sk);
   syncSegInd($('pageTabs'));
+  if(pageAnimReady&&!uiSelftestMode()&&!reducedMotion()){
+    const cur=eq?$('pageEq'):(dev?$('pageDevice'):$('pageSkin'));
+    if(cur&&cur.animate){
+      cur.animate(
+        [{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'none'}],
+        {duration:330,easing:'cubic-bezier(.2,.8,.3,1)'}
+      );
+    }
+  }
+  pageAnimReady=true;
   if(dev||sk){
     if(!devChart)devChart=echarts.init($('devEqChart'));
     if(dev){devChart.resize();refreshDeviceState();}
@@ -12835,8 +12837,8 @@ function runSelfTest(){
     ck('动效：切页走 View Transitions、设备曲线用 ECharts 插值、轮盘错峰弹出、胶囊不重建 DOM',
        (()=>{
          const css=[...document.querySelectorAll('style')].map(e=>e.textContent).join('');
-         const pageOK=/startViewTransition/.test(setPage.toString()) &&
-                      /view-transition-new\(root\)/.test(css);
+         const pageOK=/\.animate\(/.test(setPageNow.toString()) &&
+                      /pageAnimReady/.test(setPageNow.toString());
          const curveOK=/animationDurationUpdate:280/.test(syncDevEqChart.toString()) &&
                        !/notMerge:true/.test(syncDevEqChart.toString());
          const radialOK=/classList\.add\('on'\)/.test(paintRadial.toString()) &&
