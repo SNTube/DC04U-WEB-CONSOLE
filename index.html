@@ -4416,10 +4416,11 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     --lamp:#f0b34a;
     --blue:#4a7ff0; --red:#a3282d; --green:#12b8a6; --orange:#f59b23; --teal:#0fa9a0;
     --theme-blue:#4E7BEE; --theme-gold:#C8A04A;
-    --shadow:0 2px 12px rgba(35,55,110,.07);
+    --shadow:0 1px 2px rgba(35,55,110,.06),0 10px 26px -14px rgba(35,55,110,.20);
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--fg);
+  body{margin:0;color:var(--fg);
+       background:radial-gradient(1200px 700px at 50% -10%,#ffffff 0%,rgba(255,255,255,0) 62%),var(--bg);
        font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;font-size:13px}
   .app{max-width:1500px;margin:0 auto;padding:18px clamp(12px,2.5vw,28px) 36px}
   header{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:14px}
@@ -4812,6 +4813,8 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap;
     transition:background .15s,border-color .15s}
   .page-tab{position:relative;z-index:1}
+  .btn,.page-tab{transition:transform .12s ease,background .15s,border-color .15s,color .15s}
+  .btn:active,.page-tab:active{transform:scale(.97)}
   .page-tab:hover{color:var(--accent)}
   .page-tab.on:hover{color:#fff}
   .page-tab.on{background:transparent;color:#fff;font-weight:600;box-shadow:none}
@@ -4918,8 +4921,12 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     padding:2px 7px;border-radius:10px}
   .dev-sec{border-top:1px solid var(--line);padding-top:11px;margin-top:11px}
   .dev-card h3+.dev-sec{border-top:none;padding-top:0;margin-top:0}
-  .dev-sec .lab{font-size:11.5px;color:var(--muted);margin-bottom:7px;display:flex;align-items:center;gap:8px}
+  .dev-sec .lab{font-size:11px;letter-spacing:.06em;color:var(--muted);
+    margin-bottom:7px;display:flex;align-items:center;gap:8px}
+  html[lang="en"] .dev-sec .lab{text-transform:uppercase;letter-spacing:.1em}
   .dev-sec .lab b{margin-left:auto;color:var(--fg);font-weight:600;font-variant-numeric:tabular-nums}
+  .dev-sec .lab b .u{font-size:.82em;font-weight:500;opacity:.62;
+    font-style:normal;letter-spacing:0}
   .opt{display:flex;flex-wrap:nowrap;gap:2px;padding:3px;border:1px solid var(--line);
     border-radius:999px;background:var(--surface-2);position:relative;
     --seg-bg:var(--surface);--seg-sh:0 1px 3px rgba(15,23,42,.16)}
@@ -5466,7 +5473,9 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     --surface:#222d43; --surface-2:#26324a; --surface-3:#2b3d61;
     --paper:#151d30; --lamp:#f0b34a;
     --pre-fg:#dce7fb; --pre-ok:#79d6a5; --pre-bad:#ff9b9b;
-    --shadow:0 2px 14px rgba(0,0,0,.34);
+    --shadow:0 1px 2px rgba(0,0,0,.45),0 12px 30px -16px rgba(0,0,0,.80),
+             inset 0 1px 0 rgba(255,255,255,.045);
+    background:radial-gradient(900px 560px at 50% -8%,#1b2438 0%,rgba(27,36,56,0) 62%),var(--bg);
     color-scheme:dark;
   }
   html.theme-switching *,html.theme-switching *::before,html.theme-switching *::after{
@@ -8691,7 +8700,7 @@ function devGroup(id,labels,key,values){
 }
 function setDevVal(id,v,fmt){
   const el=$(id),empty=(v===null||v===undefined);
-  el.textContent=empty?'—':fmt(v);
+  if(empty)el.textContent='—'; else el.innerHTML=String(fmt(v));
   el.classList.toggle('unread',empty);
   if(id==='devBalVal'){
     const side=empty?'':el.textContent.charAt(0);
@@ -8794,7 +8803,7 @@ function devRender(){
    ['devBalance',S.dev.balance],['devBrightness',S.dev.brightness]]
     .forEach(([id,v])=>paintRange($(id),v));
   setDevVal('devVolVal',S.dev.volume,v=>String(v));
-  setDevVal('devOpVal',S.dev.opVoltage,v=>v.toFixed(1)+' V');
+  setDevVal('devOpVal',S.dev.opVoltage,v=>v.toFixed(1)+' <i class="u">V</i>');
   setDevVal('devBalVal',S.dev.balance,v=>devBalanceLabel(v));
   setDevVal('devBrightVal',S.dev.brightness,v=>String(v));
   $('devColors').innerHTML=DEV_COLORS.map(c=>
