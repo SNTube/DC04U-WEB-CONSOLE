@@ -5739,13 +5739,13 @@ try{
     <aside>
       <div class="card panel">
         <h2>编辑选中频段 <span class="tag" id="selTag">#1</span></h2>
-        <div class="row"><label>类型</label><select id="edType"></select></div>
+        <div class="row"><label for="edType">类型</label><select id="edType"></select></div>
         <div class="row"><label>频率 F</label><input class="val" type="text" inputmode="numeric" id="edFreq" title="官方步进 1 Hz · ↑↓ 微调（Shift 加速 10 倍）">
-          <input type="range" id="edFreqRange" min="0" max="1000" step="1"></div>
+          <input type="range" id="edFreqRange" min="0" max="1000" step="1" aria-label="频率滑杆"></div>
         <div class="row"><label>增益 G</label><input class="val" type="text" inputmode="decimal" id="edGain" title="官方步进 0.1 dB · ↑↓ 微调（Shift 加速 10 倍）">
-          <input type="range" id="edGainRange" min="-20" max="20" step="0.1"></div>
+          <input type="range" id="edGainRange" min="-20" max="20" step="0.1" aria-label="增益滑杆"></div>
         <div class="row"><label>Q 值</label><input class="val" type="text" inputmode="decimal" id="edQ" title="官方步进 0.01 · ↑↓ 微调（Shift 加速 10 倍）">
-          <input type="range" id="edQRange" min="0.1" max="20" step="0.01"></div>
+          <input type="range" id="edQRange" min="0.1" max="20" step="0.01" aria-label="Q 值滑杆"></div>
         <p class="micro" id="edGainHint" hidden>此类型不使用增益 <code>G</code>：低通 / 高通 / 带通只由 <code>F</code> 和 <code>Q</code> 决定，全通只改相位。</p>
         <div class="row check"><label for="edOn">参与曲线</label><input type="checkbox" id="edOn"></div>
       </div>
@@ -5869,17 +5869,17 @@ try{
         <section class="card dev-card" id="devAudio">
           <div class="dev-sec meter">
             <div class="lab">音量 <b id="devVolVal">50</b></div>
-            <input class="dev-range" type="range" id="devVolume" min="0" max="100" step="1" value="50">
+            <input class="dev-range" type="range" id="devVolume" min="0" max="100" step="1" value="50" aria-label="设备音量">
             <div class="dev-scale"><span>0</span><span>50</span><span>100</span></div>
           </div>
           <div class="dev-sec meter">
             <div class="lab">耳放电压 <b id="devOpVal">4.5 V</b></div>
-            <input class="dev-range" type="range" id="devOpVoltage" min="4" max="6" step="0.1" value="4.5">
+            <input class="dev-range" type="range" id="devOpVoltage" min="4" max="6" step="0.1" value="4.5" aria-label="耳放电压">
             <div class="dev-scale"><span>4.0 V</span><span>5.0 V</span><span>6.0 V</span></div>
           </div>
           <div class="dev-sec meter">
             <div class="lab">声道平衡 <b id="devBalVal">0-0</b></div>
-            <input class="dev-range bal-range" type="range" id="devBalance" min="0" max="20" step="1" value="10">
+            <input class="dev-range bal-range" type="range" id="devBalance" min="0" max="20" step="1" value="10" aria-label="声道平衡">
             <div class="dev-scale bal-scale"><span>L10</span><span>0-0</span><span>R10</span></div>
           </div>
         </section>
