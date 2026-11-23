@@ -4402,14 +4402,9 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
 
 </script>
 <style>
-  html{background-color:var(--bg);background-image:
-    linear-gradient(155deg,rgba(255,255,255,0) 45%,rgba(28,38,66,.035) 100%),
-    radial-gradient(135% 115% at 50% 0%,transparent 50%,rgba(28,38,66,.05) 100%),
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='1600'><filter id='a' x='0' y='0' width='1600' height='1600'><feTurbulence type='fractalNoise' baseFrequency='.0042 .0058' numOctaves='3' seed='7'/><feColorMatrix type='matrix' values='0 0 0 0 0.2  0 0 0 0 0.25  0 0 0 0 0.38  0 0 0 .07 0'/></filter><filter id='b' x='0' y='0' width='1600' height='1600'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='3'/><feColorMatrix type='matrix' values='0 0 0 0 0.2  0 0 0 0 0.25  0 0 0 0 0.38  0 0 0 .22 0'/></filter><rect width='1600' height='1600' filter='url(%23a)'/><rect width='1600' height='1600' filter='url(%23b)'/></svg>");
-    background-size:auto,auto,cover;
-    background-repeat:no-repeat,no-repeat,no-repeat;
-    background-attachment:fixed,fixed,fixed;
-    background-position:0 0,center top,center top}
+  html{background-color:var(--bg);
+       background-image:linear-gradient(180deg,#f8fafe 0%,#e9eff9 100%);
+       background-repeat:no-repeat;background-attachment:fixed;background-size:cover}
   /* 主题变量。浅色为默认，深色在下方 html[data-theme="dark"] 里覆盖同名变量；
      组件样式只引用变量，不写死颜色。 */
   :root{
@@ -4431,8 +4426,8 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
        font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;font-size:13px}
   body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9000;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='.6'/></svg>");
-    background-size:160px 160px;opacity:.13;mix-blend-mode:soft-light}
-  html[data-theme="dark"] body::after{opacity:.17}
+    background-size:160px 160px;opacity:.10;mix-blend-mode:soft-light}
+  html[data-theme="dark"] body::after{opacity:.13}
   .app{max-width:1500px;margin:0 auto;padding:18px clamp(12px,2.5vw,28px) 36px}
   header{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:14px}
   .spacer{flex:1}
@@ -5486,23 +5481,8 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     --pre-fg:#dce7fb; --pre-ok:#79d6a5; --pre-bad:#ff9b9b;
     --shadow:0 1px 2px rgba(0,0,0,.45),0 12px 30px -16px rgba(0,0,0,.80),
              inset 0 1px 0 rgba(255,255,255,.045);
-    background-color:var(--bg);background-image:
-    radial-gradient(62% 58% at 22% 0%,rgba(120,150,220,.12),rgba(120,150,220,0) 70%),
-    radial-gradient(135% 115% at 50% 0%,transparent 50%,rgba(0,0,0,.36) 100%),
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='1600'><filter id='a' x='0' y='0' width='1600' height='1600'><feTurbulence type='fractalNoise' baseFrequency='.0042 .0058' numOctaves='3' seed='7'/><feColorMatrix type='matrix' values='0 0 0 0 0.86  0 0 0 0 0.9  0 0 0 0 1  0 0 0 .07 0'/></filter><filter id='b' x='0' y='0' width='1600' height='1600'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='3'/><feColorMatrix type='matrix' values='0 0 0 0 0.86  0 0 0 0 0.9  0 0 0 0 1  0 0 0 .20 0'/></filter><rect width='1600' height='1600' filter='url(%23a)'/><rect width='1600' height='1600' filter='url(%23b)'/></svg>");
-    background-size:auto,auto,cover;
-    background-repeat:no-repeat,no-repeat,no-repeat;
-    background-attachment:fixed,fixed,fixed;
-    background-position:0 0,center top,center top;
-
-    background-size:auto,cover;
-    background-repeat:no-repeat,no-repeat;
-    background-attachment:fixed,fixed;
-    background-position:center top,0 0;
-    background-size:auto,auto,auto,480px 480px;
-    background-repeat:repeat,repeat,no-repeat,repeat;
-    background-attachment:fixed,fixed,fixed,fixed;
-    background-position:0 0,0 0,center top,0 0;
+    background-color:var(--bg);
+    background-image:linear-gradient(180deg,#1a2331 0%,#0f1522 100%);
     color-scheme:dark;
   }
   html.theme-switching *,html.theme-switching *::before,html.theme-switching *::after{
@@ -12884,17 +12864,15 @@ function runSelfTest(){
        })(),
        [...$('pageTabs').querySelectorAll('.page-tab')].map(b=>b.textContent.trim()));
 
-    ck('背景＝html 单层的程序纹理（两级噪声 + 晕影），body 透明（不会收出接缝）',
+    ck('背景＝html 单层的竖向浅渐变（fixed），body 透明（不会在底部收出分界线）',
        (()=>{
          const hs=getComputedStyle(document.documentElement),
                bs=getComputedStyle(document.body);
-         return hs.backgroundImage.indexOf('data:image/svg+xml')>=0 &&
-                hs.backgroundImage.indexOf('radial-gradient')>=0 &&
+         return hs.backgroundImage.indexOf('linear-gradient')>=0 &&
                 hs.backgroundAttachment.indexOf('fixed')>=0 &&
-                hs.backgroundSize.indexOf('cover')>=0 &&
                 bs.backgroundColor==='rgba(0, 0, 0, 0)';
        })(),
-       [getComputedStyle(document.documentElement).backgroundSize,
+       [getComputedStyle(document.documentElement).backgroundImage.slice(0,40),
         getComputedStyle(document.body).backgroundColor]);
 
     ck('动效：切页走 View Transitions、设备曲线用 ECharts 插值、轮盘错峰弹出、胶囊不重建 DOM',
