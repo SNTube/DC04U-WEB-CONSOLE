@@ -7327,7 +7327,6 @@ function wheelQ(ev,i){
 }
 function startDrag(ev,i){
   if(ev.button!==0) return;
-  if(bands()[i].status===false) return;
   closeRadial();
   ev.preventDefault(); ev.stopPropagation();
   select(i);
@@ -7338,7 +7337,11 @@ function startDrag(ev,i){
     const p=chart.convertFromPixel({xAxisIndex:0,yAxisIndex:0},
       [e.clientX-rect.left,e.clientY-rect.top]);
     if(!p) return;
-    if(!pushed){pushHistory();pushed=true;}
+    if(!pushed){
+      pushHistory();
+      if(bands()[i].status===false)PEQCore.softOn(bands(),i);
+      pushed=true;
+    }
     const r=ZOOM_LEVELS[S.zoom];
     const f=Math.max(20,Math.min(20000,Math.round(FX(p[0]))));
     const g=Math.max(-r,Math.min(r,Math.round(p[1]*10)/10));
@@ -10474,6 +10477,32 @@ function runSelfTest(){
     window.dispatchEvent(new MouseEvent('mouseup',{bubbles:true,button:2}));
     ck('右键按住拖动不改 F/G：轮盘是右键功能，拖圆点只认左键',
        b.frequency===f0 && b.gain===g0, [f0,b.frequency,g0,b.gain]);
+  })();
+  (()=>{
+    const b=bands()[8];
+    const snap=JSON.parse(JSON.stringify(b));
+    PEQCore.softOff(bands(),8); render();
+    const wasClosed=b.status===false && !!b._parked;
+    const pt=$('points').querySelector('.pt[data-i="8"]');
+    const rect=$('chartWrap').getBoundingClientRect();
+    const [px,py]=chart.convertToPixel({xAxisIndex:0,yAxisIndex:0},[Math.log10(2000),3.5]);
+    const r=pt.getBoundingClientRect();
+    pt.dispatchEvent(new MouseEvent('mousedown',{bubbles:true,cancelable:true,button:0,buttons:1,
+      clientX:r.x+r.width/2,clientY:r.y+r.height/2}));
+    window.dispatchEvent(new MouseEvent('mousemove',{bubbles:true,clientX:rect.left+px,clientY:rect.top+py}));
+    window.dispatchEvent(new MouseEvent('mouseup',{bubbles:true,button:0}));
+    const opened=b.status===true && !b._parked;
+    const moved=Math.abs(b.frequency-2000)<60 && Math.abs(b.gain-3.5)<0.4;
+    const fAfter=b.frequency, gAfter=b.gain;
+    PEQCore.softOff(bands(),8);
+    const parkedNew=!!b._parked &&
+      Math.abs(b._parked.frequency-fAfter)<0.001 && Math.abs(b._parked.gain-gAfter)<0.001;
+    Object.keys(b).forEach(k=>delete b[k]);
+    Object.assign(b,snap);
+    render();
+    ck('空槽圆点也能拖：拖一下就参与曲线，关闭前记的旧参数被拖动值取代',
+       wasClosed && opened && moved && parkedNew,
+       [wasClosed,opened,moved,parkedNew,fAfter,gAfter]);
   })();
   (()=>{
     const pt=$('points').querySelector('.pt[data-i="0"]'), r=pt.getBoundingClientRect();
