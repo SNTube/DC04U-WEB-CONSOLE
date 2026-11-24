@@ -2120,7 +2120,6 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "cache.names":"自定义 1 / 2 / 3 的方案命名（只用于本机备忘）",
     "cache.normFreq":"标准化频率（频响曲线 0 dB 的参照点）",
     "cache.tipMode":"浮层说明档位（关 / 简洁 / 详细）",
-    "cache.volAuto":"音量静态补偿的「自动」开关（补偿值本身不保存）",
     "cache.uiLang":"界面语言（English / 中文 / 日本語）",
     "cache.warn":"不会改动设备里的任何设置，也不会向设备发送任何写入报文；不会影响已导出的 PEQ / JSON 文件。清除后页面会刷新回到初始状态，当前未导出的均衡器编辑会丢失，已连接的设备会断开。",
     "cache.confirm":"确认清除",
@@ -2805,7 +2804,6 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "cache.names":"Names of custom presets 1 / 2 / 3 (local memo only)",
     "cache.normFreq":"Normalize frequency (the 0 dB reference of the response curve)",
     "cache.tipMode":"Marker tooltip level (off / simple / detailed)",
-    "cache.volAuto":"Static compensation auto switch (the value itself is not saved)",
     "cache.uiLang":"Interface language (English / Chinese / Japanese)",
     "cache.warn":"No device setting is changed and no write packet is sent; exported PEQ / JSON files are unaffected. After clearing, the page reloads to its initial state, unsaved equalizer edits are lost and the connected device is disconnected.",
     "cache.confirm":"Clear now",
@@ -3490,7 +3488,6 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "cache.names":"カスタム 1 / 2 / 3 のプリセット名（ローカルのメモ用）",
     "cache.normFreq":"正規化周波数（特性カーブ 0 dB の基準点）",
     "cache.tipMode":"マーカーの説明の詳細度（オフ / シンプル / 詳細）",
-    "cache.volAuto":"音量静的補正の「自動」スイッチ（補正値自体は保存されません）",
     "cache.uiLang":"表示言語（English / 中文 / 日本語）",
     "cache.warn":"デバイスの設定は一切変更せず、書き込みパケットも送信しません。書き出し済みの PEQ / JSON ファイルには影響しません。消去後はページが初期状態に戻り、未保存のイコライザー編集は失われ、接続中のデバイスは切断されます。",
     "cache.confirm":"消去する",
@@ -4153,7 +4150,6 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "自定义 1 / 2 / 3 的方案命名（只用于本机备忘）":"cache.names",
     "标准化频率（频响曲线 0 dB 的参照点）":"cache.normFreq",
     "浮层说明档位（关 / 简洁 / 详细）":"cache.tipMode",
-    "音量静态补偿的「自动」开关（补偿值本身不保存）":"cache.volAuto",
     "界面语言（English / 中文 / 日本語）":"cache.uiLang",
     "不会改动设备里的任何设置，也不会向设备发送任何写入报文；不会影响已导出的 PEQ / JSON 文件。清除后页面会刷新回到初始状态，当前未导出的均衡器编辑会丢失，已连接的设备会断开。":"cache.warn",
     "确认清除":"cache.confirm",
@@ -6141,7 +6137,6 @@ try{
       <li>自定义 1 / 2 / 3 的方案命名（只用于本机备忘）</li>
       <li>标准化频率（频响曲线 0 dB 的参照点）</li>
       <li>浮层说明档位（关 / 简洁 / 详细）</li>
-      <li>音量静态补偿的「自动」开关（补偿值本身不保存）</li>
       <li>界面语言（English / 中文 / 日本語）</li>
     </ul>
     <p class="cache-note">不会改动设备里的任何设置，也不会向设备发送任何写入报文；不会影响已导出的 PEQ / JSON 文件。清除后页面会刷新回到初始状态，当前未导出的均衡器编辑会丢失，已连接的设备会断开。</p>
@@ -9859,8 +9854,9 @@ $('piSlots').querySelectorAll('button').forEach(b=>b.onclick=()=>{
   $(id).addEventListener('input',e=>devSliderInput(key,e.target)));
 
 const VOLC={base:null,on:false,suppress:0,auto:false,lastGain:null};
-const VOLC_AUTO_KEY='dc04u.volAuto.v1';
-try{VOLC.auto=localStorage.getItem(VOLC_AUTO_KEY)==='1';}catch(_){VOLC.auto=false;}
+const VOLC_AUTO_LEGACY_KEY='dc04u.volAuto.v1';
+VOLC.auto=false;
+try{localStorage.removeItem(VOLC_AUTO_LEGACY_KEY);}catch(_){}
 function volcAutoValue(){return devClamp(-2*Math.round(+S.preset.totalGain||0),-100,100);}
 function volcValue(){return VOLC.auto?volcAutoValue():Math.round(+S.volComp||0);}
 function volcTarget(){
@@ -10011,7 +10007,6 @@ function volcSyncSlotState(){
   const auto=$('volcAuto');
   if(auto)auto.onclick=()=>{
     VOLC.auto=!VOLC.auto;
-    try{localStorage.setItem(VOLC_AUTO_KEY,VOLC.auto?'1':'0');}catch(_){}
     VOLC.lastGain=Math.round(+S.preset.totalGain||0);
     volcSync();
     if(VOLC.on)volcApply();
@@ -13684,12 +13679,12 @@ function runSelfTest(){
        })(),
        {id:$('btnClearCache')&&$('btnClearCache').id,
         after:$('btnConnToggle').nextElementSibling&&$('btnConnToggle').nextElementSibling.id});
-    ck('清除缓存清单 8 项：浮层说明档位 / 音量自动补偿开关 / 界面语言三条均已进三语词典',
+    ck('清除缓存清单 7 项：浮层说明档位 / 界面语言均已进三语词典（自动开关不落盘，不再列出）',
        (()=>{
          const zh=[...document.querySelectorAll('#cacheMask .cache-list li')].map(li=>li.textContent.trim());
-         const must=['浮层说明档位（关 / 简洁 / 详细）','音量静态补偿的「自动」开关（补偿值本身不保存）',
-                     '界面语言（English / 中文 / 日本語）'];
-         return zh.length===8 && must.every(t=>zh.indexOf(t)>=0 && !!(window.I18N&&I18N.REV[t]));
+         const must=['浮层说明档位（关 / 简洁 / 详细）','界面语言（English / 中文 / 日本語）'];
+         return zh.length===7 && must.every(t=>zh.indexOf(t)>=0 && !!(window.I18N&&I18N.REV[t])) &&
+                zh.every(t=>t.indexOf('音量静态补偿')<0);
        })(),
        [...document.querySelectorAll('#cacheMask .cache-list li')].map(li=>li.textContent.trim()).slice(-3));
     ck('界面语言进缓存：键名 dc04u.uiLang.v1，取值与 DEV_LANG / I18N.LANGS 同序（en / zh / ja）',
@@ -14019,10 +14014,26 @@ function runSelfTest(){
          return v1===60&&shown1==='+12'&&v2===54&&shown2==='+6'&&base2===48&&
                 base3===51&&label3==='关闭后音量 51';
        })(),vc.autoFollow);
+
+    ck('「自动」开关不落盘：开着也不写 dc04u.volAuto.v1（刷新重连不会把已补偿的音量当基准）',
+       (()=>{
+         const was=VOLC.auto,keepOn=VOLC.on,keepBase=VOLC.base;
+         try{localStorage.removeItem('dc04u.volAuto.v1');}catch(_){}
+         const btn=$('volcAuto');
+         btn.onclick();
+         const on=VOLC.auto===true;
+         let stored=null;try{stored=localStorage.getItem('dc04u.volAuto.v1');}catch(_){}
+         btn.onclick();
+         const off=VOLC.auto===false;
+         let stored2=null;try{stored2=localStorage.getItem('dc04u.volAuto.v1');}catch(_){}
+         VOLC.auto=was;VOLC.on=keepOn;VOLC.base=keepBase;
+         return on&&off&&stored===null&&stored2===null;
+       })(),
+       (()=>{try{return localStorage.getItem('dc04u.volAuto.v1');}catch(_){return 'no-storage';}})());
     S.volComp=0;VOLC.on=false;VOLC.base=null;VOLC.suppress=0;VOLC.auto=false;
     S.eqSlot=null;S.eqLocalOverride=false;
     applyDeviceReadout(SELFTEST_READOUT);
-    try{localStorage.removeItem(VOLC_AUTO_KEY);}catch(_){}
+    try{localStorage.removeItem(VOLC_AUTO_LEGACY_KEY);}catch(_){}
     volcSync();
 
     const m93={};
