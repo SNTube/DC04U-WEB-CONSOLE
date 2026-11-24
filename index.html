@@ -10007,9 +10007,10 @@ function volcSyncSlotState(){
   }
   if(!want&&VOLC.on){
     dropPending();
-    const base=VOLC.base;
+    const base=VOLC.base,val=volcValue();
     VOLC.on=false;VOLC.base=null;
-    if(base!=null&&S.dev.volume!=null&&volcValue()!==0){
+    S.volComp=0;
+    if(base!=null&&S.dev.volume!=null&&val!==0){
       VOLC.suppress++;
       S.dev.volume=base;
       paintRange($('devVolume'),base);
@@ -14027,7 +14028,7 @@ function runSelfTest(){
          vc.set={vol:S.dev.volume,shown:el.value,expect:VOLC.base+7,slider:$('devVolume').value};
          return S.dev.volume===VOLC.base+7&&S.dev.volume===55&&$('devVolume').value==='55';
        })(),vc.set);
-    ck('音量静态补偿：取消自定义预设 → 音量退回「关闭后音量」48，底标改回「开启前音量 48」',
+    ck('音量静态补偿：取消自定义预设 → 音量退回「关闭后音量」48、补偿值归零、底标改回「开启前音量 48」',
        (()=>{
          S.eqSlot=null;S.eqLocalOverride=true;syncPiSlots();
          vc.disable={vol:S.dev.volume,label:$('volcBase').textContent,
@@ -14035,7 +14036,7 @@ function runSelfTest(){
                      off:$('volcBox').classList.contains('off')};
          return !VOLC.on&&VOLC.base===null&&S.dev.volume===48&&
                 $('volcBase').textContent==='开启前音量 48'&&
-                $('volComp').value==='+7'&&$('volcBox').classList.contains('off');
+                $('volComp').value==='0'&&$('volcBox').classList.contains('off');
        })(),vc.disable);
     ck('音量静态补偿：步进恒 1（按 Shift 也只走 1 档）、0 显示为「0」、越界只红边不写入',
        (()=>{
