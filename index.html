@@ -2559,6 +2559,30 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "toastT.localOnly":"\u4ec5\u672c\u673a\u751f\u6548 \u00b7 {reason}\uff08\u8fde\u63a5\u8bbe\u5907\u5e76\u5728\u300c\u5199\u5165\u8bbe\u7f6e\u300d\u5b8c\u6210\u6388\u6743\u540e\u624d\u4f1a\u5199\u5165\u8bbe\u5907\uff09",
     "toastT.rollback":"\u5199\u5165\u5931\u8d25\uff0c\u5df2\u56de\u6eda\u5230\u539f\u503c\uff1a{msg}",
     "toastT.volcFail":"音量写入未能确认（已重试 {n} 次）：{msg}",
+    "attr.freqSlider":"频率滑杆",
+    "attr.gainSlider":"增益滑杆",
+    "attr.qSlider":"Q 值滑杆",
+    "attr.devVolume":"设备音量",
+    "attr.fsDialog":"文件检索",
+    "attr.fsResults":"检索结果",
+    "tip.importPreset":"导入 PEQ：官方 JSON 或 Parametric EQ 文本（.json / .txt / .eq），按文件内容自动识别",
+    "conn.connecting":"连接中…",
+    "conn.reading":"读取中…",
+    "conn.lost":"设备已断开",
+    "nav.disconnect":"断开连接",
+    "tip.disconnect":"断开与 DC04U 的连接",
+    "toastT.themeDark":"已切换到深色模式",
+    "toastT.themeLight":"已切换到浅色模式",
+    "toastT.bandOn":"已恢复为在用段",
+    "toastT.bandOff":"已软关闭：G 归零、F 保持不动，导出仍是官方空槽",
+    "toastT.baseOn":"已拉直：各曲线显示相对目标曲线的差值",
+    "toastT.baseOff":"已退出拉直：恢复绝对 dB 显示",
+    "toastT.backCleared":"背面素材已清除",
+    "toastT.frontCleared":"正面素材已清除",
+    "info.eqFail":"Parametric EQ 导入失败",
+    "info.eqFailNote":"（未改动当前预设）",
+    "info.eqPartial":"Parametric EQ 导入完成（部分内容已跳过）",
+    "info.eqPartialNote":"{on} / 10 段在用，已转换为官方 JSON。以下内容被跳过或做了调整：",
     "fs.curve":"频响曲线文件夹",
     "fs.preset":"PEQ 预设文件夹",
     "fs.export":"导出文件夹",
@@ -3261,6 +3285,30 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "toastT.localOnly":"Local only \u00b7 {reason} (written to the device only after connecting and authorizing in \"Write settings\")",
     "toastT.rollback":"Write failed; rolled back to the previous value: {msg}",
     "toastT.volcFail":"Could not confirm the volume write (retried {n} times): {msg}",
+    "attr.freqSlider":"Frequency slider",
+    "attr.gainSlider":"Gain slider",
+    "attr.qSlider":"Q slider",
+    "attr.devVolume":"Device volume",
+    "attr.fsDialog":"File browser",
+    "attr.fsResults":"Search results",
+    "tip.importPreset":"Import PEQ: official JSON or Parametric EQ text (.json / .txt / .eq); the format is detected from the file contents",
+    "conn.connecting":"Connecting…",
+    "conn.reading":"Reading…",
+    "conn.lost":"Device disconnected",
+    "nav.disconnect":"Disconnect",
+    "tip.disconnect":"Disconnect from DC04U",
+    "toastT.themeDark":"Switched to dark mode",
+    "toastT.themeLight":"Switched to light mode",
+    "toastT.bandOn":"Band restored",
+    "toastT.bandOff":"Soft-disabled: G set to 0, F unchanged; still exports as an official empty slot",
+    "toastT.baseOn":"Flattened: curves now show the difference from the target curve",
+    "toastT.baseOff":"Flatten off: absolute dB restored",
+    "toastT.backCleared":"Back artwork cleared",
+    "toastT.frontCleared":"Front artwork cleared",
+    "info.eqFail":"Parametric EQ import failed",
+    "info.eqFailNote":"(current preset unchanged)",
+    "info.eqPartial":"Parametric EQ imported (some parts skipped)",
+    "info.eqPartialNote":"{on} / 10 bands in use, converted to official JSON. The following was skipped or adjusted:",
     "fs.curve":"Response curve folder",
     "fs.preset":"PEQ preset folder",
     "fs.export":"Export folder",
@@ -3963,6 +4011,30 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "toastT.localOnly":"\u3053\u306e PC \u5185\u306e\u307f \u00b7 {reason}\uff08\u63a5\u7d9a\u3057\u3066\u300c\u66f8\u304d\u8fbc\u307f\u8a2d\u5b9a\u300d\u3067\u627f\u8a8d\u3059\u308b\u3068\u30c7\u30d0\u30a4\u30b9\u306b\u66f8\u304d\u8fbc\u307e\u308c\u307e\u3059\uff09",
     "toastT.rollback":"\u66f8\u304d\u8fbc\u307f\u306b\u5931\u6557\u3057\u3001\u5143\u306e\u5024\u306b\u623b\u3057\u307e\u3057\u305f\uff1a{msg}",
     "toastT.volcFail":"\u97f3\u91cf\u306e\u66f8\u304d\u8fbc\u307f\u3092\u78ba\u8a8d\u3067\u304d\u307e\u305b\u3093\u3067\u3057\u305f\uff08{n} \u56de\u518d\u8a66\u884c\uff09\uff1a{msg}",
+    "attr.freqSlider":"周波数スライダー",
+    "attr.gainSlider":"ゲインスライダー",
+    "attr.qSlider":"Q スライダー",
+    "attr.devVolume":"デバイス音量",
+    "attr.fsDialog":"ファイル検索",
+    "attr.fsResults":"検索結果",
+    "tip.importPreset":"PEQ を読み込み：公式 JSON または Parametric EQ テキスト（.json / .txt / .eq）。形式はファイル内容から自動判定します",
+    "conn.connecting":"接続中…",
+    "conn.reading":"読み込み中…",
+    "conn.lost":"デバイスが切断されました",
+    "nav.disconnect":"切断",
+    "tip.disconnect":"DC04U との接続を切断",
+    "toastT.themeDark":"ダークモードに切り替えました",
+    "toastT.themeLight":"ライトモードに切り替えました",
+    "toastT.bandOn":"使用中のバンドに戻しました",
+    "toastT.bandOff":"ソフトオフ：G を 0 にし、F はそのまま。書き出しは公式の空スロットのまま",
+    "toastT.baseOn":"フラット表示：各カーブはターゲットとの差を表示します",
+    "toastT.baseOff":"フラット表示を解除：絶対 dB 表示に戻しました",
+    "toastT.backCleared":"背面素材をクリアしました",
+    "toastT.frontCleared":"正面素材をクリアしました",
+    "info.eqFail":"Parametric EQ の読み込みに失敗しました",
+    "info.eqFailNote":"（現在のプリセットは変更していません）",
+    "info.eqPartial":"Parametric EQ を読み込みました（一部をスキップ）",
+    "info.eqPartialNote":"{on} / 10 バンド使用中。公式 JSON に変換しました。以下はスキップまたは調整された内容です：",
     "fs.curve":"周波数特性フォルダ",
     "fs.preset":"PEQ プリセットフォルダ",
     "fs.export":"書き出しフォルダ",
@@ -7667,7 +7739,7 @@ function applyTheme(dark,persist){
 $('themeDock').onclick=()=>{
   const dark=!isDark();
   applyTheme(dark,true);
-  toast(dark?'已切换到深色模式':'已切换到浅色模式');
+  toast(dark?T('toastT.themeDark','已切换到深色模式'):T('toastT.themeLight','已切换到浅色模式'));
 };
 
 const EQN_KEY='dc04u.eqSlotNames.v1';
@@ -7899,7 +7971,7 @@ $('edQRange').oninput=e=>editBand(()=>bands()[S.selected].factor=roundTo(+e.targ
 $('edOn').onchange=e=>{
   const on=e.target.checked;
   updatePreset(()=>on?PEQCore.softOn(bands(),S.selected):PEQCore.softOff(bands(),S.selected));
-  toast(on?'已恢复为在用段':'已软关闭：G 归零、F 保持不动，导出仍是官方空槽');
+  toast(on?T('toastT.bandOn','已恢复为在用段'):T('toastT.bandOff','已软关闭：G 归零、F 保持不动，导出仍是官方空槽'));
 };
 
 $('legend').querySelectorAll('.chip').forEach(el=>el.onclick=()=>{
@@ -8053,13 +8125,13 @@ function importParametricEqText(text,name){
   const r=parseParametricEq(text,{name});
   if(!r.ok){
     toast(fillTpl(T('toastT.importFail','导入失败：{msg}'),{msg:r.error}));
-    if(r.warns.length) showInfo('Parametric EQ 导入失败',r.error+'（未改动当前预设）',r.warns.join('\n'));
+    if(r.warns.length) showInfo(T('info.eqFail','Parametric EQ 导入失败'),r.error+T('info.eqFailNote','（未改动当前预设）'),r.warns.join('\n'));
     return;
   }
   applyOfficialJson(r.json,{baseline:true,imported:true});
   toast(fillTpl(T('toastT.importedApo','已导入 Parametric EQ：{on} / 10 段在用'),{on:r.onCount}));
-  if(r.warns.length) showInfo('Parametric EQ 导入完成（部分内容已跳过）',
-    `${r.onCount} / 10 段在用，已转换为官方 JSON。以下内容被跳过或做了调整：`,
+  if(r.warns.length) showInfo(T('info.eqPartial','Parametric EQ 导入完成（部分内容已跳过）'),
+    fillTpl(T('info.eqPartialNote','{on} / 10 段在用，已转换为官方 JSON。以下内容被跳过或做了调整：'),{on:r.onCount}),
     r.warns.join('\n'));
 }
 $('exportPreset').onclick=async()=>{
@@ -8218,7 +8290,7 @@ function setBaseline(on){
   const from=((chart.getOption()||{}).series||[]).map(s=>(s.data||[]).map(d=>Array.isArray(d)?d[1]:d));
   S.baselineOn=on;
   syncBaseIcon();
-  toast(on?'已拉直：各曲线显示相对目标曲线的差值':'已退出拉直：恢复绝对 dB 显示');
+  toast(on?T('toastT.baseOn','已拉直：各曲线显示相对目标曲线的差值'):T('toastT.baseOff','已退出拉直：恢复绝对 dB 显示'));
   cancelBaseAnim();
   if(uiSelftestMode()){render();return;}
   const next=buildSeries();
@@ -9631,7 +9703,7 @@ const Skin = (function(){
     };
     $('skinClear'+c).onclick=()=>{
       St[side]=null;if(St.editing===side)St.editing=null;render();
-      toast((side==='back'?'背面':'正面')+'素材已清除');
+      toast(side==='back'?T('toastT.backCleared','背面素材已清除'):T('toastT.frontCleared','正面素材已清除'));
     };
     $('skin'+c+'Fit').onclick=()=>{fit(side);render();toast('已按当前角度等比填充（方向保留）');};
     [['L90',-90],['R90',90]].forEach(([suf,d])=>{
@@ -9822,10 +9894,10 @@ function setConnState(text,connected){
 }
 function syncConnToggle(){
   const b=$('btnConnToggle'),on=!!roBridge;
-  b.textContent=on?'断开连接':'连接设备';
+  b.textContent=on?T('nav.disconnect','断开连接'):T('nav.connect','连接设备');
   b.classList.toggle('connected',on);
-  b.title=on?'断开与 DC04U 的连接'
-            :'连接 DC04U 并持续同步设备状态（本地 WebHID）';
+  b.title=on?T('tip.disconnect','断开与 DC04U 的连接')
+            :T('tip.connect','连接 DC04U 并持续同步设备状态（本地 WebHID）');
   b.disabled=!!roBusy;
 }
 async function openDeviceBridge(){
@@ -10104,14 +10176,14 @@ async function disconnectDevice(showToast){
   DW.device=null;
   clearTimeout(EQW.timer);EQW.timer=null;EQW.hash=null;EQW.slot=null;
   DW.gateNoticed=false;EQW.gateNoticed=false;
-  setConnState('未连接设备',false);
+  setConnState(T('nav.disconnected','未连接设备'),false);
   syncDevReadHint(false);
   syncConnToggle();syncWriteUi();
   if(showToast)toast('已断开设备，写入已停止（最后一次读数保留）');
 }
 async function handleDeviceLost(reason){
   await disconnectDevice(false);
-  setConnState('设备已断开',false);
+  setConnState(T('conn.lost','设备已断开'),false);
   toast(reason+'，已停止读取');
 }
 async function connectDevice(){
@@ -10119,10 +10191,10 @@ async function connectDevice(){
   roBusy=true;syncConnToggle();
   const t0=performance.now();
   try{
-    setConnState('连接中…',false);
+    setConnState(T('conn.connecting','连接中…'),false);
     const bridge=await openDeviceBridge();
-    if(!bridge){setConnState('未连接设备',false);toast('已取消设备选择');return;}
-    setConnState('读取中…',false);
+    if(!bridge){setConnState(T('nav.disconnected','未连接设备'),false);toast('已取消设备选择');return;}
+    setConnState(T('conn.reading','读取中…'),false);
     const before=bridge.sentLog().length;
     const res=await bridge.readDc04uState({timeoutMs:400});
     roState={...(res.state||{})};
@@ -10136,7 +10208,7 @@ async function connectDevice(){
     }catch(_){}
     const sent=bridge.sentLog().length-before;
     roLastReport=buildReadReport(res,Math.round(performance.now()-t0),roDeviceName,sent);
-    setConnState('已连接 · '+roDeviceName,true);
+    setConnState(fillTpl(T('toastT.badgeConnected','已连接 · {name}'),{name:roDeviceName}),true);
     syncDevReadHint(true);
     startHealthCheck();
     const fwNote=DeviceProtocol.isSupportedFirmware(S.fwVersion)
@@ -10240,7 +10312,7 @@ $('uacReconnect').onclick=async()=>{
   closeUacMask();
   if(uacReconnectHook){uacReconnectHook();return;}
   await disconnectDevice(false);
-  setConnState('未连接设备',false);
+  setConnState(T('nav.disconnected','未连接设备'),false);
   syncConnToggle();syncWriteUi();
   await connectDevice();
 };
