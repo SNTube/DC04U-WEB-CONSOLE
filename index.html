@@ -2559,6 +2559,26 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "toastT.localOnly":"\u4ec5\u672c\u673a\u751f\u6548 \u00b7 {reason}\uff08\u8fde\u63a5\u8bbe\u5907\u5e76\u5728\u300c\u5199\u5165\u8bbe\u7f6e\u300d\u5b8c\u6210\u6388\u6743\u540e\u624d\u4f1a\u5199\u5165\u8bbe\u5907\uff09",
     "toastT.rollback":"\u5199\u5165\u5931\u8d25\uff0c\u5df2\u56de\u6eda\u5230\u539f\u503c\uff1a{msg}",
     "toastT.volcFail":"音量写入未能确认（已重试 {n} 次）：{msg}",
+    "fs.curve":"频响曲线文件夹",
+    "fs.preset":"PEQ 预设文件夹",
+    "fs.export":"导出文件夹",
+    "fs.unset":"未设置",
+    "fs.pick":"选择",
+    "fs.clear":"清空",
+    "fs.hint":"设定后，「导入源频响曲线 / 导入目标曲线 / 导入 PEQ」改为在该文件夹里检索选取；导出默认存到导出文件夹。清空即恢复系统的文件选择框。",
+    "fs.unsupported":"当前浏览器不支持本地文件夹（需要 Chrome / Edge）：这三行只显示、不可选。",
+    "fsb.import":"导入文件",
+    "fsb.importPeq":"导入 PEQ 文件",
+    "fsb.count":"共 {n} 项",
+    "fsb.countCap":"共 {n} 项，显示前 {m}",
+    "fsb.empty":"这个文件夹里没有匹配的文件",
+    "fsb.noMore":"没有更多结果",
+    "fsb.search":"搜索文件名…",
+    "toastT.fsSet":"已设定{label}：{dir}",
+    "toastT.fsCleared":"已清空{label}，恢复系统文件选择框",
+    "toastT.fsNoSave":"已选定，但本浏览器没能保存（下次打开需要重选）",
+    "toastT.fsLost":"文件夹权限已失效，请在「写入设置」里重新选择文件夹",
+    "toastT.fsReadFail":"读取文件失败：{msg}",
     "toastT.notWritten":"\u53c2\u6570\u672a\u5199\u5165\u8bbe\u5907\uff1a{msg}",
     "toastT.gateReenum":"设备正在重新枚举，请重新插拔后再操作",
     "toastT.reenumMismatch":"设备重连后读数与写入值不一致（期望 {want}，实际 {got}），已按设备值显示",
@@ -3244,6 +3264,26 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "toastT.localOnly":"Local only \u00b7 {reason} (written to the device only after connecting and authorizing in \"Write settings\")",
     "toastT.rollback":"Write failed; rolled back to the previous value: {msg}",
     "toastT.volcFail":"Could not confirm the volume write (retried {n} times): {msg}",
+    "fs.curve":"Response curve folder",
+    "fs.preset":"PEQ preset folder",
+    "fs.export":"Export folder",
+    "fs.unset":"Not set",
+    "fs.pick":"Choose",
+    "fs.clear":"Clear",
+    "fs.hint":"Once set, \"Import source curve / Import target curve / Import PEQ\" pick files from that folder, and exports default to the export folder. Clear restores the system file dialog.",
+    "fs.unsupported":"This browser cannot access local folders (Chrome / Edge required): these rows are display-only.",
+    "fsb.import":"Import file",
+    "fsb.importPeq":"Import PEQ file",
+    "fsb.count":"{n} item(s)",
+    "fsb.countCap":"{n} items, showing first {m}",
+    "fsb.empty":"No matching files in this folder",
+    "fsb.noMore":"No more results",
+    "fsb.search":"Search file name…",
+    "toastT.fsSet":"{label} set: {dir}",
+    "toastT.fsCleared":"{label} cleared; using the system file dialog again",
+    "toastT.fsNoSave":"Selected, but this browser could not save it (you will need to pick again next time)",
+    "toastT.fsLost":"Folder permission expired — please choose the folder again in Write settings",
+    "toastT.fsReadFail":"Could not read the file: {msg}",
     "toastT.notWritten":"Parameters were not written to the device: {msg}",
     "toastT.gateReenum":"The device is re-enumerating — replug the USB cable, then try again",
     "toastT.reenumMismatch":"After reconnecting, the reading differs from what was written (expected {want}, got {got}); showing the device value",
@@ -3929,6 +3969,26 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "toastT.localOnly":"\u3053\u306e PC \u5185\u306e\u307f \u00b7 {reason}\uff08\u63a5\u7d9a\u3057\u3066\u300c\u66f8\u304d\u8fbc\u307f\u8a2d\u5b9a\u300d\u3067\u627f\u8a8d\u3059\u308b\u3068\u30c7\u30d0\u30a4\u30b9\u306b\u66f8\u304d\u8fbc\u307e\u308c\u307e\u3059\uff09",
     "toastT.rollback":"\u66f8\u304d\u8fbc\u307f\u306b\u5931\u6557\u3057\u3001\u5143\u306e\u5024\u306b\u623b\u3057\u307e\u3057\u305f\uff1a{msg}",
     "toastT.volcFail":"\u97f3\u91cf\u306e\u66f8\u304d\u8fbc\u307f\u3092\u78ba\u8a8d\u3067\u304d\u307e\u305b\u3093\u3067\u3057\u305f\uff08{n} \u56de\u518d\u8a66\u884c\uff09\uff1a{msg}",
+    "fs.curve":"周波数特性フォルダ",
+    "fs.preset":"PEQ プリセットフォルダ",
+    "fs.export":"書き出しフォルダ",
+    "fs.unset":"未設定",
+    "fs.pick":"選択",
+    "fs.clear":"クリア",
+    "fs.hint":"設定すると「ソース特性を読み込み / ターゲット特性を読み込み / PEQ を読み込み」はそのフォルダ内から選ぶ方式になり、書き出しも書き出しフォルダに保存されます。クリアすると OS のファイル選択に戻ります。",
+    "fs.unsupported":"このブラウザはローカルフォルダにアクセスできません（Chrome / Edge が必要）：この 3 行は表示のみです。",
+    "fsb.import":"ファイルを読み込み",
+    "fsb.importPeq":"PEQ ファイルを読み込み",
+    "fsb.count":"{n} 件",
+    "fsb.countCap":"{n} 件中、先頭 {m} 件を表示",
+    "fsb.empty":"このフォルダに一致するファイルはありません",
+    "fsb.noMore":"これ以上の結果はありません",
+    "fsb.search":"ファイル名を検索…",
+    "toastT.fsSet":"{label}を設定しました：{dir}",
+    "toastT.fsCleared":"{label}をクリアしました。OS のファイル選択に戻ります",
+    "toastT.fsNoSave":"選択しましたが、このブラウザでは保存できませんでした（次回は再選択が必要です）",
+    "toastT.fsLost":"フォルダの権限が失効しました。「書き込み設定」で選び直してください",
+    "toastT.fsReadFail":"ファイルを読み込めませんでした：{msg}",
     "toastT.notWritten":"\u30d1\u30e9\u30e1\u30fc\u30bf\u306f\u30c7\u30d0\u30a4\u30b9\u306b\u66f8\u304d\u8fbc\u307e\u308c\u3066\u3044\u307e\u305b\u3093\uff1a{msg}",
     "toastT.gateReenum":"デバイスが再列挙中です。USB を差し直してから操作してください",
     "toastT.reenumMismatch":"再接続後の読み取り値が書き込み値と一致しません（期待 {want} / 実際 {got}）。デバイスの値で表示しています",
@@ -5391,6 +5451,38 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   .wset-confirm-txt{margin-bottom:9px}
   .wset-confirm .btn{font-size:11.5px;padding:6px 11px}
   .wset-confirm .btn.danger{background:#c8761c;border-color:#c8761c;color:#fff}
+  .wset-path{display:flex;align-items:center;gap:7px;min-width:0;justify-content:flex-end}
+  .wset-path .nm{font-size:12px;font-weight:650;max-width:150px;min-width:0;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .wset-path .nm.unread{color:var(--muted);font-weight:500}
+  .wset-path .btn{font-size:11px;padding:5px 9px;flex:none}
+  .wset-hint{font-size:11px;color:var(--muted);line-height:1.7;margin:0 0 12px;padding:0 2px}
+  .fsb-pop{position:fixed;z-index:58;background:var(--surface);border:1px solid var(--line);
+    border-radius:14px;box-shadow:0 16px 44px rgba(15,25,50,.22);padding:12px;
+    width:380px;max-width:calc(100vw - 24px);display:flex;flex-direction:column;gap:9px}
+  .fsb-pop[hidden]{display:none}
+  .fsb-top{display:flex;gap:8px;align-items:center}
+  .fsb-top input{flex:1;min-width:0;font:inherit;font-size:12px;padding:7px 10px;
+    border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--fg)}
+  .fsb-top input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(74,127,240,.12)}
+  .fsb-top .btn{font-size:11.5px;padding:7px 12px;flex:none}
+  .fsb-crumb{font-size:11px;color:var(--muted);min-width:0;overflow:hidden;
+    text-overflow:ellipsis;white-space:nowrap;line-height:1.6}
+  .fsb-crumb button{font:inherit;color:var(--accent);background:none;border:none;
+    padding:0 1px;cursor:pointer}
+  .fsb-crumb button.cur{color:var(--fg);font-weight:650;cursor:default}
+  .fsb-crumb i{font-style:normal;opacity:.6;margin:0 1px}
+  .fsb-list{height:min(320px,42vh);overflow:auto;border:1px solid var(--line);
+    border-radius:10px;background:var(--surface-2)}
+  .fsb-item{display:flex;align-items:center;gap:8px;padding:7px 11px;font-size:12.5px;
+    cursor:pointer;border-bottom:1px solid var(--line)}
+  .fsb-item:last-child{border-bottom:none}
+  .fsb-item:hover{background:var(--surface-3)}
+  .fsb-item.sel{background:var(--surface-3);box-shadow:inset 2px 0 0 var(--accent);font-weight:600}
+  .fsb-item .ic{width:15px;flex:none;display:flex;align-items:center;color:var(--muted)}
+  .fsb-item .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .fsb-empty{padding:26px 12px;text-align:center;color:var(--muted);font-size:12px}
+  .fsb-foot{font-size:11px;color:var(--muted);line-height:1.5}
   .wset-brand{border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
   .wset-brand-head{display:flex;align-items:center;gap:9px;margin-bottom:8px}
   .wset-brand-head img{width:30px;height:30px;object-fit:contain;border-radius:8px;background:var(--surface);
@@ -6101,7 +6193,29 @@ try{
         <button class="wset-switch" id="wsetAuthToggle" type="button" aria-pressed="false"
                 disabled title="请先连接设备读取固件版本">关</button>
       </div>
+      <div class="wset-row"><span>频响曲线文件夹</span>
+        <div class="wset-path">
+          <b class="nm unread" id="fsCurve">未设置</b>
+          <button class="btn" id="fsCurvePick" type="button">选择</button>
+          <button class="btn" id="fsCurveClear" type="button" disabled>清空</button>
+        </div>
+      </div>
+      <div class="wset-row"><span>PEQ 预设文件夹</span>
+        <div class="wset-path">
+          <b class="nm unread" id="fsPreset">未设置</b>
+          <button class="btn" id="fsPresetPick" type="button">选择</button>
+          <button class="btn" id="fsPresetClear" type="button" disabled>清空</button>
+        </div>
+      </div>
+      <div class="wset-row"><span>导出文件夹</span>
+        <div class="wset-path">
+          <b class="nm unread" id="fsExport">未设置</b>
+          <button class="btn" id="fsExportPick" type="button">选择</button>
+          <button class="btn" id="fsExportClear" type="button" disabled>清空</button>
+        </div>
+      </div>
     </div>
+    <p class="wset-hint" id="fsHint">设定后，「导入源频响曲线 / 导入目标曲线 / 导入 PEQ」改为在该文件夹里检索选取；导出默认存到导出文件夹。清空即恢复系统的文件选择框。</p>
     <div class="wset-risk" id="wsetRisk">
       <b>已知风险</b>：当前固件 <b id="wsetRiskFw">—</b> 与开发版本 3.24.30 不同。本控制台的写入报文只按 3.24.30 的官网前端逐条核对过，其它固件可能改变了写入途径，存在写坏设备设置的风险。授权只对<b>当前这个固件版本</b>生效：<b>上次授权的固件版本号</b>与当前固件不一致时会自动撤销授权，需要重新授权。
       <div class="wset-confirm" id="wsetConfirm">
@@ -6117,6 +6231,15 @@ try{
       <p>在仿 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA2cAAAC4AQMAAABdBQZBAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAGUExURQAAAAGc40BSpSwAAAABdFJOUwBA5thmAAAEEklEQVR42u3aQZKdIBAGYCwXLN1m50VSxc2iR/MoHMGlC0vjA4XudkBk0JpKuneOPj5E/0QFIbi4uLi4uLi4uLi4uLi4uLi4/qtqVlC9+VNtN+x+SXa6zXHfvf25XVftW9z3VOao+Urr0Fbr906+J59anNbZfUhzBw5RrcHNtXi3BJsj0Gaq4VaCWuc3P91SYLfG2nxouE2jNbiVkAaGygyPwttQW4C2Ek2t5AJ/rdHmFD4ZeTp813qskSEIaS3ZhtpKtAFoA9Iq/KugpkhzCu9HmgaaRpo85+pLrSPNxbQRaCPSGtLnkLaS5si5Im0C2oS0lvQ5oFVRTWNtBtqMNEVaCWj1SjpPfhfUFqR1pJVASX9VW6u5TtdWc4d2H8FqYwXuvF0bYSthrffNzVDbhmGCWgU0AX72cQCh6L/MKBATkLFWY23rjdc6f+dZrfetLBFN484Drdp0qCmgKf+7basCQhXRWpiODmuCaK3Jn9Vaf+cZbcJDENRA8hXROqw1QANXYNuq4V2vYprAx0Ft00Oa9PeC0XTgBHCphdARTQKt9leHak2i1hCtpdrgNBA4c6ZDmjanazXQwD1PNZms9cmaD5zRejwEKZok2nauQc0Hjmp1WOumTM0H7lpzh97RKqj5wJn0PaFpr/nAGU08q/nA5Wr1Dc0HjmpVRBtJr1I1H7hXNBe4G9oa02RMc4F7RXOB+2jL05oL3Of/1sc1FziqnauA5gJXSoveky5wr2gucO9oR+ByteqWdgTuHe0I3DvaEbh3tCNwD2noScEH7h3tCBzQ1Ok1n2g6osWe8HzgztrwhLYH7qzpEpok2h64UlrkrQMErpgWfn8DgftocwGti2t74EppkTdhELhCWuwtHwSu0HWjXzBWou2BK6S1WKvh1xkQuAKa/84l/LdtqtnAPaXNRLOBOz/hZWo6rtnA3dHGG9pENBu4YtqAtZFoNnDFtD6u2cAV0wTWNNFs4EppC9F6qpnA5Wo10SaiCaqZwJXSNNbmk2YCV0oTWNMnrSmoaazN4qTJQiMJXuHINtTqQndJmlYd331f0cQq3tT+FPymcK39Lvgt6Fr79Q2NfsO71kp+MfyhmvyntbTvytHZhzxNPq9F5zq8Fps1Stbq+DxOcU0nadH5tzytXUVY68MzmTe06Nwi0MCIr7naxbwpeLLQ6O0wV1twn4ManE3P1S7mu8FzDJzLn/K12bcyx7SD69Z8rTu+N1XnNV3oqYmu+MjSVHQNxqPaGNTwahadq7VpGl6pM+RqoXVBVOvoGqgsLbTmiWpk/VamFlrPRasJrDK7WYmt1LHLm14qsZXYgKeXTGylKTGQoNNz4nH9d7Tqq8Wa4VH41pm5bgsuLi4uLi4uLi4uLi4uLi4urh9RfwGbIv6ProZBlAAAAABJRU5ErkJggg==" alt="拓品 TOPPING"> 设备控制台外观风格的基础上，深度打造了一个「基于 iBasso 官方 SET 链路的、最好用的 DC04U 控制台」。项目完全开源，请关注 <button type="button" class="bili-link" id="biliBtn" title="跳转到 小旦 的 B站主页（跳转前会二次确认）">B站@小旦SNTube</button> ，欢迎打赏与交流。</p>
     </div>
   </div>
+</div>
+<div class="fsb-pop" id="fsPop" hidden role="dialog" aria-label="文件检索">
+  <div class="fsb-top">
+    <input type="text" id="fsSearch" placeholder="搜索文件名…" autocomplete="off" spellcheck="false">
+    <button class="btn primary" id="fsImport" type="button" disabled>导入文件</button>
+  </div>
+  <div class="fsb-crumb" id="fsCrumb"></div>
+  <div class="fsb-list" id="fsList" role="listbox" aria-label="检索结果"></div>
+  <div class="fsb-foot" id="fsCount"></div>
 </div>
 <div class="mask" id="biliMask">
   <div class="modal bili-confirm" role="dialog" aria-modal="true" aria-labelledby="biliTitle">
@@ -7901,8 +8024,8 @@ function parseParametricEq(text,opts){
 
 const IMPORT_JSON_RE=/^\s*\{/;
 $('importPreset').onclick=()=>$('filePreset').click();
-$('filePreset').onchange=e=>{
-  const file=e.target.files[0];if(!file)return;
+function importPresetFile(file){
+  if(!file)return;
   const rd=new FileReader();
   rd.onload=()=>{
     const text=String(rd.result||'').replace(/^\uFEFF/,'');
@@ -7910,8 +8033,9 @@ $('filePreset').onchange=e=>{
     if(IMPORT_JSON_RE.test(text)) importOfficialText(text,file.name);
     else importParametricEqText(text,name);
   };
-  rd.readAsText(file);e.target.value='';
-};
+  rd.readAsText(file);
+}
+$('filePreset').onchange=e=>{importPresetFile(e.target.files[0]);e.target.value='';};
 function importOfficialText(text,fileName){
   try{
     const json=JSON.parse(text);
@@ -7934,7 +8058,7 @@ function importParametricEqText(text,name){
     `${r.onCount} / 10 段在用，已转换为官方 JSON。以下内容被跳过或做了调整：`,
     r.warns.join('\n'));
 }
-$('exportPreset').onclick=()=>{
+$('exportPreset').onclick=async()=>{
   if(!(S.preset.name||'').trim()){
     $('piNameErr').hidden=false;
     $('piNameErr').textContent=fillTpl(T('eq.enterName','请输入{label}'),{label:eqnLabel()});
@@ -7947,16 +8071,16 @@ $('exportPreset').onclick=()=>{
   const v=DeviceProtocol.validatePreset(p);
   if(!v.valid){toast(fillTpl(T('toastT.exportBlocked','导出被拦下：{msg}'),{msg:v.errors[0]}));return;}
   const blob=new Blob([JSON.stringify(p,null,2)],{type:'application/json;charset=utf-8'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download=(S.preset.name||'preset').replace(/[\\/:*?"<>|]/g,'_')+'.json';a.click();
-  setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast(fillTpl(T('toastT.exported','已导出 {name}（官方格式）'),{name:a.download}));
+  const name=(S.preset.name||'preset').replace(/[\\/:*?"<>|]/g,'_')+'.json';
+  if(await saveBlob(blob,name)==='cancel')return;
+  toast(fillTpl(T('toastT.exported','已导出 {name}（官方格式）'),{name}));
 };
-$('exportPeq').onclick=()=>{
+$('exportPeq').onclick=async()=>{
   const txt=toParametricEqText();
   const blob=new Blob([txt+'\n'],{type:'text/plain;charset=utf-8'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download=(S.preset.name||'preset').replace(/[\\/:*?"<>|]/g,'_')+'.txt';a.click();
-  setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast(fillTpl(T('toastT.exportedApo','已导出 {name}（Parametric EQ 格式）'),{name:a.download}));
+  const name=(S.preset.name||'preset').replace(/[\\/:*?"<>|]/g,'_')+'.txt';
+  if(await saveBlob(blob,name)==='cancel')return;
+  toast(fillTpl(T('toastT.exportedApo','已导出 {name}（Parametric EQ 格式）'),{name}));
 };
 $('copyJson').onclick=e=>{e.preventDefault();e.stopPropagation();copyPreview();};
 
@@ -8195,15 +8319,19 @@ function resampleCurve(pts){
   const freqs=PEQCore.frequencyCurve([],600,0).map(p=>p.frequency);
   return freqs.map(f=>({frequency:f,db:interpLog(pts,f)-off}));
 }
-function importCurveFile(input, apply){
-  const file=input.files[0];if(!file)return;
+function importCurveFileTo(file,apply){
+  if(!file)return;
   const rd=new FileReader();
   rd.onload=()=>{
     const pts=parseCurveText(rd.result);
     if(pts.length<2){toast('未识别到曲线数据（需要「频率 数值」两列）');return;}
     apply(resampleCurve(pts),pts.length,file.name);
   };
-  rd.readAsText(file);input.value='';
+  rd.readAsText(file);
+}
+function importCurveFile(input,apply){
+  const file=input.files[0];input.value='';
+  importCurveFileTo(file,apply);
 }
 function applyTargetCurveImport(resampled,n,fileName){
   S.targetCurve=resampled;
@@ -8220,11 +8348,12 @@ $('resetSource').onclick=()=>{
   render();
   toast('源频响曲线已恢复默认：0 dB 平直线');
 };
-$('fileSource').onchange=e=>importCurveFile(e.target,(resampled,n)=>{
+$('fileSource').onchange=e=>importCurveFile(e.target,applySourceCurveImport);
+function applySourceCurveImport(resampled,n){
   S.sourceCurve=resampled;
   S.show.source=true;$('legend').querySelector('[data-k=source]').classList.remove('off');
   render();toast(fillTpl(T('toastT.sourceImported','已导入源频响曲线：{n} 个点（已平移为 {nf} = 0 dB）'),{n,nf:nfLabel()}));
-});
+}
 
 $('previewReports').onclick=()=>{
   $('modalTitle').textContent=T('rp.title','官方格式校验 / 报文预览');
@@ -8497,6 +8626,242 @@ $('wsetAuthConfirm').onclick=()=>{
   syncWriteUi();
   toast(fillTpl(T('toastT.fwAuth','已授权固件 {fw} 写入（已知风险，仅对该版本生效）'),{fw}));
 };
+const FS_ROWS=[
+  {key:'curve', id:'fsCurve',  label:'频响曲线文件夹'},
+  {key:'preset',id:'fsPreset', label:'PEQ 预设文件夹'},
+  {key:'export',id:'fsExport', label:'导出文件夹'}
+];
+const FS_SET={curve:null,preset:null,export:null};
+const FSH=(function(){
+  const DB='dc04u.fs.v1',STORE='h';
+  let dbp=null;
+  function db(){
+    if(dbp)return dbp;
+    dbp=new Promise((res,rej)=>{
+      let r;
+      try{r=indexedDB.open(DB,1);}catch(e){rej(e);return;}
+      r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains(STORE))d.createObjectStore(STORE);};
+      r.onsuccess=()=>res(r.result);
+      r.onerror=()=>rej(r.error);
+    });
+    return dbp;
+  }
+  function run(mode,fn){
+    return db().then(d=>new Promise((res,rej)=>{
+      const t=d.transaction(STORE,mode),q=fn(t.objectStore(STORE));
+      t.oncomplete=()=>res(q&&'result' in q?q.result:undefined);
+      t.onerror=()=>rej(t.error);
+      t.onabort=()=>rej(t.error);
+    }));
+  }
+  const supported=typeof window.showDirectoryPicker==='function';
+  async function read(key){try{return await run('readonly',s=>s.get(key));}catch(_){return null;}}
+  async function write(key,h){try{await run('readwrite',s=>s.put(h,key));return true;}catch(_){return false;}}
+  async function clear(key){try{await run('readwrite',s=>s.delete(key));return true;}catch(_){return false;}}
+  async function pick(key){
+    try{return await window.showDirectoryPicker({id:'dc04u-'+key,mode:'read'});}
+    catch(_){return null;}
+  }
+  async function ensure(key){
+    const h=await read(key);if(!h)return null;
+    try{
+      let p=await h.queryPermission({mode:'read'});
+      if(p!=='granted')p=await h.requestPermission({mode:'read'});
+      return p==='granted'?h:null;
+    }catch(_){return null;}
+  }
+  return {supported,read,write,clear,pick,ensure};
+})();
+function syncFsRows(){
+  FS_ROWS.forEach(r=>{
+    const nm=$(r.id),clr=$(r.id+'Clear'),h=FS_SET[r.key];
+    if(nm){
+      nm.textContent=h?h.name:T('fs.unset','未设置');
+      nm.classList.toggle('unread',!h);
+      nm.title=h?h.name:'';
+    }
+    if(clr)clr.disabled=!h;
+  });
+}
+async function saveBlob(blob,name){
+  if(FSH.supported&&FS_SET.export&&typeof window.showSaveFilePicker==='function'){
+    const h=await FSH.ensure('export');
+    if(h){
+      try{
+        const fh=await window.showSaveFilePicker({suggestedName:name,startIn:h});
+        const w=await fh.createWritable();await w.write(blob);await w.close();
+        return 'picker';
+      }catch(e){
+        if(e&&e.name==='AbortError')return 'cancel';
+      }
+    }
+  }
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  return 'download';
+}
+function fsbCountText(total,shown,limit){
+  return total>limit
+    ?fillTpl(T('fsb.countCap','共 {n} 项，显示前 {m}'),{n:total,m:shown})
+    :fillTpl(T('fsb.count','共 {n} 项'),{n:total});
+}
+const FSB=(function(){
+  const pop=$('fsPop'),listEl=$('fsList'),crumbEl=$('fsCrumb'),
+        searchEl=$('fsSearch'),countEl=$('fsCount'),okBtn=$('fsImport');
+  const LIMIT=30;
+  let stack=[],items=[],selIdx=-1,cfg=null,seq=0,anchorEl=null;
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const hits=()=>{
+    const q=searchEl.value.trim().toLowerCase();
+    return q?items.filter(it=>it.name.toLowerCase().includes(q)):items;
+  };
+  function place(){
+    if(!anchorEl)return;
+    const r=anchorEl.getBoundingClientRect();
+    const w=Math.min(380,window.innerWidth-24);
+    pop.style.width=w+'px';
+    pop.style.left=Math.max(12,Math.min(r.left,window.innerWidth-w-12))+'px';
+    const h=pop.offsetHeight;
+    let top=r.bottom+6;
+    if(top+h>window.innerHeight-12)top=Math.max(12,r.top-h-6);
+    pop.style.top=top+'px';
+  }
+  const ICON_DIR='<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M1.6 4.3h4l1.3 1.6h7.5v6.6a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>';
+  const ICON_FILE='<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.6 2.4h5.9l3 3v8.2h-8.9z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M9.5 2.5v3h3" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>';
+  function render(){
+    const hit=hits(),shown=hit.slice(0,LIMIT);
+    crumbEl.innerHTML=stack.map((d,i)=>
+      `<button type="button" data-i="${i}"${i===stack.length-1?' class="cur"':''}>${esc(d.name)}</button>`
+    ).join('<i>›</i>');
+    listEl.innerHTML=shown.length?shown.map((it,i)=>
+      `<div class="fsb-item${i===selIdx?' sel':''}" data-i="${i}" role="option" aria-selected="${i===selIdx}">`+
+      `<span class="ic">${it.isDir?ICON_DIR:ICON_FILE}</span><span class="nm">${esc(it.name)}</span></div>`
+    ).join(''):`<div class="fsb-empty">${hit.length?T('fsb.noMore','没有更多结果'):T('fsb.empty','这个文件夹里没有匹配的文件')}</div>`;
+    countEl.textContent=fsbCountText(hit.length,shown.length,LIMIT);
+    const cur=shown[selIdx];
+    okBtn.disabled=!(cur&&!cur.isDir);
+    place();
+  }
+  async function readDir(){
+    const t=++seq,dir=stack[stack.length-1],out=[];
+    try{
+      for await(const [name,handle] of dir.entries()){
+        if(t!==seq)return;
+        if(handle.kind==='directory')out.push({name,handle,isDir:true});
+        else if(!cfg.exts||cfg.exts.some(x=>name.toLowerCase().endsWith(x)))
+          out.push({name,handle,isDir:false});
+      }
+    }catch(_){}
+    if(t!==seq)return;
+    out.sort((a,b)=>a.isDir!==b.isDir?(a.isDir?-1:1):a.name.localeCompare(b.name,'zh-Hans-CN',{numeric:true}));
+    items=out;selIdx=-1;render();
+  }
+  async function doImport(){
+    const cur=hits()[selIdx];
+    if(!cur||cur.isDir)return;
+    const cb=cfg&&cfg.onPick;
+    try{
+      const file=await cur.handle.getFile();
+      close();
+      if(cb)cb(file);
+    }catch(e){
+      toast(fillTpl(T('toastT.fsReadFail','读取文件失败：{msg}'),{msg:(e&&e.message)||e}));
+    }
+  }
+  function open(o){
+    cfg=o;anchorEl=o.anchor;stack=[o.root];items=[];selIdx=-1;searchEl.value='';
+    okBtn.textContent=o.button||T('fsb.import','导入文件');
+    pop.hidden=false;render();readDir();
+    searchEl.focus();
+  }
+  function close(){pop.hidden=true;cfg=null;anchorEl=null;items=[];stack=[];selIdx=-1;}
+  listEl.addEventListener('click',e=>{
+    const el=e.target.closest('.fsb-item');if(!el)return;
+    const it=hits()[+el.dataset.i];if(!it)return;
+    if(it.isDir){stack.push(it.handle);searchEl.value='';selIdx=-1;readDir();return;}
+    selIdx=+el.dataset.i;render();
+  });
+  listEl.addEventListener('dblclick',e=>{
+    const el=e.target.closest('.fsb-item');if(!el)return;
+    const it=hits()[+el.dataset.i];
+    if(it&&!it.isDir){selIdx=+el.dataset.i;doImport();}
+  });
+  crumbEl.addEventListener('click',e=>{
+    const b=e.target.closest('button[data-i]');if(!b)return;
+    const i=+b.dataset.i;
+    if(i===stack.length-1)return;
+    stack.length=i+1;searchEl.value='';selIdx=-1;readDir();
+  });
+  searchEl.addEventListener('input',()=>{selIdx=-1;render();});
+  searchEl.addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&!okBtn.disabled){e.preventDefault();doImport();}
+    if(e.key==='Escape'){e.preventDefault();close();}
+  });
+  okBtn.addEventListener('click',doImport);
+  document.addEventListener('mousedown',e=>{
+    if(pop.hidden)return;
+    if(pop.contains(e.target)||(anchorEl&&anchorEl.contains(e.target)))return;
+    close();
+  });
+  return {open,close};
+})();
+async function fsOpenFor(anchor,key,o){
+  const h=await FSH.ensure(key);
+  if(!h){
+    FS_SET[key]=null;syncFsRows();
+    toast(T('toastT.fsLost','文件夹权限已失效，请在「写入设置」里重新选择文件夹'));
+    return;
+  }
+  FSB.open(Object.assign({anchor,root:h},o));
+}
+$('importPreset').onclick=()=>{
+  if(FSH.supported&&FS_SET.preset)
+    return fsOpenFor($('importPreset'),'preset',
+      {exts:['.json','.txt','.eq','.csv'],button:T('fsb.importPeq','导入 PEQ 文件'),onPick:importPresetFile});
+  $('filePreset').click();
+};
+$('importCurve').onclick=()=>{
+  if(FSH.supported&&FS_SET.curve)
+    return fsOpenFor($('importCurve'),'curve',
+      {exts:['.txt','.csv'],button:T('fsb.import','导入文件'),onPick:f=>importCurveFileTo(f,applyTargetCurveImport)});
+  $('fileCurve').click();
+};
+$('importSource').onclick=()=>{
+  if(FSH.supported&&FS_SET.curve)
+    return fsOpenFor($('importSource'),'curve',
+      {exts:['.txt','.csv'],button:T('fsb.import','导入文件'),onPick:f=>importCurveFileTo(f,applySourceCurveImport)});
+  $('fileSource').click();
+};
+FS_ROWS.forEach(r=>{
+  const pk=$(r.id+'Pick'),clr=$(r.id+'Clear');
+  if(pk)pk.onclick=async()=>{
+    if(!FSH.supported)return;
+    const h=await FSH.pick(r.key);
+    if(!h)return;
+    FS_SET[r.key]=h;
+    const kept=await FSH.write(r.key,h);
+    syncFsRows();
+    toast(kept
+      ?fillTpl(T('toastT.fsSet','已设定{label}：{dir}'),{label:T('fs.'+r.key,r.label),dir:h.name})
+      :T('toastT.fsNoSave','已选定，但本浏览器没能保存（下次打开需要重选）'));
+  };
+  if(clr)clr.onclick=async()=>{
+    FS_SET[r.key]=null;await FSH.clear(r.key);syncFsRows();
+    toast(fillTpl(T('toastT.fsCleared','已清空{label}，恢复系统文件选择框'),{label:T('fs.'+r.key,r.label)}));
+  };
+});
+(async function fsBoot(){
+  if(/(?:^|[?&])selftest(?:=|&|$)/.test(location.search))return;
+  if(!FSH.supported){
+    const hint=$('fsHint');
+    if(hint)hint.textContent=T('fs.unsupported','当前浏览器不支持本地文件夹（需要 Chrome / Edge）：这三行只显示、不可选。');
+    FS_ROWS.forEach(r=>{const b=$(r.id+'Pick');if(b)b.disabled=true;});
+    return;
+  }
+  for(const r of FS_ROWS){FS_SET[r.key]=await FSH.read(r.key);}
+  syncFsRows();
+})();
 /**
    * 写入串行队列：同一字段只保留最后一次的目标值。
    * 连点加减号时中间值会被合并，避免「一帧一回」造成的抖动和回弹。
@@ -9361,11 +9726,9 @@ const Skin = (function(){
   }
   function download(kind){
     const cv=draw(kind),name=filename(kind);
-    cv.toBlob(blob=>{
+    cv.toBlob(async blob=>{
       if(!blob){toast(fillTpl(T('toastT.pngFail','PNG 生成失败：{name}'),{name}));return;}
-      const url=URL.createObjectURL(blob),a=document.createElement('a');
-      a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
-      setTimeout(()=>URL.revokeObjectURL(url),1500);
+      if(await saveBlob(blob,name)==='cancel')return;
       toast(fillTpl(T('toastT.downloaded','已下载 {name}'),{name}));
     },'image/png');
   }
@@ -13498,15 +13861,36 @@ function runSelfTest(){
        $('writeSettings').querySelector('.wset-label').textContent.trim()==='写入设置' &&
        !$('fwWarn').classList.contains('on') && $('fwWarn').getAttribute('role')==='alert',
        [$('writeLampText').textContent,$('fwWarn').className]);
-    ck('写入设置 4 项齐全：三个版本号 + 授权开关；开发版本号 = 开发时固件 3.24.30',
+    ck('写入设置 7 项齐全：三个版本号 + 授权开关 + 三个本地文件夹；开发版本号 = 开发时固件 3.24.30',
        $('wsetDevFw').textContent===DeviceProtocol.FIRMWARE_TARGET &&
        $('wsetFw').textContent==='—' && $('wsetAuthFw').textContent==='—' &&
        !!$('wsetAuthToggle') && $('wsetAuthToggle').disabled===true &&
-       $('wsetDevFw').parentElement.parentElement.querySelectorAll('.wset-row').length===4 &&
+       $('wsetDevFw').parentElement.parentElement.querySelectorAll('.wset-row').length===7 &&
+       ['fsCurve','fsPreset','fsExport'].every(id=>!!$(id)&&!!$(id+'Pick')&&!!$(id+'Clear')&&
+         $(id).textContent===T('fs.unset','未设置')&&$(id+'Clear').disabled===true) &&
+       !!$('fsPop').hidden && !!$('fsSearch') && !!$('fsList') && !!$('fsImport') &&
        $('wsetRisk').textContent.includes('已知风险') &&
        /localStorage\.setItem/.test(storeAuthFw.toString()) &&
        /localStorage\.getItem/.test(loadAuthFw.toString()),
-       [$('wsetDevFw').textContent,$('wsetFw').textContent,$('wsetAuthToggle').disabled]);
+       [$('wsetDevFw').textContent,$('wsetFw').textContent,$('wsetAuthToggle').disabled,
+        $('writeMask').querySelectorAll('.wset-row').length]);
+    ck('本地文件夹：三行默认「未设置」；设定后显示句柄名、清空钮才可用（浏览器不给路径）',
+       (()=>{
+         const keep={curve:FS_SET.curve,preset:FS_SET.preset,export:FS_SET.export};
+         FS_SET.curve={name:'我的曲线'};FS_SET.preset={name:'预设库'};FS_SET.export=null;
+         syncFsRows();
+         const a=$('fsCurve').textContent,cOff=$('fsCurveClear').disabled,
+               b=$('fsPreset').textContent,e=$('fsExport').textContent,
+               eOff=$('fsExportClear').disabled;
+         FS_SET.curve=keep.curve;FS_SET.preset=keep.preset;FS_SET.export=keep.export;
+         syncFsRows();
+         return a==='我的曲线'&&cOff===false&&b==='预设库'&&
+                e===T('fs.unset','未设置')&&eOff===true;
+       })(),[$('fsCurve').textContent,$('fsCurveClear').disabled]);
+    ck('本地文件夹：检索结果超上限时计数文案说明「显示前 N 项」',
+       fsbCountText(42,30,30).indexOf('42')>=0&&fsbCountText(42,30,30).indexOf('30')>=0&&
+       fsbCountText(7,7,30).indexOf('7')>=0&&fsbCountText(7,7,30).indexOf('显示前')<0,
+       [fsbCountText(42,30,30),fsbCountText(7,7,30)]);
     ck('写入设置含 SNTube Studio 开发设计、两张本地 logo 与简介（运行时零联网）',
        (()=>{
          const b=$('writeMask').querySelector('.wset-brand'),
