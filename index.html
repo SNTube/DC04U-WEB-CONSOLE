@@ -10061,13 +10061,18 @@ function volcSyncSlotState(){
   el.addEventListener('focus',()=>{if(!VOLC.auto)el.select();});
   const auto=$('volcAuto');
   if(auto)auto.onclick=()=>{
-    VOLC.auto=!VOLC.auto;
+    if(VOLC.auto){
+      S.volComp=volcAutoValue();
+      VOLC.auto=false;
+    }else{
+      VOLC.auto=true;
+    }
     VOLC.lastGain=Math.round(+S.preset.totalGain||0);
     volcSync();
     if(VOLC.on)volcApply();
     toast(VOLC.auto
       ?('自动补偿已开启：补偿值＝总增益 '+Math.round(+S.preset.totalGain||0)+' dB × −2 ＝ '+volcValue()+' 档')
-      :'自动补偿已关闭，回到手动补偿值');
+      :('自动补偿已关闭，补偿值保留为 '+(volcValue()>0?'+':'')+volcValue()+' 档'));
   };
   VOLC.lastGain=Math.round(+S.preset.totalGain||0);
   volcSync();
