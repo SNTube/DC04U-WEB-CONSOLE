@@ -3968,7 +3968,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "fs.export":"書き出しフォルダ",
     "fs.unset":"未設定",
     "fs.pick":"選択",
-    "fs.clear":"関連付け解除",
+    "fs.clear":"解除",
     "fs.unsupported":"このブラウザはローカルフォルダにアクセスできません（Chrome / Edge が必要）",
     "fsb.import":"ファイルを読み込み",
     "fsb.importPeq":"PEQ ファイルを読み込み",
@@ -4760,9 +4760,22 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   .modal pre{background:#101a30;color:#cfe0ff;padding:14px;border-radius:10px;font-size:11px;
              line-height:1.65;overflow:auto;max-height:46vh;white-space:pre}
   .modal .close{float:right}
-  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#26355c;color:#fff;
-         padding:9px 16px;border-radius:10px;font-size:12px;opacity:0;pointer-events:none;transition:.25s;z-index:60}
-  .toast.on{opacity:1}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,10px);background:#26355c;color:#fff;
+         padding:9px 16px;border-radius:10px;font-size:12px;opacity:0;pointer-events:none;
+         transition:opacity .25s ease,transform .25s cubic-bezier(.2,.8,.3,1);z-index:60}
+  .toast.on{opacity:1;transform:translate(-50%,0)}
+  @keyframes dcFade{from{opacity:0}to{opacity:1}}
+  @keyframes dcRise{from{opacity:0;transform:translateY(9px) scale(.985)}to{opacity:1;transform:none}}
+  .mask.on,.imgmask.on{animation:dcFade .18s ease-out}
+  .mask.on>.modal{animation:dcRise .22s cubic-bezier(.2,.8,.3,1)}
+  .imgmask.on>.imgbox{animation:dcRise .22s cubic-bezier(.2,.8,.3,1)}
+  .fsb-pop{animation:dcRise .18s cubic-bezier(.2,.8,.3,1)}
+  .dd.open .dd-menu{animation:dcRise .16s ease-out}
+  @media (prefers-reduced-motion:reduce){
+    .mask.on,.imgmask.on,.mask.on>.modal,.imgmask.on>.imgbox,
+    .fsb-pop,.dd.open .dd-menu{animation:none}
+    .toast{transition:none}
+  }
 
   details.json-card{margin-top:14px;padding:12px 14px}
   details.json-card>summary{display:flex;align-items:center;gap:9px;flex-wrap:wrap;
@@ -8759,7 +8772,7 @@ const FSB=(function(){
     await walk(stack[stack.length-1],'',0);
     if(t!==seq)return;
     out.sort((a,b)=>(a.dir+a.name).localeCompare(b.dir+b.name,'zh-Hans-CN',{numeric:true}));
-    mode='search';hits=out;items=[];selIdx=-1;render();
+    mode='search';hits=out;selIdx=-1;render();
   }
   async function doImport(){
     const cur=list()[selIdx];
@@ -8790,7 +8803,9 @@ const FSB=(function(){
     const el=e.target.closest('.fsb-item');if(!el)return;
     const it=list()[+el.dataset.i];if(!it)return;
     if(it.isDir){stack.push(it.handle);searchEl.value='';selIdx=-1;readDir();return;}
-    selIdx=+el.dataset.i;render();
+    const i=+el.dataset.i;
+    selIdx=(selIdx===i?-1:i);
+    render();
   });
   listEl.addEventListener('dblclick',e=>{
     const el=e.target.closest('.fsb-item');if(!el)return;
@@ -8806,7 +8821,11 @@ const FSB=(function(){
   searchEl.addEventListener('input',()=>{
     clearTimeout(timer);selIdx=-1;
     const q=searchEl.value.trim();
-    if(!q){mode='browse';hits=[];seq++;render();return;}
+    if(!q){
+      mode='browse';hits=[];seq++;render();
+      if(!items.length)readDir();
+      return;
+    }
     timer=setTimeout(()=>runSearch(q),160);
   });
   searchEl.addEventListener('keydown',e=>{
