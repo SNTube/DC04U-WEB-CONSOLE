@@ -2559,6 +2559,9 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "toastT.localOnly":"\u4ec5\u672c\u673a\u751f\u6548 \u00b7 {reason}\uff08\u8fde\u63a5\u8bbe\u5907\u5e76\u5728\u300c\u5199\u5165\u8bbe\u7f6e\u300d\u5b8c\u6210\u6388\u6743\u540e\u624d\u4f1a\u5199\u5165\u8bbe\u5907\uff09",
     "toastT.rollback":"\u5199\u5165\u5931\u8d25\uff0c\u5df2\u56de\u6eda\u5230\u539f\u503c\uff1a{msg}",
     "toastT.volcFail":"音量写入未能确认（已重试 {n} 次）：{msg}",
+    "toastT.volcAutoOn":"自动补偿已开启：补偿值＝总增益 {gain} dB × −2 ＝ {val} 档",
+    "toastT.volcAutoOff":"自动补偿已关闭，补偿值保留为 {val} 档",
+    "toastT.noRead":"尚未读取设备状态，请先点击「连接设备」",
     "attr.freqSlider":"频率滑杆",
     "attr.gainSlider":"增益滑杆",
     "attr.qSlider":"Q 值滑杆",
@@ -3285,6 +3288,9 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "toastT.localOnly":"Local only \u00b7 {reason} (written to the device only after connecting and authorizing in \"Write settings\")",
     "toastT.rollback":"Write failed; rolled back to the previous value: {msg}",
     "toastT.volcFail":"Could not confirm the volume write (retried {n} times): {msg}",
+    "toastT.volcAutoOn":"Auto compensation on: value = total gain {gain} dB × −2 = {val} steps",
+    "toastT.volcAutoOff":"Auto compensation off; value kept at {val} steps",
+    "toastT.noRead":"No device readout yet — connect the device first",
     "attr.freqSlider":"Frequency slider",
     "attr.gainSlider":"Gain slider",
     "attr.qSlider":"Q slider",
@@ -4011,6 +4017,9 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "toastT.localOnly":"\u3053\u306e PC \u5185\u306e\u307f \u00b7 {reason}\uff08\u63a5\u7d9a\u3057\u3066\u300c\u66f8\u304d\u8fbc\u307f\u8a2d\u5b9a\u300d\u3067\u627f\u8a8d\u3059\u308b\u3068\u30c7\u30d0\u30a4\u30b9\u306b\u66f8\u304d\u8fbc\u307e\u308c\u307e\u3059\uff09",
     "toastT.rollback":"\u66f8\u304d\u8fbc\u307f\u306b\u5931\u6557\u3057\u3001\u5143\u306e\u5024\u306b\u623b\u3057\u307e\u3057\u305f\uff1a{msg}",
     "toastT.volcFail":"\u97f3\u91cf\u306e\u66f8\u304d\u8fbc\u307f\u3092\u78ba\u8a8d\u3067\u304d\u307e\u305b\u3093\u3067\u3057\u305f\uff08{n} \u56de\u518d\u8a66\u884c\uff09\uff1a{msg}",
+    "toastT.volcAutoOn":"自動補正オン：補正値＝総ゲイン {gain} dB × −2 ＝ {val} 段",
+    "toastT.volcAutoOff":"自動補正オフ：補正値は {val} 段のまま保持します",
+    "toastT.noRead":"まだデバイスを読み取っていません。先に「デバイス接続」を押してください",
     "attr.freqSlider":"周波数スライダー",
     "attr.gainSlider":"ゲインスライダー",
     "attr.qSlider":"Q スライダー",
@@ -7893,6 +7902,8 @@ function refreshDynamicText(){
   try{syncCompPreset();}catch(_){}
   try{syncPiSlots();}catch(_){}
   try{syncWriteUi();}catch(_){}
+  try{paintConnState();}catch(_){}
+  try{syncConnToggle();}catch(_){}
   try{renderPresetTags();}catch(_){}
   try{renderDfList();}catch(_){}
   try{renderTypeOptions();}catch(_){}
@@ -7903,6 +7914,7 @@ function refreshDynamicText(){
   try{Skin.render();}catch(_){}
   try{const tp=$('fmTip');if(tp)tp.innerHTML='';}catch(_){}
   try{$('dfZoomCap').textContent=trS(DIGITAL_FILTERS[dfShowIndex()].ir)+T('df.irCap','（脉冲响应图）');}catch(_){}
+  try{I18N.patch(document.body);}catch(_){}
 }
 function applyUiLang(v){
   if(!window.I18N)return;
@@ -9886,11 +9898,28 @@ const Skin = (function(){
   return api;
 })();
 let roBridge=null,roDeviceName='',roState={},roLastReport='',roHealthTimer=null,roBusy=false;
-function setConnState(text,connected){
-  const el=$('connBadge');
-  el.textContent=text;
-  el.classList.toggle('on',!!connected);
+let roLastRead=null;
+function rememberRead(res,ms,devName,sent){
+  roLastRead={res:res,ms:ms,devName:devName,sent:sent};
+  roLastReport=buildReadReport(res,ms,devName,sent);
+}
+const CONN_FB={off:'未连接设备',lost:'设备已断开',connecting:'连接中…',reading:'读取中…',ok:'已连接 · {name}'};
+const CONN_KEY={off:'nav.disconnected',lost:'conn.lost',connecting:'conn.connecting',
+                reading:'conn.reading',ok:'toastT.badgeConnected'};
+let connKind='off',connName='';
+function paintConnState(){
+  const el=$('connBadge');if(!el)return;
+  const k=CONN_FB[connKind]?connKind:'off';
+  let txt=T(CONN_KEY[k],CONN_FB[k]);
+  if(k==='ok')txt=fillTpl(txt,{name:connName});
+  el.textContent=txt;
+  el.classList.toggle('on',k==='ok');
   el.style.background='';el.style.color='';
+}
+function setConnState(kind,name){
+  connKind=CONN_FB[kind]?kind:'off';
+  connName=name||'';
+  paintConnState();
 }
 function syncConnToggle(){
   const b=$('btnConnToggle'),on=!!roBridge;
@@ -10176,14 +10205,14 @@ async function disconnectDevice(showToast){
   DW.device=null;
   clearTimeout(EQW.timer);EQW.timer=null;EQW.hash=null;EQW.slot=null;
   DW.gateNoticed=false;EQW.gateNoticed=false;
-  setConnState(T('nav.disconnected','未连接设备'),false);
+  setConnState('off');
   syncDevReadHint(false);
   syncConnToggle();syncWriteUi();
   if(showToast)toast('已断开设备，写入已停止（最后一次读数保留）');
 }
 async function handleDeviceLost(reason){
   await disconnectDevice(false);
-  setConnState(T('conn.lost','设备已断开'),false);
+  setConnState('lost');
   toast(reason+'，已停止读取');
 }
 async function connectDevice(){
@@ -10191,10 +10220,10 @@ async function connectDevice(){
   roBusy=true;syncConnToggle();
   const t0=performance.now();
   try{
-    setConnState(T('conn.connecting','连接中…'),false);
+    setConnState('connecting');
     const bridge=await openDeviceBridge();
-    if(!bridge){setConnState(T('nav.disconnected','未连接设备'),false);toast('已取消设备选择');return;}
-    setConnState(T('conn.reading','读取中…'),false);
+    if(!bridge){setConnState('off');toast('已取消设备选择');return;}
+    setConnState('reading');
     const before=bridge.sentLog().length;
     const res=await bridge.readDc04uState({timeoutMs:400});
     roState={...(res.state||{})};
@@ -10207,8 +10236,8 @@ async function connectDevice(){
       peqOk=!!S.devPeq;
     }catch(_){}
     const sent=bridge.sentLog().length-before;
-    roLastReport=buildReadReport(res,Math.round(performance.now()-t0),roDeviceName,sent);
-    setConnState(fillTpl(T('toastT.badgeConnected','已连接 · {name}'),{name:roDeviceName}),true);
+    rememberRead(res,Math.round(performance.now()-t0),roDeviceName,sent);
+    setConnState('ok',roDeviceName);
     syncDevReadHint(true);
     startHealthCheck();
     const fwNote=DeviceProtocol.isSupportedFirmware(S.fwVersion)
@@ -10223,7 +10252,7 @@ async function connectDevice(){
     stopHealthCheck();
     if(roBridge){try{await roBridge.close();}catch(_){}}
     roBridge=null;
-    setConnState(T('nav.disconnected','未连接设备'),false);
+    setConnState('off');
     showInfo(T('rd.failTitle','连接设备失败'),
       T('rd.failNote','本地 WebHID 通道：连接期间不会向设备写入任何设置'),
       fillTpl(T('rd.failBody','原因：{msg}\n\n排查：\n  1. 用 Chrome / Edge 打开本页（WebHID 需安全上下文；本地 file:// 即可，无需联网）。\n  2. 确认 DC04U 已用 USB 接好，并在弹出的设备选择框里选中它。\n  3. 其它程序（如官网控制台）可能占用了设备，先关掉再试。\n  4. 官网没有写入开关：连接 + 完整读数后即生效；非 {fw} 固件需在「写入设置」授权。'),
@@ -10239,7 +10268,7 @@ async function refreshDeviceState(){
     const res=await roBridge.readDc04uState({timeoutMs:400});
     roState={...roState,...(res.state||{})};
     applyDeviceReadout(roState);
-    roLastReport=buildReadReport(res,Math.round(performance.now()-t0),roDeviceName,
+    rememberRead(res,Math.round(performance.now()-t0),roDeviceName,
       roBridge.sentLog().length-before);
     syncDevReadHint(true);
   }catch(_){}finally{roBusy=false;syncConnToggle();}
@@ -10249,10 +10278,10 @@ $('btnConnToggle').onclick=()=>{
   else connectDevice();
 };
 $('connBadge').onclick=()=>{
-  if(!roLastReport)return toast('尚未读取设备状态，请先点击「连接设备」');
+  if(!roLastRead)return toast(T('toastT.noRead','尚未读取设备状态，请先点击「连接设备」'));
   showInfo(T('rd.title','设备读取结果'),
     T('rd.note','本次连接读取仅发送官方 GET · 连接成功后写入即生效（非开发版本需授权） · 状态持续跟随设备上报'),
-    roLastReport);
+    buildReadReport(roLastRead.res,roLastRead.ms,roLastRead.devName,roLastRead.sent));
 };
 const CACHE_PREFIX='dc04u.';
 function cacheKeysIn(store){
@@ -10312,7 +10341,7 @@ $('uacReconnect').onclick=async()=>{
   closeUacMask();
   if(uacReconnectHook){uacReconnectHook();return;}
   await disconnectDevice(false);
-  setConnState(T('nav.disconnected','未连接设备'),false);
+  setConnState('off');
   syncConnToggle();syncWriteUi();
   await connectDevice();
 };
@@ -10550,8 +10579,10 @@ function volcSyncSlotState(){
     volcSync();
     if(VOLC.on)volcApply();
     toast(VOLC.auto
-      ?('自动补偿已开启：补偿值＝总增益 '+Math.round(+S.preset.totalGain||0)+' dB × −2 ＝ '+volcValue()+' 档')
-      :('自动补偿已关闭，补偿值保留为 '+(volcValue()>0?'+':'')+volcValue()+' 档'));
+      ?fillTpl(T('toastT.volcAutoOn','自动补偿已开启：补偿值＝总增益 {gain} dB × −2 ＝ {val} 档'),
+               {gain:Math.round(+S.preset.totalGain||0),val:volcValue()})
+      :fillTpl(T('toastT.volcAutoOff','自动补偿已关闭，补偿值保留为 {val} 档'),
+               {val:(volcValue()>0?'+':'')+volcValue()}));
   };
   VOLC.lastGain=Math.round(+S.preset.totalGain||0);
   volcSync();
