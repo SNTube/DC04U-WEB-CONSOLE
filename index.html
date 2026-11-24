@@ -8553,18 +8553,6 @@ async function devSet(uiKey,uiValue,opts){
       if(opts.commit)opts.commit(value);
       return true;
     }catch(e){
-      if(opts.tolerant){
-        try{
-          await new Promise(r=>setTimeout(r,120));
-          const rb2=await roBridge.readOne(DeviceProtocol.SET_RID_READ_NAME[report[5]],
-            {timeoutMs:500,retries:2});
-          if(rb2.parsed&&rb2.parsed[field]===value){
-            commitReadback(rb2.parsed);
-            if(opts.commit)opts.commit(value);
-            return true;
-          }
-        }catch(_){}
-      }
       try{await roBridge.writeSection(DeviceProtocol.setFieldReport(field,prev,snap),
         {timeoutMs:400,retries:1});}catch(_){}
       const back=map[2](prev);
@@ -8634,13 +8622,8 @@ async function writeEqPreset(opts){
         await new Promise(r=>setTimeout(r,150));
       }
       await roBridge.writePeqSequence(p,idx,{});
-      let matched=false;
-      for(let k=0;k<3&&!matched;k++){
-        if(k)await new Promise(r=>setTimeout(r,120));
-        const rr=await roBridge.readPeqSlot(idx-1,{timeoutMs:500,retries:2});
-        matched=!!rr&&!!rr.ok&&eqBandsMatch(rr.bands,p);
-      }
-      if(!matched)throw new Error('PEQ 读回比对不一致');
+      const rr=await roBridge.readPeqSlot(idx-1,{timeoutMs:400,retries:1});
+      if(!rr.ok||!eqBandsMatch(rr.bands,p))throw new Error('PEQ 读回比对不一致');
       if(S.devPeq)S.devPeq[idx-1]={slot:idx-1,totalGain:p.totalGain||0,
         bands:p.filterSettings.map((b,i)=>({filterIndex:i,filterType:b.filterType,
           frequency:b.frequency,gain:b.gain,factor:b.factor}))};
@@ -9875,8 +9858,7 @@ $('piSlots').querySelectorAll('button').forEach(b=>b.onclick=()=>{
  ['devBalance','balance'],['devBrightness','brightness']].forEach(([id,key])=>
   $(id).addEventListener('input',e=>devSliderInput(key,e.target)));
 
-const VOLC={base:null,on:false,suppress:0,auto:false,lastGain:null,
-            timer:null,pending:null,writing:false,retry:0};
+const VOLC={base:null,on:false,suppress:0,auto:false,lastGain:null};
 const VOLC_AUTO_KEY='dc04u.volAuto.v1';
 try{VOLC.auto=localStorage.getItem(VOLC_AUTO_KEY)==='1';}catch(_){VOLC.auto=false;}
 function volcAutoValue(){return devClamp(-2*Math.round(+S.preset.totalGain||0),-100,100);}
@@ -9929,34 +9911,15 @@ function volcSync(){
 function volcApply(){
   const t=volcTarget();
   if(t==null)return;
-  VOLC.pending=t;
-  if(!VOLC.writing){VOLC.writing=true;VOLC.suppress++;}
+  VOLC.suppress++;
   S.dev.volume=t;
   paintRange($('devVolume'),t);
   setDevVal('devVolVal',t,v=>String(v));
-  clearTimeout(VOLC.timer);
-  VOLC.timer=setTimeout(flushVolc,160);
-}
-function flushVolc(){
-  VOLC.timer=null;
-  const t=VOLC.pending;
-  VOLC.pending=null;
-  if(t==null||!VOLC.on){if(VOLC.writing){VOLC.writing=false;VOLC.suppress--;}return;}
-  const finish=ok=>{
-    if(VOLC.pending!=null){flushVolc();return;}
-    VOLC.writing=false;
-    VOLC.suppress=Math.max(0,VOLC.suppress-1);
-    if(!ok&&VOLC.on&&VOLC.retry<1&&!writeGate()){
-      VOLC.retry++;
-      VOLC.pending=t;VOLC.writing=true;VOLC.suppress++;
-      VOLC.timer=setTimeout(flushVolc,400);
-      return;
-    }
-    VOLC.retry=0;
+  Promise.resolve(devSet('volume',t)).finally(()=>{
+    VOLC.suppress--;
     volcOnVolumeChanged();
     volcSync();
-  };
-  Promise.resolve(devSet('volume',t,{silent:true,tolerant:true})).then(v=>finish(v!==false),()=>finish(false));
+  });
 }
 function volcOnVolumeChanged(){
   if(!VOLC.on||VOLC.base==null||VOLC.suppress)return;
@@ -9995,7 +9958,6 @@ function volcSyncSlotState(){
   if(!want&&VOLC.on){
     const base=VOLC.base;
     VOLC.on=false;VOLC.base=null;
-    clearTimeout(VOLC.timer);VOLC.timer=null;VOLC.pending=null;VOLC.retry=0;
     if(base!=null&&S.dev.volume!=null&&volcValue()!==0){
       VOLC.suppress++;
       S.dev.volume=base;
@@ -14057,29 +14019,6 @@ function runSelfTest(){
          return v1===60&&shown1==='+12'&&v2===54&&shown2==='+6'&&base2===48&&
                 base3===51&&label3==='关闭后音量 51';
        })(),vc.autoFollow);
-    ck('自动补偿：连点总增益只攒一帧音量（写合并），PEQ 读回比对会隔 120ms 重读',
-       (()=>{
-         const g0=S.preset.totalGain,keep={on:VOLC.on,base:VOLC.base,auto:VOLC.auto,
-           writing:VOLC.writing,suppress:VOLC.suppress,pending:VOLC.pending,timer:VOLC.timer};
-         VOLC.on=true;VOLC.base=40;VOLC.auto=true;VOLC.writing=false;VOLC.suppress=0;
-         S.preset.totalGain=-3;volcApply();
-         const first=VOLC.pending;
-         S.preset.totalGain=-5;volcApply();
-         const merged=VOLC.pending===50&&first===46&&VOLC.suppress===1&&!!VOLC.timer;
-         const oneTimer=/setTimeout\(flushVolc,160\)/.test(volcApply.toString());
-         const retry=/writeGate\(\)/.test(flushVolc.toString());
-         const tolerant=/tolerant:true/.test(flushVolc.toString());
-         const reRead=/for\(let k=0;k<3/.test(writeEqPreset.toString());
-         clearTimeout(VOLC.timer);
-         S.preset.totalGain=g0;
-         VOLC.on=keep.on;VOLC.base=keep.base;VOLC.auto=keep.auto;
-         VOLC.writing=keep.writing;VOLC.suppress=keep.suppress;
-         VOLC.pending=keep.pending;VOLC.timer=keep.timer;
-         applyDeviceReadout(SELFTEST_READOUT);
-         return merged&&oneTimer&&retry&&reRead&&tolerant;
-       })(),
-       [VOLC.pending,VOLC.suppress]);
-
     S.volComp=0;VOLC.on=false;VOLC.base=null;VOLC.suppress=0;VOLC.auto=false;
     S.eqSlot=null;S.eqLocalOverride=false;
     applyDeviceReadout(SELFTEST_READOUT);
