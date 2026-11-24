@@ -2564,18 +2564,15 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "fs.export":"导出文件夹",
     "fs.unset":"未设置",
     "fs.pick":"选择",
-    "fs.clear":"清空",
-    "fs.hint":"设定后，「导入源频响曲线 / 导入目标曲线 / 导入 PEQ」改为在该文件夹里检索选取；导出默认存到导出文件夹。清空即恢复系统的文件选择框。",
-    "fs.unsupported":"当前浏览器不支持本地文件夹（需要 Chrome / Edge）：这三行只显示、不可选。",
+    "fs.clear":"取消关联",
+    "fs.unsupported":"当前浏览器不支持本地文件夹（需要 Chrome / Edge）",
     "fsb.import":"导入文件",
     "fsb.importPeq":"导入 PEQ 文件",
     "fsb.count":"共 {n} 项",
-    "fsb.countCap":"共 {n} 项，显示前 {m}",
     "fsb.empty":"这个文件夹里没有匹配的文件",
-    "fsb.noMore":"没有更多结果",
     "fsb.search":"搜索文件名…",
     "toastT.fsSet":"已设定{label}：{dir}",
-    "toastT.fsCleared":"已清空{label}，恢复系统文件选择框",
+    "toastT.fsCleared":"已取消关联{label}，恢复系统文件选择框",
     "toastT.fsNoSave":"已选定，但本浏览器没能保存（下次打开需要重选）",
     "toastT.fsLost":"文件夹权限已失效，请在「写入设置」里重新选择文件夹",
     "toastT.fsReadFail":"读取文件失败：{msg}",
@@ -3269,18 +3266,15 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "fs.export":"Export folder",
     "fs.unset":"Not set",
     "fs.pick":"Choose",
-    "fs.clear":"Clear",
-    "fs.hint":"Once set, \"Import source curve / Import target curve / Import PEQ\" pick files from that folder, and exports default to the export folder. Clear restores the system file dialog.",
-    "fs.unsupported":"This browser cannot access local folders (Chrome / Edge required): these rows are display-only.",
+    "fs.clear":"Unlink",
+    "fs.unsupported":"This browser cannot access local folders (Chrome / Edge required)",
     "fsb.import":"Import file",
     "fsb.importPeq":"Import PEQ file",
     "fsb.count":"{n} item(s)",
-    "fsb.countCap":"{n} items, showing first {m}",
     "fsb.empty":"No matching files in this folder",
-    "fsb.noMore":"No more results",
     "fsb.search":"Search file name…",
     "toastT.fsSet":"{label} set: {dir}",
-    "toastT.fsCleared":"{label} cleared; using the system file dialog again",
+    "toastT.fsCleared":"{label} unlinked; using the system file dialog again",
     "toastT.fsNoSave":"Selected, but this browser could not save it (you will need to pick again next time)",
     "toastT.fsLost":"Folder permission expired — please choose the folder again in Write settings",
     "toastT.fsReadFail":"Could not read the file: {msg}",
@@ -3974,18 +3968,15 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "fs.export":"書き出しフォルダ",
     "fs.unset":"未設定",
     "fs.pick":"選択",
-    "fs.clear":"クリア",
-    "fs.hint":"設定すると「ソース特性を読み込み / ターゲット特性を読み込み / PEQ を読み込み」はそのフォルダ内から選ぶ方式になり、書き出しも書き出しフォルダに保存されます。クリアすると OS のファイル選択に戻ります。",
-    "fs.unsupported":"このブラウザはローカルフォルダにアクセスできません（Chrome / Edge が必要）：この 3 行は表示のみです。",
+    "fs.clear":"関連付け解除",
+    "fs.unsupported":"このブラウザはローカルフォルダにアクセスできません（Chrome / Edge が必要）",
     "fsb.import":"ファイルを読み込み",
     "fsb.importPeq":"PEQ ファイルを読み込み",
     "fsb.count":"{n} 件",
-    "fsb.countCap":"{n} 件中、先頭 {m} 件を表示",
     "fsb.empty":"このフォルダに一致するファイルはありません",
-    "fsb.noMore":"これ以上の結果はありません",
     "fsb.search":"ファイル名を検索…",
     "toastT.fsSet":"{label}を設定しました：{dir}",
-    "toastT.fsCleared":"{label}をクリアしました。OS のファイル選択に戻ります",
+    "toastT.fsCleared":"{label}の関連付けを解除しました。OS のファイル選択に戻ります",
     "toastT.fsNoSave":"選択しましたが、このブラウザでは保存できませんでした（次回は再選択が必要です）",
     "toastT.fsLost":"フォルダの権限が失効しました。「書き込み設定」で選び直してください",
     "toastT.fsReadFail":"ファイルを読み込めませんでした：{msg}",
@@ -5451,12 +5442,11 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   .wset-confirm-txt{margin-bottom:9px}
   .wset-confirm .btn{font-size:11.5px;padding:6px 11px}
   .wset-confirm .btn.danger{background:#c8761c;border-color:#c8761c;color:#fff}
-  .wset-path{display:flex;align-items:center;gap:7px;min-width:0;justify-content:flex-end}
-  .wset-path .nm{font-size:12px;font-weight:650;max-width:150px;min-width:0;
+  .wset-path{display:flex;align-items:center;gap:6px;min-width:0;justify-content:flex-end}
+  .wset-path .nm{font-size:12px;font-weight:650;max-width:130px;min-width:0;
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .wset-path .nm.unread{color:var(--muted);font-weight:500}
-  .wset-path .btn{font-size:11px;padding:5px 9px;flex:none}
-  .wset-hint{font-size:11px;color:var(--muted);line-height:1.7;margin:0 0 12px;padding:0 2px}
+  .wset-path .btn{font-size:11px;padding:5px 9px;flex:none;white-space:nowrap}
   .fsb-pop{position:fixed;z-index:58;background:var(--surface);border:1px solid var(--line);
     border-radius:14px;box-shadow:0 16px 44px rgba(15,25,50,.22);padding:12px;
     width:380px;max-width:calc(100vw - 24px);display:flex;flex-direction:column;gap:9px}
@@ -5480,7 +5470,9 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   .fsb-item:hover{background:var(--surface-3)}
   .fsb-item.sel{background:var(--surface-3);box-shadow:inset 2px 0 0 var(--accent);font-weight:600}
   .fsb-item .ic{width:15px;flex:none;display:flex;align-items:center;color:var(--muted)}
-  .fsb-item .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .fsb-item .nm{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .fsb-item .sub{flex:1 1 auto;min-width:0;font-size:10.5px;color:var(--muted);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
   .fsb-empty{padding:26px 12px;text-align:center;color:var(--muted);font-size:12px}
   .fsb-foot{font-size:11px;color:var(--muted);line-height:1.5}
   .wset-brand{border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
@@ -6197,25 +6189,24 @@ try{
         <div class="wset-path">
           <b class="nm unread" id="fsCurve">未设置</b>
           <button class="btn" id="fsCurvePick" type="button">选择</button>
-          <button class="btn" id="fsCurveClear" type="button" disabled>清空</button>
+          <button class="btn" id="fsCurveClear" type="button" disabled>取消关联</button>
         </div>
       </div>
       <div class="wset-row"><span>PEQ 预设文件夹</span>
         <div class="wset-path">
           <b class="nm unread" id="fsPreset">未设置</b>
           <button class="btn" id="fsPresetPick" type="button">选择</button>
-          <button class="btn" id="fsPresetClear" type="button" disabled>清空</button>
+          <button class="btn" id="fsPresetClear" type="button" disabled>取消关联</button>
         </div>
       </div>
       <div class="wset-row"><span>导出文件夹</span>
         <div class="wset-path">
           <b class="nm unread" id="fsExport">未设置</b>
           <button class="btn" id="fsExportPick" type="button">选择</button>
-          <button class="btn" id="fsExportClear" type="button" disabled>清空</button>
+          <button class="btn" id="fsExportClear" type="button" disabled>取消关联</button>
         </div>
       </div>
     </div>
-    <p class="wset-hint" id="fsHint">设定后，「导入源频响曲线 / 导入目标曲线 / 导入 PEQ」改为在该文件夹里检索选取；导出默认存到导出文件夹。清空即恢复系统的文件选择框。</p>
     <div class="wset-risk" id="wsetRisk">
       <b>已知风险</b>：当前固件 <b id="wsetRiskFw">—</b> 与开发版本 3.24.30 不同。本控制台的写入报文只按 3.24.30 的官网前端逐条核对过，其它固件可能改变了写入途径，存在写坏设备设置的风险。授权只对<b>当前这个固件版本</b>生效：<b>上次授权的固件版本号</b>与当前固件不一致时会自动撤销授权，需要重新授权。
       <div class="wset-confirm" id="wsetConfirm">
@@ -8701,21 +8692,15 @@ async function saveBlob(blob,name){
   setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   return 'download';
 }
-function fsbCountText(total,shown,limit){
-  return total>limit
-    ?fillTpl(T('fsb.countCap','共 {n} 项，显示前 {m}'),{n:total,m:shown})
-    :fillTpl(T('fsb.count','共 {n} 项'),{n:total});
-}
+function fsbCountText(n){return fillTpl(T('fsb.count','共 {n} 项'),{n});}
 const FSB=(function(){
   const pop=$('fsPop'),listEl=$('fsList'),crumbEl=$('fsCrumb'),
         searchEl=$('fsSearch'),countEl=$('fsCount'),okBtn=$('fsImport');
-  const LIMIT=30;
-  let stack=[],items=[],selIdx=-1,cfg=null,seq=0,anchorEl=null;
+  let stack=[],items=[],hits=[],selIdx=-1,cfg=null,seq=0,anchorEl=null,mode='browse',timer=null;
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const hits=()=>{
-    const q=searchEl.value.trim().toLowerCase();
-    return q?items.filter(it=>it.name.toLowerCase().includes(q)):items;
-  };
+  const list=()=>mode==='search'?hits:items;
+  const ICON_DIR='<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M1.6 4.3h4l1.3 1.6h7.5v6.6a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>';
+  const ICON_FILE='<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.6 2.4h5.9l3 3v8.2h-8.9z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M9.5 2.5v3h3" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>';
   function place(){
     if(!anchorEl)return;
     const r=anchorEl.getBoundingClientRect();
@@ -8727,20 +8712,20 @@ const FSB=(function(){
     if(top+h>window.innerHeight-12)top=Math.max(12,r.top-h-6);
     pop.style.top=top+'px';
   }
-  const ICON_DIR='<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M1.6 4.3h4l1.3 1.6h7.5v6.6a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>';
-  const ICON_FILE='<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.6 2.4h5.9l3 3v8.2h-8.9z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M9.5 2.5v3h3" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>';
   function render(){
-    const hit=hits(),shown=hit.slice(0,LIMIT);
+    const cur=list();
     crumbEl.innerHTML=stack.map((d,i)=>
       `<button type="button" data-i="${i}"${i===stack.length-1?' class="cur"':''}>${esc(d.name)}</button>`
     ).join('<i>›</i>');
-    listEl.innerHTML=shown.length?shown.map((it,i)=>
+    listEl.innerHTML=cur.length?cur.map((it,i)=>
       `<div class="fsb-item${i===selIdx?' sel':''}" data-i="${i}" role="option" aria-selected="${i===selIdx}">`+
-      `<span class="ic">${it.isDir?ICON_DIR:ICON_FILE}</span><span class="nm">${esc(it.name)}</span></div>`
-    ).join(''):`<div class="fsb-empty">${hit.length?T('fsb.noMore','没有更多结果'):T('fsb.empty','这个文件夹里没有匹配的文件')}</div>`;
-    countEl.textContent=fsbCountText(hit.length,shown.length,LIMIT);
-    const cur=shown[selIdx];
-    okBtn.disabled=!(cur&&!cur.isDir);
+      `<span class="ic">${it.isDir?ICON_DIR:ICON_FILE}</span>`+
+      `<span class="nm">${esc(it.name)}</span>`+
+      (it.dir?`<span class="sub">${esc(it.dir.replace(/\/$/,''))}</span>`:'')+
+      `</div>`
+    ).join(''):`<div class="fsb-empty">${T('fsb.empty','这个文件夹里没有匹配的文件')}</div>`;
+    countEl.textContent=fsbCountText(cur.length);
+    okBtn.disabled=false;
     place();
   }
   async function readDir(){
@@ -8755,11 +8740,35 @@ const FSB=(function(){
     }catch(_){}
     if(t!==seq)return;
     out.sort((a,b)=>a.isDir!==b.isDir?(a.isDir?-1:1):a.name.localeCompare(b.name,'zh-Hans-CN',{numeric:true}));
-    items=out;selIdx=-1;render();
+    mode='browse';items=out;hits=[];selIdx=-1;render();
+  }
+  async function runSearch(q){
+    const t=++seq,ql=q.toLowerCase(),out=[];
+    async function walk(dir,prefix,depth){
+      if(depth>8)return;
+      try{
+        for await(const [name,handle] of dir.entries()){
+          if(t!==seq)return;
+          if(handle.kind==='directory'){await walk(handle,prefix+name+'/',depth+1);continue;}
+          if(!name.toLowerCase().includes(ql))continue;
+          if(cfg.exts&&!cfg.exts.some(x=>name.toLowerCase().endsWith(x)))continue;
+          out.push({name,dir:prefix,handle,isDir:false});
+        }
+      }catch(_){}
+    }
+    await walk(stack[stack.length-1],'',0);
+    if(t!==seq)return;
+    out.sort((a,b)=>(a.dir+a.name).localeCompare(b.dir+b.name,'zh-Hans-CN',{numeric:true}));
+    mode='search';hits=out;items=[];selIdx=-1;render();
   }
   async function doImport(){
-    const cur=hits()[selIdx];
-    if(!cur||cur.isDir)return;
+    const cur=list()[selIdx];
+    if(!cur||cur.isDir){
+      const nat=cfg&&cfg.onNative;
+      close();
+      if(nat)nat();
+      return;
+    }
     const cb=cfg&&cfg.onPick;
     try{
       const file=await cur.handle.getFile();
@@ -8770,21 +8779,22 @@ const FSB=(function(){
     }
   }
   function open(o){
-    cfg=o;anchorEl=o.anchor;stack=[o.root];items=[];selIdx=-1;searchEl.value='';
+    cfg=o;anchorEl=o.anchor;stack=[o.root];items=[];hits=[];selIdx=-1;mode='browse';
+    searchEl.value='';clearTimeout(timer);
     okBtn.textContent=o.button||T('fsb.import','导入文件');
     pop.hidden=false;render();readDir();
     searchEl.focus();
   }
-  function close(){pop.hidden=true;cfg=null;anchorEl=null;items=[];stack=[];selIdx=-1;}
+  function close(){pop.hidden=true;cfg=null;anchorEl=null;items=[];hits=[];stack=[];selIdx=-1;clearTimeout(timer);seq++;}
   listEl.addEventListener('click',e=>{
     const el=e.target.closest('.fsb-item');if(!el)return;
-    const it=hits()[+el.dataset.i];if(!it)return;
+    const it=list()[+el.dataset.i];if(!it)return;
     if(it.isDir){stack.push(it.handle);searchEl.value='';selIdx=-1;readDir();return;}
     selIdx=+el.dataset.i;render();
   });
   listEl.addEventListener('dblclick',e=>{
     const el=e.target.closest('.fsb-item');if(!el)return;
-    const it=hits()[+el.dataset.i];
+    const it=list()[+el.dataset.i];
     if(it&&!it.isDir){selIdx=+el.dataset.i;doImport();}
   });
   crumbEl.addEventListener('click',e=>{
@@ -8793,9 +8803,14 @@ const FSB=(function(){
     if(i===stack.length-1)return;
     stack.length=i+1;searchEl.value='';selIdx=-1;readDir();
   });
-  searchEl.addEventListener('input',()=>{selIdx=-1;render();});
+  searchEl.addEventListener('input',()=>{
+    clearTimeout(timer);selIdx=-1;
+    const q=searchEl.value.trim();
+    if(!q){mode='browse';hits=[];seq++;render();return;}
+    timer=setTimeout(()=>runSearch(q),160);
+  });
   searchEl.addEventListener('keydown',e=>{
-    if(e.key==='Enter'&&!okBtn.disabled){e.preventDefault();doImport();}
+    if(e.key==='Enter'){e.preventDefault();doImport();}
     if(e.key==='Escape'){e.preventDefault();close();}
   });
   okBtn.addEventListener('click',doImport);
@@ -8818,19 +8833,22 @@ async function fsOpenFor(anchor,key,o){
 $('importPreset').onclick=()=>{
   if(FSH.supported&&FS_SET.preset)
     return fsOpenFor($('importPreset'),'preset',
-      {exts:['.json','.txt','.eq','.csv'],button:T('fsb.importPeq','导入 PEQ 文件'),onPick:importPresetFile});
+      {exts:['.json','.txt','.eq','.csv'],button:T('fsb.importPeq','导入 PEQ 文件'),
+       onPick:importPresetFile,onNative:()=>$('filePreset').click()});
   $('filePreset').click();
 };
 $('importCurve').onclick=()=>{
   if(FSH.supported&&FS_SET.curve)
     return fsOpenFor($('importCurve'),'curve',
-      {exts:['.txt','.csv'],button:T('fsb.import','导入文件'),onPick:f=>importCurveFileTo(f,applyTargetCurveImport)});
+      {exts:['.txt','.csv'],button:T('fsb.import','导入文件'),
+       onPick:f=>importCurveFileTo(f,applyTargetCurveImport),onNative:()=>$('fileCurve').click()});
   $('fileCurve').click();
 };
 $('importSource').onclick=()=>{
   if(FSH.supported&&FS_SET.curve)
     return fsOpenFor($('importSource'),'curve',
-      {exts:['.txt','.csv'],button:T('fsb.import','导入文件'),onPick:f=>importCurveFileTo(f,applySourceCurveImport)});
+      {exts:['.txt','.csv'],button:T('fsb.import','导入文件'),
+       onPick:f=>importCurveFileTo(f,applySourceCurveImport),onNative:()=>$('fileSource').click()});
   $('fileSource').click();
 };
 FS_ROWS.forEach(r=>{
@@ -8848,15 +8866,19 @@ FS_ROWS.forEach(r=>{
   };
   if(clr)clr.onclick=async()=>{
     FS_SET[r.key]=null;await FSH.clear(r.key);syncFsRows();
-    toast(fillTpl(T('toastT.fsCleared','已清空{label}，恢复系统文件选择框'),{label:T('fs.'+r.key,r.label)}));
+    toast(fillTpl(T('toastT.fsCleared','已取消关联{label}，恢复系统文件选择框'),{label:T('fs.'+r.key,r.label)}));
   };
 });
 (async function fsBoot(){
   if(/(?:^|[?&])selftest(?:=|&|$)/.test(location.search))return;
   if(!FSH.supported){
-    const hint=$('fsHint');
-    if(hint)hint.textContent=T('fs.unsupported','当前浏览器不支持本地文件夹（需要 Chrome / Edge）：这三行只显示、不可选。');
-    FS_ROWS.forEach(r=>{const b=$(r.id+'Pick');if(b)b.disabled=true;});
+    const why=T('fs.unsupported','当前浏览器不支持本地文件夹（需要 Chrome / Edge）');
+    FS_ROWS.forEach(r=>{
+      ['','Pick','Clear'].forEach(sfx=>{
+        const b=$(r.id+sfx);
+        if(b){b.disabled=true;b.title=why;}
+      });
+    });
     return;
   }
   for(const r of FS_ROWS){FS_SET[r.key]=await FSH.read(r.key);}
@@ -9726,9 +9748,11 @@ const Skin = (function(){
   }
   function download(kind){
     const cv=draw(kind),name=filename(kind);
-    cv.toBlob(async blob=>{
+    cv.toBlob(blob=>{
       if(!blob){toast(fillTpl(T('toastT.pngFail','PNG 生成失败：{name}'),{name}));return;}
-      if(await saveBlob(blob,name)==='cancel')return;
+      const url=URL.createObjectURL(blob),a=document.createElement('a');
+      a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1500);
       toast(fillTpl(T('toastT.downloaded','已下载 {name}'),{name}));
     },'image/png');
   }
@@ -13887,10 +13911,10 @@ function runSelfTest(){
          return a==='我的曲线'&&cOff===false&&b==='预设库'&&
                 e===T('fs.unset','未设置')&&eOff===true;
        })(),[$('fsCurve').textContent,$('fsCurveClear').disabled]);
-    ck('本地文件夹：检索结果超上限时计数文案说明「显示前 N 项」',
-       fsbCountText(42,30,30).indexOf('42')>=0&&fsbCountText(42,30,30).indexOf('30')>=0&&
-       fsbCountText(7,7,30).indexOf('7')>=0&&fsbCountText(7,7,30).indexOf('显示前')<0,
-       [fsbCountText(42,30,30),fsbCountText(7,7,30)]);
+    ck('本地文件夹：检索结果计数只写总数，不截断也不写「显示前」',
+       fsbCountText(42).indexOf('42')>=0&&fsbCountText(42).indexOf('显示前')<0&&
+       fsbCountText(0).indexOf('0')>=0,
+       [fsbCountText(42),fsbCountText(0)]);
     ck('写入设置含 SNTube Studio 开发设计、两张本地 logo 与简介（运行时零联网）',
        (()=>{
          const b=$('writeMask').querySelector('.wset-brand'),
