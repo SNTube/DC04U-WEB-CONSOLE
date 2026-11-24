@@ -2558,6 +2558,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "toastT.fwAuth":"\u5df2\u6388\u6743\u56fa\u4ef6 {fw} \u5199\u5165\uff08\u5df2\u77e5\u98ce\u9669\uff0c\u4ec5\u5bf9\u8be5\u7248\u672c\u751f\u6548\uff09",
     "toastT.localOnly":"\u4ec5\u672c\u673a\u751f\u6548 \u00b7 {reason}\uff08\u8fde\u63a5\u8bbe\u5907\u5e76\u5728\u300c\u5199\u5165\u8bbe\u7f6e\u300d\u5b8c\u6210\u6388\u6743\u540e\u624d\u4f1a\u5199\u5165\u8bbe\u5907\uff09",
     "toastT.rollback":"\u5199\u5165\u5931\u8d25\uff0c\u5df2\u56de\u6eda\u5230\u539f\u503c\uff1a{msg}",
+    "toastT.volcFail":"音量写入未能确认（已重试 {n} 次）：{msg}",
     "toastT.notWritten":"\u53c2\u6570\u672a\u5199\u5165\u8bbe\u5907\uff1a{msg}",
     "toastT.gateReenum":"设备正在重新枚举，请重新插拔后再操作",
     "toastT.reenumMismatch":"设备重连后读数与写入值不一致（期望 {want}，实际 {got}），已按设备值显示",
@@ -3242,6 +3243,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "toastT.fwAuth":"Writes authorized for firmware {fw} (known risk; this version only)",
     "toastT.localOnly":"Local only \u00b7 {reason} (written to the device only after connecting and authorizing in \"Write settings\")",
     "toastT.rollback":"Write failed; rolled back to the previous value: {msg}",
+    "toastT.volcFail":"Could not confirm the volume write (retried {n} times): {msg}",
     "toastT.notWritten":"Parameters were not written to the device: {msg}",
     "toastT.gateReenum":"The device is re-enumerating — replug the USB cable, then try again",
     "toastT.reenumMismatch":"After reconnecting, the reading differs from what was written (expected {want}, got {got}); showing the device value",
@@ -3926,6 +3928,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "toastT.fwAuth":"\u30d5\u30a1\u30fc\u30e0\u30a6\u30a7\u30a2 {fw} \u3078\u306e\u66f8\u304d\u8fbc\u307f\u3092\u627f\u8a8d\u3057\u307e\u3057\u305f\uff08\u65e2\u77e5\u30ea\u30b9\u30af\u3001\u3053\u306e\u7248\u306e\u307f\u6709\u52b9\uff09",
     "toastT.localOnly":"\u3053\u306e PC \u5185\u306e\u307f \u00b7 {reason}\uff08\u63a5\u7d9a\u3057\u3066\u300c\u66f8\u304d\u8fbc\u307f\u8a2d\u5b9a\u300d\u3067\u627f\u8a8d\u3059\u308b\u3068\u30c7\u30d0\u30a4\u30b9\u306b\u66f8\u304d\u8fbc\u307e\u308c\u307e\u3059\uff09",
     "toastT.rollback":"\u66f8\u304d\u8fbc\u307f\u306b\u5931\u6557\u3057\u3001\u5143\u306e\u5024\u306b\u623b\u3057\u307e\u3057\u305f\uff1a{msg}",
+    "toastT.volcFail":"\u97f3\u91cf\u306e\u66f8\u304d\u8fbc\u307f\u3092\u78ba\u8a8d\u3067\u304d\u307e\u305b\u3093\u3067\u3057\u305f\uff08{n} \u56de\u518d\u8a66\u884c\uff09\uff1a{msg}",
     "toastT.notWritten":"\u30d1\u30e9\u30e1\u30fc\u30bf\u306f\u30c7\u30d0\u30a4\u30b9\u306b\u66f8\u304d\u8fbc\u307e\u308c\u3066\u3044\u307e\u305b\u3093\uff1a{msg}",
     "toastT.gateReenum":"デバイスが再列挙中です。USB を差し直してから操作してください",
     "toastT.reenumMismatch":"再接続後の読み取り値が書き込み値と一致しません（期待 {want} / 実際 {got}）。デバイスの値で表示しています",
@@ -7679,7 +7682,7 @@ $('piDesc').addEventListener('input',e=>{
     try{e.target.select();}catch(_){}
   },true);
 })();
-function toast(msg){const t=$('toast');t.textContent=(window.I18N?I18N.tr(msg):msg);t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),1800);}
+function toast(msg,ms){const t=$('toast');t.textContent=(window.I18N?I18N.tr(msg):msg);t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),ms||1800);}
 function fillTpl(s,o){return String(s).replace(/\{(\w+)\}/g,(m,k)=>(o[k]==null?m:o[k]));}
 function T(k,fb){return window.I18N?I18N.t(k):fb;}
 function trS(s){return window.I18N?I18N.tr(s):s;}
@@ -8548,6 +8551,7 @@ async function devSet(uiKey,uiValue,opts){
       if(opts.commit)opts.commit(value);
       return true;
     }catch(e){
+      if(uiKey==='volume'&&opts.volc)return false;
       try{await roBridge.writeSection(DeviceProtocol.setFieldReport(field,prev,snap),
         {timeoutMs:400,retries:1});}catch(_){}
       const back=map[2](prev);
@@ -8616,9 +8620,15 @@ async function writeEqPreset(opts){
         S.dev.eqPreset=idx;S.eqDevicePreset=idx;S.eqLocalOverride=true;
         await new Promise(r=>setTimeout(r,150));
       }
-      await roBridge.writePeqSequence(p,idx,{});
-      const rr=await roBridge.readPeqSlot(idx-1,{timeoutMs:400,retries:1});
-      if(!rr.ok||!eqBandsMatch(rr.bands,p))throw new Error('PEQ 读回比对不一致');
+      let rr=null,okPEQ=false;
+      const PEQ_TRY_GAP=[0,120,250];
+      for(let attempt=0;attempt<PEQ_TRY_GAP.length;attempt++){
+        if(PEQ_TRY_GAP[attempt])await new Promise(r=>setTimeout(r,PEQ_TRY_GAP[attempt]));
+        await roBridge.writePeqSequence(p,idx,{});
+        rr=await roBridge.readPeqSlot(idx-1,{timeoutMs:400,retries:1});
+        if(rr.ok&&eqBandsMatch(rr.bands,p)){okPEQ=true;break;}
+      }
+      if(!okPEQ)throw new Error('PEQ 读回比对不一致');
       if(S.devPeq)S.devPeq[idx-1]={slot:idx-1,totalGain:p.totalGain||0,
         bands:p.filterSettings.map((b,i)=>({filterIndex:i,filterType:b.filterType,
           frequency:b.frequency,gain:b.gain,factor:b.factor}))};
@@ -8626,7 +8636,8 @@ async function writeEqPreset(opts){
       return true;
     }catch(e){
       try{if(prev)await roBridge.writePeqSequence(prev,idx,{});}catch(_){}
-      toast(fillTpl(T('toastT.slotWriteFail','自定义预设 {slot} 写入失败，已按原参数回滚：{msg}'),{slot,msg:((e&&e.message)||e)}));
+      toast(fillTpl(T('toastT.slotWriteFail','自定义预设 {slot} 写入失败，已按原参数回滚：{msg}'),
+        {slot,msg:((e&&e.message)||e)}));
       return false;
     }
   });
@@ -9853,7 +9864,9 @@ $('piSlots').querySelectorAll('button').forEach(b=>b.onclick=()=>{
  ['devBalance','balance'],['devBrightness','brightness']].forEach(([id,key])=>
   $(id).addEventListener('input',e=>devSliderInput(key,e.target)));
 
-const VOLC={base:null,on:false,suppress:0,auto:false,lastGain:null};
+const VOLC={base:null,on:false,suppress:0,auto:false,lastGain:null,
+            pending:null,retry:0,retryTimer:null};
+const VOLC_RETRY_MAX=3;
 const VOLC_AUTO_LEGACY_KEY='dc04u.volAuto.v1';
 VOLC.auto=false;
 try{localStorage.removeItem(VOLC_AUTO_LEGACY_KEY);}catch(_){}
@@ -9911,17 +9924,41 @@ function volcApply(){
   S.dev.volume=t;
   paintRange($('devVolume'),t);
   setDevVal('devVolVal',t,v=>String(v));
-  Promise.resolve(devSet('volume',t)).finally(()=>{
+  Promise.resolve(devSet('volume',t,{volc:true})).then(ok=>{
+    if(ok){VOLC.pending=null;VOLC.retry=0;}
+    else if(VOLC.on&&VOLC.base!=null&&!writeGate()&&t===volcTarget()){
+      VOLC.pending=t;volcRetryLater();
+    }
+  }).finally(()=>{
     VOLC.suppress--;
     volcOnVolumeChanged();
     volcSync();
   });
+}
+function volcRetryLater(){
+  if(!VOLC.on||VOLC.base==null||VOLC.pending==null)return;
+  if(VOLC.retryTimer)return;
+  if(VOLC.retry>=VOLC_RETRY_MAX){
+    const msg=fillTpl(T('toastT.volcFail','音量写入未能确认（已重试 {n} 次）：{msg}'),
+      {n:VOLC.retry,msg:'读回超时'});
+    VOLC.retry=0;VOLC.pending=null;
+    toast(msg,6000);
+    volcSync();
+    return;
+  }
+  VOLC.retry++;
+  VOLC.retryTimer=setTimeout(()=>{
+    VOLC.retryTimer=null;
+    if(!VOLC.on||VOLC.base==null||VOLC.pending==null)return;
+    volcApply();
+  },1500);
 }
 function volcOnVolumeChanged(){
   if(!VOLC.on||VOLC.base==null||VOLC.suppress)return;
   const v=S.dev.volume;
   if(v==null)return;
   if(VOLC.auto){
+    if(VOLC.pending!=null)return;
     const nb=devClamp(Math.round(v-volcValue()),0,100);
     if(nb===VOLC.base)return;
     VOLC.base=nb;
@@ -9941,17 +9978,35 @@ function volcAutoFollow(){
   volcSync();
   if(VOLC.on)volcApply();
 }
+function volcDeriveBase(devVol,gain,inSlot){
+  if(!inSlot||!gain||devVol==null)return {val:null,base:devVol,clamped:false};
+  const val=devClamp(-2*Math.round(gain),-100,100);
+  const raw=devVol-val;
+  const base=devClamp(raw,0,100);
+  return {val,base,clamped:base!==raw};
+}
 function volcSyncSlotState(){
   const want=!!S.eqSlot;
+  const dropPending=()=>{
+    VOLC.pending=null;VOLC.retry=0;
+    if(VOLC.retryTimer){clearTimeout(VOLC.retryTimer);VOLC.retryTimer=null;}
+  };
   if(want&&!VOLC.on){
+    dropPending();
     VOLC.on=true;
-    VOLC.base=(S.dev.volume==null?null:S.dev.volume);
-    VOLC.lastGain=Math.round(+S.preset.totalGain||0);
+    const devVol=(S.dev.volume==null?null:S.dev.volume);
+    const g=Math.round(+S.preset.totalGain||0);
+    VOLC.lastGain=g;
+    const inSlot=!!DW.device&&DW.device.eqIndex===S.eqSlot+7;
+    const d=volcDeriveBase(devVol,g,inSlot);
+    if(d.val!=null)S.volComp=d.val;
+    VOLC.base=d.base;
     volcSync();
-    volcApply();
+    if(!d.clamped)volcApply();
     return;
   }
   if(!want&&VOLC.on){
+    dropPending();
     const base=VOLC.base;
     VOLC.on=false;VOLC.base=null;
     if(base!=null&&S.dev.volume!=null&&volcValue()!==0){
@@ -13940,6 +13995,18 @@ function runSelfTest(){
                 $('volcBase').textContent==='关闭后音量 48'&&$('devVolume').value==='53'&&
                 !$('volcBox').classList.contains('off');
        })(),vc.enable);
+    ck('音量静态补偿：连上时按总增益逆算（−2×增益）并反推「关闭后音量」',
+       (()=>{
+         const a=volcDeriveBase(60,-6,true);
+         const b=volcDeriveBase(60,0,true);
+         const c=volcDeriveBase(60,-6,false);
+         const e=volcDeriveBase(5,-6,true);
+         vc.derive={a,b,c,e};
+         return a.val===12&&a.base===48&&a.clamped===false&&
+                b.val===null&&b.base===60&&
+                c.val===null&&c.base===60&&
+                e.base===0&&e.clamped===true;
+       })(),vc.derive);
     ck('音量静态补偿：设备音量被物理按键/上报改成 55 → 输入框自动变 +7（55−48），基准不动',
        (()=>{
          VOLC.suppress=0;
