@@ -2120,6 +2120,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "cache.names":"自定义 1 / 2 / 3 的方案命名（只用于本机备忘）",
     "cache.normFreq":"标准化频率（频响曲线 0 dB 的参照点）",
     "cache.tipMode":"浮层说明档位（关 / 简洁 / 详细）",
+    "cache.volAuto":"音量静态补偿的「自动」开关（补偿值本身不保存）",
     "cache.uiLang":"界面语言（English / 中文 / 日本語）",
     "cache.warn":"不会改动设备里的任何设置，也不会向设备发送任何写入报文；不会影响已导出的 PEQ / JSON 文件。清除后页面会刷新回到初始状态，当前未导出的均衡器编辑会丢失，已连接的设备会断开。",
     "cache.confirm":"确认清除",
@@ -2804,6 +2805,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "cache.names":"Names of custom presets 1 / 2 / 3 (local memo only)",
     "cache.normFreq":"Normalize frequency (the 0 dB reference of the response curve)",
     "cache.tipMode":"Marker tooltip level (off / simple / detailed)",
+    "cache.volAuto":"Static compensation auto switch (the value itself is not saved)",
     "cache.uiLang":"Interface language (English / Chinese / Japanese)",
     "cache.warn":"No device setting is changed and no write packet is sent; exported PEQ / JSON files are unaffected. After clearing, the page reloads to its initial state, unsaved equalizer edits are lost and the connected device is disconnected.",
     "cache.confirm":"Clear now",
@@ -3488,6 +3490,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "cache.names":"カスタム 1 / 2 / 3 のプリセット名（ローカルのメモ用）",
     "cache.normFreq":"正規化周波数（特性カーブ 0 dB の基準点）",
     "cache.tipMode":"マーカーの説明の詳細度（オフ / シンプル / 詳細）",
+    "cache.volAuto":"音量静的補正の「自動」スイッチ（補正値自体は保存されません）",
     "cache.uiLang":"表示言語（English / 中文 / 日本語）",
     "cache.warn":"デバイスの設定は一切変更せず、書き込みパケットも送信しません。書き出し済みの PEQ / JSON ファイルには影響しません。消去後はページが初期状態に戻り、未保存のイコライザー編集は失われ、接続中のデバイスは切断されます。",
     "cache.confirm":"消去する",
@@ -4150,6 +4153,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     "自定义 1 / 2 / 3 的方案命名（只用于本机备忘）":"cache.names",
     "标准化频率（频响曲线 0 dB 的参照点）":"cache.normFreq",
     "浮层说明档位（关 / 简洁 / 详细）":"cache.tipMode",
+    "音量静态补偿的「自动」开关（补偿值本身不保存）":"cache.volAuto",
     "界面语言（English / 中文 / 日本語）":"cache.uiLang",
     "不会改动设备里的任何设置，也不会向设备发送任何写入报文；不会影响已导出的 PEQ / JSON 文件。清除后页面会刷新回到初始状态，当前未导出的均衡器编辑会丢失，已连接的设备会断开。":"cache.warn",
     "确认清除":"cache.confirm",
@@ -6137,6 +6141,7 @@ try{
       <li>自定义 1 / 2 / 3 的方案命名（只用于本机备忘）</li>
       <li>标准化频率（频响曲线 0 dB 的参照点）</li>
       <li>浮层说明档位（关 / 简洁 / 详细）</li>
+      <li>音量静态补偿的「自动」开关（补偿值本身不保存）</li>
       <li>界面语言（English / 中文 / 日本語）</li>
     </ul>
     <p class="cache-note">不会改动设备里的任何设置，也不会向设备发送任何写入报文；不会影响已导出的 PEQ / JSON 文件。清除后页面会刷新回到初始状态，当前未导出的均衡器编辑会丢失，已连接的设备会断开。</p>
@@ -9551,16 +9556,12 @@ function resetEditorToIdle(){
   d.name=S.preset.name;d.description=S.preset.description;
   d.tags=(S.preset.tags||[]).slice();
   EQW.suppress=true;
-  VOLC.hold++;
-  VOLC.quietUntil=Date.now()+2000;
   try{applyOfficialJson(d,{baseline:true,imported:true});}
-  finally{EQW.suppress=false;EQW.slot=null;EQW.hash=null;VOLC.hold=Math.max(0,VOLC.hold-1);}
+  finally{EQW.suppress=false;EQW.slot=null;EQW.hash=null;}
   clearTimeout(EQW.timer);
 }
 function loadDeviceSlot(n,p,manual){
   EQW.suppress=true;
-  VOLC.hold++;
-  VOLC.quietUntil=Date.now()+2000;
   try{
     applyOfficialJson({
       name:S.preset.name,description:S.preset.description,tags:S.preset.tags,
@@ -9573,7 +9574,6 @@ function loadDeviceSlot(n,p,manual){
   }finally{
     EQW.suppress=false;
     EQW.slot=n;EQW.hash=eqPresetHash(officialJson());
-    VOLC.hold=Math.max(0,VOLC.hold-1);
   }
 }
 function syncActiveCustomSlot(force){
@@ -9876,11 +9876,9 @@ $('piSlots').querySelectorAll('button').forEach(b=>b.onclick=()=>{
   $(id).addEventListener('input',e=>devSliderInput(key,e.target)));
 
 const VOLC={base:null,on:false,suppress:0,auto:false,lastGain:null,
-            timer:null,pending:null,writing:false,retry:0,
-            hold:0,lastBase:null,lastBaseAt:0,quietUntil:0};
-const VOLC_AUTO_LEGACY_KEY='dc04u.volAuto.v1';
-VOLC.auto=false;
-try{localStorage.removeItem(VOLC_AUTO_LEGACY_KEY);}catch(_){}
+            timer:null,pending:null,writing:false,retry:0};
+const VOLC_AUTO_KEY='dc04u.volAuto.v1';
+try{VOLC.auto=localStorage.getItem(VOLC_AUTO_KEY)==='1';}catch(_){VOLC.auto=false;}
 function volcAutoValue(){return devClamp(-2*Math.round(+S.preset.totalGain||0),-100,100);}
 function volcValue(){return VOLC.auto?volcAutoValue():Math.round(+S.volComp||0);}
 function volcTarget(){
@@ -9932,7 +9930,6 @@ function volcApply(){
   const t=volcTarget();
   if(t==null)return;
   VOLC.pending=t;
-  VOLC.quietUntil=Date.now()+2000;
   if(!VOLC.writing){VOLC.writing=true;VOLC.suppress++;}
   S.dev.volume=t;
   paintRange($('devVolume'),t);
@@ -9962,8 +9959,7 @@ function flushVolc(){
   Promise.resolve(devSet('volume',t,{silent:true,tolerant:true})).then(v=>finish(v!==false),()=>finish(false));
 }
 function volcOnVolumeChanged(){
-  if(!VOLC.on||VOLC.base==null||VOLC.suppress||VOLC.hold)return;
-  if(Date.now()<VOLC.quietUntil)return;
+  if(!VOLC.on||VOLC.base==null||VOLC.suppress)return;
   const v=S.dev.volume;
   if(v==null)return;
   if(VOLC.auto){
@@ -9989,10 +9985,8 @@ function volcAutoFollow(){
 function volcSyncSlotState(){
   const want=!!S.eqSlot;
   if(want&&!VOLC.on){
-    const cur=S.dev.volume;
-    const recent=VOLC.lastBase!=null&&(Date.now()-VOLC.lastBaseAt)<4000;
     VOLC.on=true;
-    VOLC.base=(cur==null?null:(recent&&cur>VOLC.lastBase?VOLC.lastBase:cur));
+    VOLC.base=(S.dev.volume==null?null:S.dev.volume);
     VOLC.lastGain=Math.round(+S.preset.totalGain||0);
     volcSync();
     volcApply();
@@ -10001,10 +9995,7 @@ function volcSyncSlotState(){
   if(!want&&VOLC.on){
     const base=VOLC.base;
     VOLC.on=false;VOLC.base=null;
-    if(base!=null){VOLC.lastBase=base;VOLC.lastBaseAt=Date.now();}
-    const hadPending=VOLC.pending!=null;
     clearTimeout(VOLC.timer);VOLC.timer=null;VOLC.pending=null;VOLC.retry=0;
-    if(hadPending&&VOLC.writing){VOLC.writing=false;VOLC.suppress=Math.max(0,VOLC.suppress-1);}
     if(base!=null&&S.dev.volume!=null&&volcValue()!==0){
       VOLC.suppress++;
       S.dev.volume=base;
@@ -10058,6 +10049,7 @@ function volcSyncSlotState(){
   const auto=$('volcAuto');
   if(auto)auto.onclick=()=>{
     VOLC.auto=!VOLC.auto;
+    try{localStorage.setItem(VOLC_AUTO_KEY,VOLC.auto?'1':'0');}catch(_){}
     VOLC.lastGain=Math.round(+S.preset.totalGain||0);
     volcSync();
     if(VOLC.on)volcApply();
@@ -13730,12 +13722,12 @@ function runSelfTest(){
        })(),
        {id:$('btnClearCache')&&$('btnClearCache').id,
         after:$('btnConnToggle').nextElementSibling&&$('btnConnToggle').nextElementSibling.id});
-    ck('清除缓存清单 7 项：浮层说明档位 / 界面语言两条均已进三语词典（自动开关已不落盘，不再列出）',
+    ck('清除缓存清单 8 项：浮层说明档位 / 音量自动补偿开关 / 界面语言三条均已进三语词典',
        (()=>{
          const zh=[...document.querySelectorAll('#cacheMask .cache-list li')].map(li=>li.textContent.trim());
-         const must=['浮层说明档位（关 / 简洁 / 详细）','界面语言（English / 中文 / 日本語）'];
-         return zh.length===7 && must.every(t=>zh.indexOf(t)>=0 && !!(window.I18N&&I18N.REV[t])) &&
-                zh.every(t=>t.indexOf('音量静态补偿')<0);
+         const must=['浮层说明档位（关 / 简洁 / 详细）','音量静态补偿的「自动」开关（补偿值本身不保存）',
+                     '界面语言（English / 中文 / 日本語）'];
+         return zh.length===8 && must.every(t=>zh.indexOf(t)>=0 && !!(window.I18N&&I18N.REV[t]));
        })(),
        [...document.querySelectorAll('#cacheMask .cache-list li')].map(li=>li.textContent.trim()).slice(-3));
     ck('界面语言进缓存：键名 dc04u.uiLang.v1，取值与 DEV_LANG / I18N.LANGS 同序（en / zh / ja）',
@@ -13994,7 +13986,6 @@ function runSelfTest(){
     ck('音量静态补偿：设备音量被物理按键/上报改成 55 → 输入框自动变 +7（55−48），基准不动',
        (()=>{
          VOLC.suppress=0;
-         VOLC.quietUntil=0;
          applyDeviceReadout({...SELFTEST_READOUT,volumeLeft:55,volumeRight:55,eqIndex:8});
          vc.follow={vol:S.dev.volume,shown:$('volComp').value,base:VOLC.base,
                     label:$('volcBase').textContent};
@@ -14059,7 +14050,6 @@ function runSelfTest(){
          S.preset.totalGain=-3;syncEditor();
          const v2=S.dev.volume,shown2=$('volComp').value,base2=VOLC.base;
          VOLC.suppress=0;
-         VOLC.quietUntil=0;
          applyDeviceReadout({...SELFTEST_READOUT,volumeLeft:57,volumeRight:57});
          const base3=VOLC.base,label3=$('volcBase').textContent;
          vc.autoFollow={v1,shown1,v2,shown2,base2,base3,label3};
@@ -14067,86 +14057,6 @@ function runSelfTest(){
          return v1===60&&shown1==='+12'&&v2===54&&shown2==='+6'&&base2===48&&
                 base3===51&&label3==='关闭后音量 51';
        })(),vc.autoFollow);
-    ck('「自动」开关不落盘：开着也不写 dc04u.volAuto.v1（刷新重连不会把已补偿的音量当基准）',
-       (()=>{
-         const was=VOLC.auto,keepOn=VOLC.on,keepBase=VOLC.base;
-         try{localStorage.removeItem('dc04u.volAuto.v1');}catch(_){}
-         const btn=$('volcAuto');
-         btn.onclick();
-         const on=VOLC.auto===true;
-         let stored=null;try{stored=localStorage.getItem('dc04u.volAuto.v1');}catch(_){}
-         btn.onclick();
-         const off=VOLC.auto===false;
-         let stored2=null;try{stored2=localStorage.getItem('dc04u.volAuto.v1');}catch(_){}
-         clearTimeout(VOLC.timer);VOLC.timer=null;VOLC.pending=null;
-         if(VOLC.writing){VOLC.writing=false;VOLC.suppress=Math.max(0,VOLC.suppress-1);}
-         VOLC.auto=was;VOLC.on=keepOn;VOLC.base=keepBase;
-         return on&&off&&stored===null&&stored2===null;
-       })(),
-       (()=>{try{return localStorage.getItem('dc04u.volAuto.v1');}catch(_){return 'no-storage';}})());
-
-    ck('切预设期间不反推基准：hold 里收到「旧音量 + 新补偿值」也不动 base（不会越切越大）',
-       (()=>{
-         const keep={on:VOLC.on,base:VOLC.base,auto:VOLC.auto,hold:VOLC.hold,
-                     vol:S.dev.volume,gain:S.preset.totalGain};
-         VOLC.on=true;VOLC.base=41;VOLC.auto=true;
-         S.preset.totalGain=0;
-         S.dev.volume=47;
-         VOLC.hold=1;volcOnVolumeChanged();
-         const guarded=VOLC.base===41;
-         VOLC.hold=0;
-         const src=/VOLC\.hold/.test(volcOnVolumeChanged.toString())&&
-                   /VOLC\.hold/.test(loadDeviceSlot.toString())&&
-                   /VOLC\.hold/.test(resetEditorToIdle.toString());
-         VOLC.on=keep.on;VOLC.base=keep.base;VOLC.auto=keep.auto;VOLC.hold=keep.hold;
-         S.dev.volume=keep.vol;S.preset.totalGain=keep.gain;
-         return guarded&&src;
-       })(),
-       [VOLC.base]);
-
-    ck('写补偿后 2 秒内不认设备读数：延迟上报的旧音量不会把基准抬上去',
-       (()=>{
-         const keep={on:VOLC.on,base:VOLC.base,auto:VOLC.auto,vol:S.dev.volume,
-                     gain:S.preset.totalGain,quiet:VOLC.quietUntil,
-                     timer:VOLC.timer,pending:VOLC.pending,writing:VOLC.writing,suppress:VOLC.suppress};
-         VOLC.on=true;VOLC.base=41;VOLC.auto=true;VOLC.writing=false;VOLC.suppress=0;
-         S.preset.totalGain=0;
-         S.dev.volume=47;
-         volcApply();
-         volcOnVolumeChanged();
-         const kept=VOLC.base===41;
-         clearTimeout(VOLC.timer);
-         VOLC.on=keep.on;VOLC.base=keep.base;VOLC.auto=keep.auto;VOLC.quietUntil=keep.quiet;
-         S.dev.volume=keep.vol;S.preset.totalGain=keep.gain;
-         VOLC.timer=keep.timer;VOLC.pending=keep.pending;
-         VOLC.writing=keep.writing;VOLC.suppress=keep.suppress;
-         return kept;
-       })(),
-       [VOLC.base]);
-
-    ck('关掉预设再立刻打开：沿用刚才的基准（4 秒内），不把还没退回的音量当新基准',
-       (()=>{
-         const keep={on:VOLC.on,base:VOLC.base,auto:VOLC.auto,slot:S.eqSlot,
-                     vol:S.dev.volume,lastBase:VOLC.lastBase,lastAt:VOLC.lastBaseAt,
-                     timer:VOLC.timer,pending:VOLC.pending,writing:VOLC.writing,
-                     suppress:VOLC.suppress};
-         VOLC.auto=true;VOLC.on=false;VOLC.base=null;
-         S.dev.volume=41;S.eqSlot=1;syncPiSlots();
-         const b1=VOLC.base;
-         VOLC.on=false;VOLC.base=null;
-         VOLC.lastBase=41;VOLC.lastBaseAt=Date.now();
-         S.dev.volume=47;
-         syncPiSlots();
-         const b2=VOLC.base;
-         clearTimeout(VOLC.timer);VOLC.timer=null;VOLC.pending=null;
-         if(VOLC.writing){VOLC.writing=false;VOLC.suppress=Math.max(0,VOLC.suppress-1);}
-         VOLC.on=keep.on;VOLC.base=keep.base;VOLC.auto=keep.auto;S.eqSlot=keep.slot;
-         S.dev.volume=keep.vol;VOLC.lastBase=keep.lastBase;VOLC.lastBaseAt=keep.lastAt;
-         VOLC.writing=keep.writing;VOLC.suppress=keep.suppress;
-         return b1===41&&b2===41;
-       })(),
-       [VOLC.lastBase]);
-
     ck('自动补偿：连点总增益只攒一帧音量（写合并），PEQ 读回比对会隔 120ms 重读',
        (()=>{
          const g0=S.preset.totalGain,keep={on:VOLC.on,base:VOLC.base,auto:VOLC.auto,
@@ -14170,10 +14080,10 @@ function runSelfTest(){
        })(),
        [VOLC.pending,VOLC.suppress]);
 
-    S.volComp=0;VOLC.on=false;VOLC.base=null;VOLC.suppress=0;VOLC.auto=false;VOLC.quietUntil=0;
+    S.volComp=0;VOLC.on=false;VOLC.base=null;VOLC.suppress=0;VOLC.auto=false;
     S.eqSlot=null;S.eqLocalOverride=false;
     applyDeviceReadout(SELFTEST_READOUT);
-    try{localStorage.removeItem(VOLC_AUTO_LEGACY_KEY);}catch(_){}
+    try{localStorage.removeItem(VOLC_AUTO_KEY);}catch(_){}
     volcSync();
 
     const m93={};
